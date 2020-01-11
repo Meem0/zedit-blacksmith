@@ -28,8 +28,48 @@ ngapp.run(function(settingsService, contextMenuFactory, pluginTransformService) 
                     let selectedNode = scope.selectedNodes[0];
                     if (selectedNode)
                     {
-                        let shortcutObj = pluginTransformService.ElementToObjectWithShortcuts(selectedNode.handle);
+                        let controlFlag = 1;
                         debugger;
+                        if (controlFlag === 0)
+                        {
+                            let shortcutObj = pluginTransformService.ElementToObjectWithShortcuts(selectedNode.handle);
+                            let path = xelib.Path(selectedNode.handle);
+                            let longPath = xelib.LongPath(selectedNode.handle);
+                            let pathToUse = path;
+                            let transformationObj = {
+                                base: pathToUse,
+                                delta: shortcutObj
+                            };
+                            fh.saveJsonFile('./obj.json', transformationObj, false);
+                        }
+                        else if (controlFlag === 1)
+                        {
+                            let obj = fh.loadJsonFile('./obj.json');
+                            try {
+                                pluginTransformService.WriteObjectToElement(selectedNode.handle, '', obj);
+                            }
+                            finally {
+                                scope.$root.$broadcast('reloadGUI');
+                            }
+                        }
+                        else if (controlFlag === 2)
+                        {
+                            let obj = fh.loadJsonFile('./obj.json');
+                            xelib.WithHandle(
+                                xelib.GetElementFile(selectedNode.handle),
+                                handle => xelib.ElementFromObject(handle, 'WEAP\\WEAP', obj)
+                            );
+                            scope.$root.$broadcast('reloadGUI');
+                        }
+                        else if (controlFlag === 3)
+                        {
+                            let obj = fh.loadJsonFile('./obj.json');
+                            xelib.WithHandle(
+                                xelib.GetElementFile(selectedNode.handle),
+                                handle => xelib.ElementFromObject(handle, 'WEAP\\WEAP', obj)
+                            );
+                            scope.$root.$broadcast('reloadGUI');
+                        }
                     }
                 }
             });
