@@ -117,6 +117,41 @@ ngapp.service('writeObjectToElementService', function() {
         }
     }
 
+    let getArrayIndexString = function(index) {
+        return '[' + index + ']';
+    }
+
+    let setElementArrayLength = function(id, length) {
+        let elementLength = 0;
+        while (xelib.HasElement(id, getArrayIndexString(elementLength))) {
+            ++elementLength;
+        }
+
+        let newId;
+        try {
+            if (elementLength > length) {
+                const path = xelib.Path(id);
+                xelib.RemoveElement(id);
+                newId = xelib.AddElement(0, path);
+            }
+
+            let idToUse = newId ? newId : id;
+
+            for (let i = 0; i < length; ++i) {
+                const indexString = getArrayIndexString(i);
+                // while loop since AddArrayItem seems to fail the first time used on a newly generated array
+                while (!xelib.HasElement(idToUse, indexString)) {
+                    xelib.AddArrayItem(idToUse, '');
+                }
+            }
+        }
+        finally {
+            if (newId) {
+                xelib.Release(newId);
+            }
+        }
+    }
+
     let writeObjectToElementRecursive = function(id, path, obj) {
         for (const [key, value] of Object.entries(obj)) {
             if (key === 'Record Header') {
@@ -136,6 +171,14 @@ ngapp.service('writeObjectToElementService', function() {
                         case vtUnknown:
                             break;
                         case vtArray:
+                            setElementArrayLength(elementId, value.length);
+                            let arrayObj = value.reduce(
+                                (obj, elem, idx) => {
+                                    obj['[' + idx + ']'] = elem;
+                                    return obj;
+                                },
+                                {}
+                            );
                             break;
                         case vtStruct:
                             writeObjectToElementRecursive(id, childPath, value);
