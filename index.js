@@ -1,7 +1,7 @@
 /* global ngapp, xelib, modulePath */
 //= require ./src/*.js
 
-ngapp.run(function(settingsService, contextMenuFactory, pluginTransformService) {
+ngapp.run(function(settingsService, contextMenuFactory, pluginTransformService, writeObjectToElementService) {
     settingsService.registerSettings({
         label: 'Blacksmith',
         templateUrl: `${modulePath}/partials/blacksmithSettings.html`,
@@ -32,7 +32,7 @@ ngapp.run(function(settingsService, contextMenuFactory, pluginTransformService) 
                         debugger;
                         if (controlFlag === 0)
                         {
-                            let shortcutObj = pluginTransformService.ElementToObjectWithShortcuts(selectedNode.handle);
+                            let shortcutObj = pluginTransformService.elementToObjectWithShortcuts(selectedNode.handle);
                             let path = xelib.Path(selectedNode.handle);
                             let longPath = xelib.LongPath(selectedNode.handle);
                             let pathToUse = path;
@@ -46,7 +46,7 @@ ngapp.run(function(settingsService, contextMenuFactory, pluginTransformService) 
                         {
                             let obj = fh.loadJsonFile('./obj.json');
                             try {
-                                pluginTransformService.WriteObjectToElement(selectedNode.handle, '', obj);
+                                writeObjectToElementService.writeObjectToElement(selectedNode.handle, '', obj);
                             }
                             finally {
                                 scope.$root.$broadcast('reloadGUI');
