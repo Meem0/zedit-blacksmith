@@ -46,7 +46,7 @@ ngapp.run(function(settingsService, contextMenuFactory, pluginTransformService, 
                         {
                             let obj = fh.loadJsonFile('./obj.json');
                             try {
-                                writeObjectToElementService.writeObjectToElement(selectedNode.handle, '', obj);
+                                writeObjectToElementService.writeObjectToElement(selectedNode.handle, obj);
                             }
                             finally {
                                 scope.$root.$broadcast('reloadGUI');

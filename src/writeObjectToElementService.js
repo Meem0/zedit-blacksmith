@@ -9,7 +9,11 @@ ngapp.service('writeObjectToElementService', function() {
 
     const stInteger = xelib.smashTypes.indexOf('stInteger');
     const stFloat = xelib.smashTypes.indexOf('stFloat');
-
+    const stUnsortedArray = xelib.smashTypes.indexOf('stUnsortedArray');
+    const stUnsortedStructArray = xelib.smashTypes.indexOf('stUnsortedStructArray');
+    const stSortedArray = xelib.smashTypes.indexOf('stSortedArray');
+    const stSortedStructArray = xelib.smashTypes.indexOf('stSortedStructArray');
+    
     // reference is of format {plugin name}:{form id without load order}
     let getFormIdFromReference = function(reference) {
         if (reference === 0) {
@@ -117,10 +121,9 @@ ngapp.service('writeObjectToElementService', function() {
         }
     }
 
-    let writeArrayToElement = function(id, value) {
-        const arrayPath = xelib.Path(id);
-        xelib.RemoveElement(id);
-        let arrayObj = value.reduce(
+    let writeArrayToElement = function(id, path, value) {
+        xelib.RemoveElement(id, path);
+        const arrayObj = value.reduce(
             (obj, elem, idx) => {
                 obj['[' + idx + ']'] = elem;
                 return obj;
@@ -128,33 +131,61 @@ ngapp.service('writeObjectToElementService', function() {
             {}
         );
         xelib.WithHandle(
-            xelib.AddElement(0, arrayPath),
-            arrayId => writeObjectToElementRecursive(arrayId, '', arrayObj)
+            xelib.AddElement(id, path),
+            arrayId => writeObjectToElementRecursive(arrayId, arrayObj)
         );
     }
 
-    let writeObjectToElementRecursive = function(id, path, obj) {
-        console.log('writeObjectToElementRecursive(' + id + ', ' + path + ', ' + JSON.stringify(obj) + ')');
+    let isArrayElement = function(id) {
+        return xelib.WithHandle(
+            xelib.GetElement(id, ''),
+            resolvedId => {
+                const smashType = xelib.SmashType(resolvedId);
+                return (
+                    smashType === stUnsortedArray
+                    || smashType === stUnsortedStructArray
+                    || smashType === stSortedArray
+                    || smashType === stSortedStructArray
+                );
+            }
+        );
+    }
 
+    // path must be a direct child of id
+    let getOrAddElement = function(id, path) {
+        let childId = xelib.GetElement(id, path);
+        if (childId === 0) {
+            if (isArrayElement(id)) {
+                childId = xelib.AddArrayItem(id, '');
+                console.log(xelib.Path(childId) + ': added array item at ' + path);
+            }
+            else {
+                try {
+                    childId = xelib.AddElement(id, path);
+                    console.log(xelib.Path(childId) + ': added element at ' + path);
+                }
+                catch (ex) {
+                    // AddElement might fail if we try to add an array count element
+                    // there doesn't seem to be a way to check this beforehand
+                    console.log(xelib.Path(id) + ': could not add element at ' + path);
+                }
+            }
+        }
+        return childId;
+    }
+
+    let writeObjectToElementRecursive = function(id, obj) {
         for (const [key, value] of Object.entries(obj)) {
             if (key === 'Record Header') {
                 continue;
             }
 
-            const childPath = (path.length > 0 ? path + '\\' : '') + key;
-            let childId = xelib.GetElement(id, childPath);
+            const childId = getOrAddElement(id, key);
+
             if (childId === 0) {
-                const parentType = xelib.WithHandle(
-                    xelib.GetElement(id, path),
-                    parentId => xelib.ValueType(parentId)
-                );
-                if (parentType === vtArray) {
-                    childId = xelib.AddArrayItem(id, path);
-                }
-                else {
-                    childId = xelib.AddElement(id, childPath);   
-                }
+                continue;
             }
+
             xelib.WithHandle(
                 childId,
                 elementId => {
@@ -163,10 +194,10 @@ ngapp.service('writeObjectToElementService', function() {
                         case vtUnknown:
                             break;
                         case vtArray:
-                            writeArrayToElement(elementId, value);
+                            writeArrayToElement(id, key, value);
                             break;
                         case vtStruct:
-                            writeObjectToElementRecursive(id, childPath, value);
+                            writeObjectToElementRecursive(elementId, value);
                             break;
                         default:
                             writeValueToElement(elementId, value, childType);
@@ -177,7 +208,7 @@ ngapp.service('writeObjectToElementService', function() {
         }
     }
 
-    this.writeObjectToElement = function(id, path, obj) {
-        writeObjectToElementRecursive(id, path, obj);
+    this.writeObjectToElement = function(id, obj) {
+        writeObjectToElementRecursive(id, obj);
     }
 });
