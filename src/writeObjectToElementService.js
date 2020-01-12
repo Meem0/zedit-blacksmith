@@ -117,42 +117,25 @@ ngapp.service('writeObjectToElementService', function() {
         }
     }
 
-    let getArrayIndexString = function(index) {
-        return '[' + index + ']';
-    }
-
-    let setElementArrayLength = function(id, length) {
-        let elementLength = 0;
-        while (xelib.HasElement(id, getArrayIndexString(elementLength))) {
-            ++elementLength;
-        }
-
-        let newId;
-        try {
-            if (elementLength > length) {
-                const path = xelib.Path(id);
-                xelib.RemoveElement(id);
-                newId = xelib.AddElement(0, path);
-            }
-
-            let idToUse = newId ? newId : id;
-
-            for (let i = 0; i < length; ++i) {
-                const indexString = getArrayIndexString(i);
-                // while loop since AddArrayItem seems to fail the first time used on a newly generated array
-                while (!xelib.HasElement(idToUse, indexString)) {
-                    xelib.AddArrayItem(idToUse, '');
-                }
-            }
-        }
-        finally {
-            if (newId) {
-                xelib.Release(newId);
-            }
-        }
+    let writeArrayToElement = function(id, value) {
+        const arrayPath = xelib.Path(id);
+        xelib.RemoveElement(id);
+        let arrayObj = value.reduce(
+            (obj, elem, idx) => {
+                obj['[' + idx + ']'] = elem;
+                return obj;
+            },
+            {}
+        );
+        xelib.WithHandle(
+            xelib.AddElement(0, arrayPath),
+            arrayId => writeObjectToElementRecursive(arrayId, '', arrayObj)
+        );
     }
 
     let writeObjectToElementRecursive = function(id, path, obj) {
+        console.log('writeObjectToElementRecursive(' + id + ', ' + path + ', ' + JSON.stringify(obj) + ')');
+
         for (const [key, value] of Object.entries(obj)) {
             if (key === 'Record Header') {
                 continue;
@@ -161,7 +144,16 @@ ngapp.service('writeObjectToElementService', function() {
             const childPath = (path.length > 0 ? path + '\\' : '') + key;
             let childId = xelib.GetElement(id, childPath);
             if (childId === 0) {
-                childId = xelib.AddElement(id, childPath);
+                const parentType = xelib.WithHandle(
+                    xelib.GetElement(id, path),
+                    parentId => xelib.ValueType(parentId)
+                );
+                if (parentType === vtArray) {
+                    childId = xelib.AddArrayItem(id, path);
+                }
+                else {
+                    childId = xelib.AddElement(id, childPath);   
+                }
             }
             xelib.WithHandle(
                 childId,
@@ -171,14 +163,7 @@ ngapp.service('writeObjectToElementService', function() {
                         case vtUnknown:
                             break;
                         case vtArray:
-                            setElementArrayLength(elementId, value.length);
-                            let arrayObj = value.reduce(
-                                (obj, elem, idx) => {
-                                    obj['[' + idx + ']'] = elem;
-                                    return obj;
-                                },
-                                {}
-                            );
+                            writeArrayToElement(elementId, value);
                             break;
                         case vtStruct:
                             writeObjectToElementRecursive(id, childPath, value);
