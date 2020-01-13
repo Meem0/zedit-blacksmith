@@ -52,24 +52,6 @@ ngapp.run(function(settingsService, contextMenuFactory, pluginTransformService, 
                                 scope.$root.$broadcast('reloadGUI');
                             }
                         }
-                        else if (controlFlag === 2)
-                        {
-                            let obj = fh.loadJsonFile('./obj.json');
-                            xelib.WithHandle(
-                                xelib.GetElementFile(selectedNode.handle),
-                                handle => xelib.ElementFromObject(handle, 'WEAP\\WEAP', obj)
-                            );
-                            scope.$root.$broadcast('reloadGUI');
-                        }
-                        else if (controlFlag === 3)
-                        {
-                            let obj = fh.loadJsonFile('./obj.json');
-                            xelib.WithHandle(
-                                xelib.GetElementFile(selectedNode.handle),
-                                handle => xelib.ElementFromObject(handle, 'WEAP\\WEAP', obj)
-                            );
-                            scope.$root.$broadcast('reloadGUI');
-                        }
                     }
                 }
             });

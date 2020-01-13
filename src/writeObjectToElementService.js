@@ -161,8 +161,10 @@ ngapp.service('writeObjectToElementService', function() {
             }
             else {
                 try {
-                    childId = xelib.AddElement(id, path);
-                    console.log(xelib.Path(childId) + ': added element at ' + path);
+                    const pathToUse = path.startsWith('BODT') ? 'BOD2' : path;
+
+                    childId = xelib.AddElement(id, pathToUse);
+                    console.log(xelib.Path(childId) + ': added element at ' + pathToUse);
                 }
                 catch (ex) {
                     // AddElement might fail if we try to add an array count element
