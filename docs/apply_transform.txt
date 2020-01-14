@@ -1,0 +1,57 @@
+p1.esp
+	stat1a
+	stat1b
+	weap1a
+		-> stat1a
+	weap1b
+		-> stat1b
+	cobj1a
+		-> weap1a
+	cobj1b
+		-> weap1b
+
+transform = [
+  {
+    base: p1.esp\\weap1a,
+    diff: {
+      Damage: 15
+    }
+  },
+  {
+    cobj: p1.esp\\cobj1b,
+	diff: {
+	  Ingredients\\[0]\\Count = 2
+	}
+  }
+]
+
+apply transform:
+	build array of records to write, including dependencies
+		[p1.esp\\weap1a, p1.esp\\stat1a, p1.esp\\cobj1b, p1.esp\\weap1b, p1.esp\\stat1b]
+	
+	OPTION 1:
+		load all records from files into array of record objects
+			[
+				{
+					EDID: 'weap1aId',
+					...
+					Damage: 12,
+					...
+				},
+				...
+			]
+		apply diffs
+			[
+				{
+					EDID: 'weap1aId',
+					...
+					Damage: 15,
+					...
+				},
+				...
+			]
+		write array of record objects into output esp
+		
+	OPTION 2:
+		copy all records into output esp
+		write diffs into output esp
