@@ -13,17 +13,34 @@ p1.esp
 transform = [
   {
     base: p1.esp\\weap1a,
-    diff: {
+    delta: {
       Damage: 15
     }
   },
   {
-    cobj: p1.esp\\cobj1b,
-	diff: {
+  	base: p1.esp\\cobj1b,
+	delta: {
 	  Ingredients\\[0]\\Count = 2
 	}
   }
 ]
+
+let addDependencies = function(transforms) {
+	const basePaths = transforms.map(transform => transform.base);
+	const recordDependencies = recordDependencyService.getDependencies(basePaths);
+	return recordDependencies.map(recordPath => {
+		const recordDelta = transforms.find(transform => transform.base === recordPath);
+		return {
+			base: recordPath,
+			delta: recordDelta ? recordDelta : {}
+		};
+	});
+}
+
+let applyTransforms = function(transforms) {
+	const allTransforms = addDependencies(transforms);
+	const recordObjects = allTransforms.map(transform => pluginTransformService.createTransformation(transform));
+}
 
 apply transform:
 	build array of records to write, including dependencies
