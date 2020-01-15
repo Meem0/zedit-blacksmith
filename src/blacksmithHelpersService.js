@@ -29,7 +29,7 @@ ngapp.service('blacksmithHelpersService', function() {
     const stSortedArray = xelib.smashTypes.indexOf('stSortedArray');
     const stSortedStructArray = xelib.smashTypes.indexOf('stSortedStructArray');
 
-    this.blacksmithTypes = {
+    const blacksmithTypes = {
         btUnknown: 0,
         btFile: 1,
         btMainRecord: 2,
@@ -38,32 +38,97 @@ ngapp.service('blacksmithHelpersService', function() {
         btReference: 5,
         btInteger: 6,
         btFloat: 7,
-        btFlags: 8
+        btFlags: 8,
+        btEnum: 9
     };
 
-    this.BlacksmithType = function(id) {
+    let BlacksmithType = function(id) {
         try {
             if (!id) {
-                return this.blacksmithTypes.btUnknown;
+                return blacksmithTypes.btUnknown;
             }
             const elementType = xelib.ElementType(id);
             if (elementType === etFile) {
-                return this.blacksmithTypes.btFile;
+                return blacksmithTypes.btFile;
             }
             else if (elementType === etMainRecord) {
-                return this.blacksmithTypes.btMainRecord;
+                return blacksmithTypes.btMainRecord;
             }
             const valueType = xelib.ValueType(id);
-            if (valueType === vtReference) {
-                return this.blacksmithTypes.btReference;
+            if (valueType === vtArray) {
+                return blacksmithTypes.btArray;
+            }
+            else if (valueType === vtStruct) {
+                return blacksmithTypes.btStruct;
+            }
+            else if (valueType === vtReference) {
+                return blacksmithTypes.btReference;
+            }
+            else if (valueType === vtFlags) {
+                return blacksmithTypes.btFlags;
+            }
+            else if (valueType === vtEnum) {
+                return blacksmithTypes.btEnum;
+            }
+            const smashType = xelib.SmashType(id);
+            if (smashType === stInteger) {
+                return blacksmithTypes.btInteger;
+            }
+            else if (smashType === stFloat) {
+                return blacksmithTypes.btFloat;
             }
         }
         catch(ex) {
             this.logError('BlacksmithType failed for id ' + id);
         }
-        return this.blacksmithTypes.btUnknown;
+        return blacksmithTypes.btUnknown;
     };
-
+    
+    this.getTypeInfo = function(id) {
+        return {
+            type: BlacksmithType(id),
+            get isFile() {
+                return this.type === blacksmithTypes.btFile;
+            },
+            get isMainRecord() {
+                return this.type === blacksmithTypes.btMainRecord;
+            },
+            get isStruct() {
+                return this.type === blacksmithTypes.btStruct;
+            },
+            get isArray() {
+                return this.type === blacksmithTypes.btArray;
+            },
+            get isReference() {
+                return this.type === blacksmithTypes.btReference;
+            },
+            get isInteger() {
+                return this.type === blacksmithTypes.btInteger;
+            },
+            get isFloat() {
+                return this.type === blacksmithTypes.btFloat;
+            },
+            get isFlags() {
+                return this.type === blacksmithTypes.btFlags;
+            },
+            get isEnum() {
+                return this.type === blacksmithTypes.btEnum;
+            }
+        };
+    }
+    
+    this.isMainRecord = function(id) {
+        return getTypeInfo(id).isMainRecord;
+    }
+    
+    this.isArray = function(id) {
+        return getTypeInfo(id).isArray;
+    }
+    
+    this.isReference = function(id) {
+        return getTypeInfo(id).isReference;
+    }
+    
     let getFileNameAndFormIdFromReference = function(reference) {
         if (reference && typeof(reference) === 'string') {
             const [filename, formIdStem] = reference.split(':');
