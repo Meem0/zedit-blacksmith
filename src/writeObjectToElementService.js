@@ -1,72 +1,65 @@
 ngapp.service('writeObjectToElementService', function(blacksmithHelpersService) {
-    let getRecordValue = function(id, valueType) {
-        switch (valueType) {
-            case vtNumber:
-                const smashType = xelib.SmashType(id);
-                if (smashType === stInteger) {
-                    return xelib.GetIntValue(id, '');
-                }
-                else if (smashType === stFloat) {
-                    return xelib.GetFloatValue(id, '');
-                }
-                else {
-                    return 0;
-                }
-            case vtReference:
-                return xelib.Hex(xelib.GetUIntValue(id, ''), 8);
-            case vtFlags:
-                // GetEnabledFlags returns [""] if no enabled flags, we want []
-                return xelib.GetEnabledFlags(id, '').filter(flag => flag.length > 0);
-            default:
-                return xelib.GetValue(id, '');
+    let getRecordValue = function(id, typeInfo) {
+        if (typeInfo.isInteger) {
+            return xelib.GetIntValue(id, '');
+        }
+        else if (typeInfo.isFloat) {
+            return xelib.GetFloatValue(id, '');
+        }
+        else if (typeInfo.isReference) {
+            return xelib.Hex(xelib.GetUIntValue(id, ''), 8);
+        }
+        else if (typeInfo.isFlags) {
+            // GetEnabledFlags returns [""] if no enabled flags, we want []
+            return xelib.GetEnabledFlags(id, '').filter(flag => flag.length > 0);
+        }
+        else {
+            return xelib.GetValue(id, '');
         }
     }
 
-    let writeValueToRecord = function(id, value, valueType) {
-        switch (valueType) {
-            case vtNumber:
-                const smashType = xelib.SmashType(id);
-                if (smashType === stInteger) {
-                    xelib.SetIntValue(id, '', value);
-                }
-                else if (smashType === stFloat) {
-                    xelib.SetFloatValue(id, '', value);
-                }
-                break;
-            case vtFlags:
-                xelib.SetEnabledFlags(id, '', value);
-                break;
-            default:
-                xelib.SetValue(id, '', value);
-                break;
+    let writeValueToRecord = function(id, value, typeInfo) {
+        if (typeInfo.isInteger) {
+            xelib.SetIntValue(id, '', value);
+        }
+        else if (typeInfo.isFloat) {
+            xelib.SetFloatValue(id, '', value);
+        }
+        else if (typeInfo.isFlags) {
+            xelib.SetEnabledFlags(id, '', value);
+        }
+        else {
+            xelib.SetValue(id, '', value);
         }
     }
 
-    let getWriteValue = function(id, value, valueType) {
-        switch (valueType) {
-            case vtReference:
-                return blacksmithHelpersService.getFormIdFromReference(value);
-            case vtFlags:
-                // e.g. value = {"Flag 1": true, "Flag 2": false}, return = ["Flag 1"]
-                return Object.entries(value).reduce((enabledFlags, [flagName, flagEnabled]) => {
-                    if (flagEnabled) {
-                        enabledFlags.push(flagName);
-                    }
-                    return enabledFlags;
-                }, []);
-            case vtEnum:
-                return xelib.GetEnumOptions(id, '')[value];
-            default:
-                return value;
+    let getWriteValue = function(id, value, typeInfo) {
+        if (typeInfo.isReference) {
+            return blacksmithHelpersService.getFormIdFromReference(value);
+        }
+        else if (typeInfo.isFlags) {
+            // e.g. value = {"Flag 1": true, "Flag 2": false}, return = ["Flag 1"]
+            return Object.entries(value).reduce((enabledFlags, [flagName, flagEnabled]) => {
+                if (flagEnabled) {
+                    enabledFlags.push(flagName);
+                }
+                return enabledFlags;
+            }, []);
+        }
+        else if (typeInfo.isEnum) {
+            return xelib.GetEnumOptions(id, '')[value];
+        }
+        else {
+            return value;
         }
     }
 
-    let areValuesEqual = function(recordValue, writeValue, valueType) {
-        if (valueType === vtNumber) {
+    let areValuesEqual = function(recordValue, writeValue, typeInfo) {
+        if (typeInfo.isNumber) {
             const tolerance = 0.0001;
             return Math.abs(recordValue - writeValue) < tolerance;
         }
-        else if (valueType === vtFlags) {
+        else if (typeInfo.isFlags) {
             return recordValue.length === writeValue.length && recordValue.every(recordFlag => writeValue.includes(recordFlag));
         }
         else {
@@ -74,17 +67,17 @@ ngapp.service('writeObjectToElementService', function(blacksmithHelpersService) 
         }
     }
 
-    let writeValueToElement = function(id, value, valueType) {
-        const recordValue = getRecordValue(id, valueType);
-        const writeValue = getWriteValue(id, value, valueType);
+    let writeValueToElement = function(id, value, typeInfo) {
+        const recordValue = getRecordValue(id, typeInfo);
+        const writeValue = getWriteValue(id, value, typeInfo);
 
         if (writeValue === undefined) {
             console.log(xelib.Path(id) + ': skipped' + recordValue);
         }
 
-        if (!areValuesEqual(recordValue, writeValue, valueType)) {
+        if (!areValuesEqual(recordValue, writeValue, typeInfo)) {
             console.log(xelib.Path(id) + ': ' + recordValue + ' -> ' + writeValue);
-            writeValueToRecord(id, writeValue, valueType);
+            writeValueToRecord(id, writeValue, typeInfo);
         }
         else {
             console.log(xelib.Path(id) + ': ' + recordValue + ' == ' + writeValue);
@@ -106,29 +99,11 @@ ngapp.service('writeObjectToElementService', function(blacksmithHelpersService) 
         );
     }
 
-    let isArrayElement = function(id) {
-        return xelib.WithHandle(
-            xelib.GetElement(id, ''),
-            resolvedId => {
-                if (xelib.ElementType(resolvedId) === etFile) {
-                    return false;
-                }
-                const smashType = xelib.SmashType(resolvedId);
-                return (
-                    smashType === stUnsortedArray
-                    || smashType === stUnsortedStructArray
-                    || smashType === stSortedArray
-                    || smashType === stSortedStructArray
-                );
-            }
-        );
-    }
-
     // path must be a direct child of id
     let getOrAddElement = function(id, path) {
         let childId = xelib.GetElement(id, path);
         if (childId === 0) {
-            if (isArrayElement(id)) {
+            if (blacksmithHelpersService.isArray(id)) {
                 childId = xelib.AddArrayItem(id, '');
                 console.log(xelib.Path(childId) + ': added array item at ' + path);
             }
@@ -164,19 +139,15 @@ ngapp.service('writeObjectToElementService', function(blacksmithHelpersService) 
             xelib.WithHandle(
                 childId,
                 elementId => {
-                    const childType = xelib.ValueType(elementId);
-                    switch (childType) {
-                        case vtUnknown:
-                            break;
-                        case vtArray:
-                            writeArrayToElement(id, key, value);
-                            break;
-                        case vtStruct:
-                            writeObjectToElementRecursive(elementId, value);
-                            break;
-                        default:
-                            writeValueToElement(elementId, value, childType);
-                            break;
+                    const typeInfo = blacksmithHelpersService.getTypeInfo(elementId);
+                    if (typeInfo.isArray) {
+                        writeArrayToElement(id, key, value);
+                    }
+                    else if (typeInfo.isStruct) {
+                        writeObjectToElementRecursive(elementId, value);
+                    }
+                    else if (!typeInfo.isUnknown) {
+                        writeValueToElement(elementId, value, typeInfo);
                     }
                 }
             );
