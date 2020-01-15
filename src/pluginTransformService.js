@@ -125,7 +125,7 @@ ngapp.service('pluginTransformService', function(
         return transforms.filter(({base, delta}) => {
             const validBase = xelib.WithHandle(
                 xelib.GetElement(0, base),
-                id => blacksmithHelpersService.BlacksmithType(id) === blacksmithHelpersService.blacksmithTypes.btMainRecord
+                id => blacksmithHelpersService.isMainRecord(id)
             );
             if (!validBase) {
                 blacksmithHelpersService.logInfo('Skipping transform ' + base + ': cannot find record');
