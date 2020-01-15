@@ -68,63 +68,82 @@ ngapp.service('writeObjectToElementService', function(blacksmithHelpersService) 
     }
 
     let writeValueToElement = function(id, value, typeInfo) {
-        const recordValue = getRecordValue(id, typeInfo);
-        const writeValue = getWriteValue(id, value, typeInfo);
+        try {
+            const recordValue = getRecordValue(id, typeInfo);
+            const writeValue = getWriteValue(id, value, typeInfo);
 
-        if (writeValue === undefined) {
-            console.log(xelib.Path(id) + ': skipped' + recordValue);
-        }
+            if (writeValue === undefined) {
+                console.log(xelib.Path(id) + ': skipped' + recordValue);
+            }
 
-        if (!areValuesEqual(recordValue, writeValue, typeInfo)) {
-            console.log(xelib.Path(id) + ': ' + recordValue + ' -> ' + writeValue);
-            writeValueToRecord(id, writeValue, typeInfo);
+            if (!areValuesEqual(recordValue, writeValue, typeInfo)) {
+                console.log(xelib.Path(id) + ': ' + recordValue + ' -> ' + writeValue);
+                writeValueToRecord(id, writeValue, typeInfo);
+            }
+            else {
+                console.log(xelib.Path(id) + ': ' + recordValue + ' == ' + writeValue);
+            }
         }
-        else {
-            console.log(xelib.Path(id) + ': ' + recordValue + ' == ' + writeValue);
+        catch (ex) {
+            blacksmithHelpersService.logWarn('writeValueToElement failed: ' + ex);
         }
     }
 
     let writeArrayToElement = function(id, path, value) {
-        xelib.RemoveElement(id, path);
-        const arrayObj = value.reduce(
-            (obj, elem, idx) => {
-                obj['[' + idx + ']'] = elem;
-                return obj;
-            },
-            {}
-        );
-        xelib.WithHandle(
-            xelib.AddElement(id, path),
-            arrayId => writeObjectToElementRecursive(arrayId, arrayObj)
-        );
+        try {
+            xelib.RemoveElement(id, path);
+            const arrayObj = value.reduce(
+                (obj, elem, idx) => {
+                    obj['[' + idx + ']'] = elem;
+                    return obj;
+                },
+                {}
+            );
+            xelib.WithHandle(
+                xelib.AddElement(id, path),
+                arrayId => writeObjectToElementRecursive(arrayId, arrayObj)
+            );
+        }
+        catch (ex) {
+            blacksmithHelpersService.logWarn('writeArrayToElement failed: ' + ex);
+        }
     }
 
     // path must be a direct child of id
     let getOrAddElement = function(id, path) {
-        let childId = xelib.GetElement(id, path);
-        if (childId === 0) {
-            if (blacksmithHelpersService.isArray(id)) {
-                childId = xelib.AddArrayItem(id, '');
-                console.log(xelib.Path(childId) + ': added array item at ' + path);
-            }
-            else {
-                try {
+        let childId = 0;
+        try {
+            childId = xelib.GetElement(id, path);
+            if (childId === 0) {
+                if (blacksmithHelpersService.isArray(id)) {
+                    childId = xelib.AddArrayItem(id, '');
+                    blacksmithHelpersService.logInfo(xelib.Path(childId) + ': added array item at ' + path);
+                }
+                else {
                     const pathToUse = path.startsWith('BODT') ? 'BOD2' : path;
-
                     childId = xelib.AddElement(id, pathToUse);
-                    console.log(xelib.Path(childId) + ': added element at ' + pathToUse);
+                    blacksmithHelpersService.logInfo(xelib.Path(childId) + ': added element at ' + pathToUse);
                 }
-                catch (ex) {
-                    // AddElement might fail if we try to add an array count element
-                    // there doesn't seem to be a way to check this beforehand
-                    console.log(xelib.Path(id) + ': could not add element at ' + path);
-                }
+            }
+        }
+        catch (ex) {
+            // AddElement might fail if we try to add an array count element
+            // there doesn't seem to be a way to check this beforehand
+            blacksmithHelpersService.logWarn('getOrAddElement failed: ' + ex);
+        }
+        finally {
+            if (childId === 0) {
+                blacksmithHelpersService.logWarn('Could not get or add element at ' + path);
             }
         }
         return childId;
     }
 
     let writeObjectToElementRecursive = function(id, obj) {
+        if (!obj || typeof(obj) !== 'object' || Array.isArray(obj)) {
+            return;
+        }
+        
         for (const [key, value] of Object.entries(obj)) {
             if (key === 'Record Header') {
                 continue;
@@ -148,6 +167,9 @@ ngapp.service('writeObjectToElementService', function(blacksmithHelpersService) 
                     }
                     else if (!typeInfo.isUnknown) {
                         writeValueToElement(elementId, value, typeInfo);
+                    }
+                    else {
+                        blacksmithHelpersService.logWarn('Unknown value type at ' + path);
                     }
                 }
             );
