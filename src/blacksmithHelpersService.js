@@ -81,6 +81,9 @@ ngapp.service('blacksmithHelpersService', function() {
     this.getTypeInfo = function(id) {
         return {
             type: BlacksmithType(id),
+            get isUnknown() {
+                return this.type === blacksmithTypes.btUnknown;
+            },
             get isFile() {
                 return this.type === blacksmithTypes.btFile;
             },
