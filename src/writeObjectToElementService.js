@@ -1,4 +1,6 @@
-ngapp.service('writeObjectToElementService', function() {
+ngapp.service('writeObjectToElementService', function(blacksmithHelpersService) {
+    const etFile = xelib.elementTypes.indexOf('etFile');
+
     const vtUnknown = xelib.valueTypes.indexOf('vtUnknown');
     const vtNumber = xelib.valueTypes.indexOf('vtNumber');
     const vtReference = xelib.valueTypes.indexOf('vtReference');
@@ -14,21 +16,6 @@ ngapp.service('writeObjectToElementService', function() {
     const stSortedArray = xelib.smashTypes.indexOf('stSortedArray');
     const stSortedStructArray = xelib.smashTypes.indexOf('stSortedStructArray');
     
-    // reference is of format {plugin name}:{form id without load order}
-    let getFormIdFromReference = function(reference) {
-        if (reference === 0) {
-            return '00000000';
-        }
-
-        const [filename, formIdStem] = reference.split(':');
-        const loadOrder = xelib.WithHandle(
-            xelib.FileByName(filename),
-            fileId => xelib.GetFileLoadOrder(fileId)
-        );
-        const loadOrderString = xelib.Hex(loadOrder, 2);
-        return loadOrderString + formIdStem;
-    }
-
     let getRecordValue = function(id, valueType) {
         switch (valueType) {
             case vtNumber:
@@ -75,7 +62,7 @@ ngapp.service('writeObjectToElementService', function() {
     let getWriteValue = function(id, value, valueType) {
         switch (valueType) {
             case vtReference:
-                return getFormIdFromReference(value);
+                return blacksmithHelpersService.getFormIdFromReference(value);
             case vtFlags:
                 // e.g. value = {"Flag 1": true, "Flag 2": false}, return = ["Flag 1"]
                 return Object.entries(value).reduce((enabledFlags, [flagName, flagEnabled]) => {
@@ -140,6 +127,9 @@ ngapp.service('writeObjectToElementService', function() {
         return xelib.WithHandle(
             xelib.GetElement(id, ''),
             resolvedId => {
+                if (xelib.ElementType(resolvedId) === etFile) {
+                    return false;
+                }
                 const smashType = xelib.SmashType(resolvedId);
                 return (
                     smashType === stUnsortedArray
@@ -210,18 +200,14 @@ ngapp.service('writeObjectToElementService', function() {
         }
     }
 
-    this.writeObjectToElement = function(id, obj) {
-        writeObjectToElementRecursive(id, obj);
+    this.writeObjectToElement = function(id, elementObject) {
+        writeObjectToElementRecursive(id, elementObject);
     }
     
     this.writeObjectToRecord = function(pluginId, recordObject) {
-        const signature = recordObject.recordHeader.type;
-        return xelib.WithHandle(
-            getOrAddElement(pluginId, signature),
-            recordId => {
-                writeObjectToElement(recordId, recordObject);
-                return xelib.Path(recordId);
-            }
-        );
+        const signature = recordObject['Record Header']['Signature'];
+        const recordId = getOrAddElement(pluginId, signature + '\\' + signature)
+        this.writeObjectToElement(recordId, recordObject);
+        return recordId;
     }
 });

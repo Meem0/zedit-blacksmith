@@ -42,25 +42,25 @@ ngapp.run(function(
                         console.log(dependencies.map(recordPath => xelib.WithHandle(xelib.GetElement(0, recordPath), id => xelib.LongName(id))));
                     }
                     else if (selectedNode) {
-                        let controlFlag = 1;
+                        let controlFlag = 2;
                         debugger;
-                        if (controlFlag === 0)
-                        {
-                            let shortcutObj = pluginTransformService.elementToObjectWithShortcuts(selectedNode.handle);
-                            let path = xelib.Path(selectedNode.handle);
-                            let longPath = xelib.LongPath(selectedNode.handle);
-                            let pathToUse = path;
-                            let transformationObj = {
-                                base: pathToUse,
-                                delta: shortcutObj
-                            };
-                            fh.saveJsonFile('./obj.json', transformationObj, false);
+                        if (controlFlag === 0) {
+                            const elementObject = xelib.ElementToObject(selectedNode.handle);
+                            fh.saveJsonFile('./obj.json', elementObject, false);
                         }
-                        else if (controlFlag === 1)
-                        {
+                        else if (controlFlag === 1) {
                             let obj = fh.loadJsonFile('./obj.json');
                             try {
                                 writeObjectToElementService.writeObjectToElement(selectedNode.handle, obj);
+                            }
+                            finally {
+                                scope.$root.$broadcast('reloadGUI');
+                            }
+                        }
+                        else if (controlFlag === 2) {
+                            let transforms = fh.loadJsonFile('./transforms.json');
+                            try {
+                                pluginTransformService.writeTransforms(selectedNode.handle, transforms);
                             }
                             finally {
                                 scope.$root.$broadcast('reloadGUI');
