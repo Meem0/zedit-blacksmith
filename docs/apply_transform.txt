@@ -37,9 +37,40 @@ let addDependencies = function(transforms) {
 	});
 }
 
-let applyTransforms = function(transforms) {
+let getRecordPathFromRecordObject = function(recordObject) {
+}
+
+let getRecordPathFromElement = function(pluginId, editorId) {
+	return xelib.WithHandle(
+		xelib.GetElement(pluginId, editorId),
+		recordId => xelib.Path(recordId)
+	);
+}
+
+let substituteReferences = function(recordObject, substitutions) {
+	let recordObjectJson = JSON.Stringify(recordObject);
+	for (let {from, to} of substitutions) {
+		recordObjectJson = recordObjectJson.replace(from, to);
+	}
+	return JSON.parse(recordObjectJson);
+}
+
+let writeRecordObjects = function(pluginId, recordObjects) {
+	let referenceSubstitutions = [];
+	for (let recordObject of recordObjects) {
+		const recordObjectSubstituted = substituteReferences(recordObject, substitutions);
+		writeObjectToElementService.writeObjectToRecord(pluginId, recordObjectSubstituted);
+		referenceSubstitutions.push({
+			from: getRecordPathFromRecordObject(recordObject),
+			to: getRecordPathFromElement(pluginId, recordObject.editorId)
+		});
+	}
+}
+
+let writeTransforms = function(transforms) {
 	const allTransforms = addDependencies(transforms);
 	const recordObjects = allTransforms.map(transform => pluginTransformService.createTransformation(transform));
+	writeRecordObjects(recordObjects);
 }
 
 apply transform:
