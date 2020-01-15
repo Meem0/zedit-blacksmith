@@ -1,4 +1,4 @@
-ngapp.service('recordDependencyService', function() {
+ngapp.service('recordDependencyService', function(blacksmithHelpersService) {
     const ignoredFilenames = ['Skyrim.esm'];
 
     let buildReferencedRecords = function(id, records) {
@@ -12,7 +12,7 @@ ngapp.service('recordDependencyService', function() {
                 childId => buildReferencedRecords(childId, records)
             );
         }
-        else if (xelib.ValueType(id) === vtReference) {
+        else if (blacksmithHelpersService.isReference(id)) {
             let linkPath = '';
             xelib.WithHandle(
                 xelib.GetLinksTo(id),
