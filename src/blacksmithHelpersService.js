@@ -110,6 +110,9 @@ ngapp.service('blacksmithHelpersService', function() {
             },
             get isEnum() {
                 return this.type === blacksmithTypes.btEnum;
+            },
+            get isNumber() {
+                return this.isInteger || this.isFloat;
             }
         };
     }
