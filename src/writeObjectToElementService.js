@@ -213,4 +213,15 @@ ngapp.service('writeObjectToElementService', function() {
     this.writeObjectToElement = function(id, obj) {
         writeObjectToElementRecursive(id, obj);
     }
+    
+    this.writeObjectToRecord = function(pluginId, recordObject) {
+        const signature = recordObject.recordHeader.type;
+        return xelib.WithHandle(
+            getOrAddElement(pluginId, signature),
+            recordId => {
+                writeObjectToElement(recordId, recordObject);
+                return xelib.Path(recordId);
+            }
+        );
+    }
 });
