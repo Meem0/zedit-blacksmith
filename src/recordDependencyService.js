@@ -1,6 +1,5 @@
 ngapp.service('recordDependencyService', function() {
     const ignoredFilenames = ['Skyrim.esm'];
-    const vtReference = xelib.valueTypes.indexOf('vtReference');
 
     let buildReferencedRecords = function(id, records) {
         if (xelib.LocalPath(id) === 'Record Header') {

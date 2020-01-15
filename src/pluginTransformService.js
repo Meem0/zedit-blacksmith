@@ -3,7 +3,6 @@ ngapp.service('pluginTransformService', function(
     recordDependencyService,
     writeObjectToElementService
 ) {
-    const etMainRecord = xelib.elementTypes.indexOf('etMainRecord');
 
     let isObject = function(item) {
         return (item && typeof item === 'object' && !Array.isArray(item));
