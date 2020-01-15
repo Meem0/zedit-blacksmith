@@ -14,20 +14,14 @@ ngapp.service('blacksmithHelpersService', function() {
     const etFile = xelib.elementTypes.indexOf('etFile');
     const etMainRecord = xelib.elementTypes.indexOf('etMainRecord');
 
-    const vtUnknown = xelib.valueTypes.indexOf('vtUnknown');
-    const vtNumber = xelib.valueTypes.indexOf('vtNumber');
+    const vtArray = xelib.valueTypes.indexOf('vtArray');
+    const vtStruct = xelib.valueTypes.indexOf('vtStruct');
     const vtReference = xelib.valueTypes.indexOf('vtReference');
     const vtFlags = xelib.valueTypes.indexOf('vtFlags');
     const vtEnum = xelib.valueTypes.indexOf('vtEnum');
-    const vtArray = xelib.valueTypes.indexOf('vtArray');
-    const vtStruct = xelib.valueTypes.indexOf('vtStruct');
 
     const stInteger = xelib.smashTypes.indexOf('stInteger');
     const stFloat = xelib.smashTypes.indexOf('stFloat');
-    const stUnsortedArray = xelib.smashTypes.indexOf('stUnsortedArray');
-    const stUnsortedStructArray = xelib.smashTypes.indexOf('stUnsortedStructArray');
-    const stSortedArray = xelib.smashTypes.indexOf('stSortedArray');
-    const stSortedStructArray = xelib.smashTypes.indexOf('stSortedStructArray');
 
     const blacksmithTypes = {
         btUnknown: 0,
