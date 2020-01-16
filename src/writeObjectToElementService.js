@@ -46,9 +46,6 @@ ngapp.service('writeObjectToElementService', function(blacksmithHelpersService) 
                 return enabledFlags;
             }, []);
         }
-        else if (typeInfo.isEnum) {
-            return xelib.GetEnumOptions(id, '')[value];
-        }
         else {
             return value;
         }
@@ -85,7 +82,7 @@ ngapp.service('writeObjectToElementService', function(blacksmithHelpersService) 
             }
         }
         catch (ex) {
-            blacksmithHelpersService.logWarn('writeValueToElement failed: ' + ex);
+            blacksmithHelpersService.logWarn('writeValueToElement failed: ' + ex, { id: id });
         }
     }
 
@@ -105,7 +102,7 @@ ngapp.service('writeObjectToElementService', function(blacksmithHelpersService) 
             );
         }
         catch (ex) {
-            blacksmithHelpersService.logWarn('writeArrayToElement failed: ' + ex);
+            blacksmithHelpersService.logWarn('writeArrayToElement failed: ' + ex, { id: id });
         }
     }
 
@@ -117,19 +114,21 @@ ngapp.service('writeObjectToElementService', function(blacksmithHelpersService) 
             if (childId === 0) {
                 if (blacksmithHelpersService.isArray(id)) {
                     childId = xelib.AddArrayItem(id, '');
-                    blacksmithHelpersService.logInfo(xelib.Path(childId) + ': added array item at ' + path);
+                    blacksmithHelpersService.logInfo('Added array item at ' + path, { id: childId });
                 }
                 else {
                     const pathToUse = path.startsWith('BODT') ? 'BOD2' : path;
                     childId = xelib.AddElement(id, pathToUse);
-                    blacksmithHelpersService.logInfo(xelib.Path(childId) + ': added element at ' + pathToUse);
+                    blacksmithHelpersService.logInfo('Added element at ' + pathToUse, { id: childId });
                 }
             }
         }
         catch (ex) {
             // AddElement might fail if we try to add an array count element
             // there doesn't seem to be a way to check this beforehand
-            blacksmithHelpersService.logWarn('getOrAddElement failed: ' + ex);
+            if (childId !== 0) {
+                blacksmithHelpersService.logWarn('Could not add element at ' + path, { id: childId });
+            }
         }
         finally {
             if (childId === 0) {
@@ -169,7 +168,7 @@ ngapp.service('writeObjectToElementService', function(blacksmithHelpersService) 
                         writeValueToElement(elementId, value, typeInfo);
                     }
                     else {
-                        blacksmithHelpersService.logWarn('Unknown value type at ' + path);
+                        blacksmithHelpersService.logWarn('Unknown value type at ' + key, { id: elementId });
                     }
                 }
             );

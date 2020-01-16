@@ -1,27 +1,48 @@
-ngapp.service('blacksmithHelpersService', function() {
-    this.logInfo = function(msg) {
-        logger.info('[BLACKSMITH] ' + msg);
+ngapp.service('blacksmithHelpersService', function() {    
+    let getLogPath = function(id) {
+        let path = '';
+        if (id) {
+            try {
+                path = xelib.Path(id);
+                if (path.length > 0) {
+                    path = '(' + path + ') ';
+                }
+            }
+            catch (ex) {
+            }
+        }
+        return path;
     }
 
-    this.logWarn = function(msg) {
-        logger.warn('[BLACKSMITH] ' + msg);
+    this.logInfo = function(msg, opts = {}) {
+        const pathStr = getLogPath(opts.id);
+        logger.info('[BLACKSMITH] ' + pathStr + msg);
     }
 
-    this.logError = function(msg) {
-        logger.error('[BLACKSMITH] ' + msg);
+    this.logWarn = function(msg, opts = {}) {
+        const pathStr = getLogPath(opts.id);
+        logger.warn('[BLACKSMITH] ' + pathStr + msg);
+    }
+
+    this.logError = function(msg, opts = {}) {
+        const pathStr = getLogPath(opts.id);
+        logger.error('[BLACKSMITH] ' + pathStr + msg);
     }
 
     const etFile = xelib.elementTypes.indexOf('etFile');
     const etMainRecord = xelib.elementTypes.indexOf('etMainRecord');
 
+    const vtNumber = xelib.valueTypes.indexOf('vtNumber');
     const vtArray = xelib.valueTypes.indexOf('vtArray');
     const vtStruct = xelib.valueTypes.indexOf('vtStruct');
     const vtReference = xelib.valueTypes.indexOf('vtReference');
     const vtFlags = xelib.valueTypes.indexOf('vtFlags');
     const vtEnum = xelib.valueTypes.indexOf('vtEnum');
 
+    const stUnknown = xelib.smashTypes.indexOf('stUnknown');
     const stInteger = xelib.smashTypes.indexOf('stInteger');
     const stFloat = xelib.smashTypes.indexOf('stFloat');
+    const stUnion = xelib.smashTypes.indexOf('stUnion');
 
     const blacksmithTypes = {
         btUnknown: 0,
@@ -33,7 +54,7 @@ ngapp.service('blacksmithHelpersService', function() {
         btInteger: 6,
         btFloat: 7,
         btFlags: 8,
-        btEnum: 9
+        btOther: 9
     };
 
     let BlacksmithType = function(id) {
@@ -61,9 +82,6 @@ ngapp.service('blacksmithHelpersService', function() {
             else if (valueType === vtFlags) {
                 return blacksmithTypes.btFlags;
             }
-            else if (valueType === vtEnum) {
-                return blacksmithTypes.btEnum;
-            }
             const smashType = xelib.SmashType(id);
             if (smashType === stInteger) {
                 return blacksmithTypes.btInteger;
@@ -71,8 +89,15 @@ ngapp.service('blacksmithHelpersService', function() {
             else if (smashType === stFloat) {
                 return blacksmithTypes.btFloat;
             }
+            else if (smashType === stUnion && valueType === vtNumber) {
+                const valueStr = xelib.GetValue(id);
+                return valueStr.includes('.') ? blacksmithTypes.btFloat : blacksmithTypes.btInteger;
+            }
+            else if (smashType !== stUnknown) {
+                return blacksmithTypes.btOther;
+            }
         }
-        catch(ex) {
+        catch (ex) {
             this.logError('BlacksmithType failed for id ' + id);
         }
         return blacksmithTypes.btUnknown;
@@ -108,9 +133,6 @@ ngapp.service('blacksmithHelpersService', function() {
             get isFlags() {
                 return this.type === blacksmithTypes.btFlags;
             },
-            get isEnum() {
-                return this.type === blacksmithTypes.btEnum;
-            },
             get isNumber() {
                 return this.isInteger || this.isFloat;
             }
@@ -118,15 +140,15 @@ ngapp.service('blacksmithHelpersService', function() {
     }
     
     this.isMainRecord = function(id) {
-        return getTypeInfo(id).isMainRecord;
+        return this.getTypeInfo(id).isMainRecord;
     }
     
     this.isArray = function(id) {
-        return getTypeInfo(id).isArray;
+        return this.getTypeInfo(id).isArray;
     }
     
     this.isReference = function(id) {
-        return getTypeInfo(id).isReference;
+        return this.getTypeInfo(id).isReference;
     }
     
     let getFileNameAndFormIdFromReference = function(reference) {

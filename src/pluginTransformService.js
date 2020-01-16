@@ -148,7 +148,7 @@ ngapp.service('pluginTransformService', function(
             writeRecordObjects(pluginId, recordObjects);
         }
         catch (ex) {
-            blacksmithHelpersService.logWarn(ex);
+            blacksmithHelpersService.logWarn('writeTransforms failed: ' + ex, { id: pluginId });
         }
     }
 });
