@@ -18,30 +18,32 @@ ngapp.service('blacksmithHelpersService', function() {
         return path;
     }
 
-    this.logInfo = function(msg, opts = {}) {
+    let getLogString = function(msg, opts = {}) {
         const pathStr = getLogPath(opts.id);
-        logger.info('[BLACKSMITH] ' + pathStr + msg);
+        return '[BLACKSMITH] ' + pathStr + msg;
+    }
+
+    this.logInfo = function(msg, opts = {}) {
+        logger.info(getLogString(msg, opts));
     }
 
     this.logWarn = function(msg, opts = {}) {
-        const pathStr = getLogPath(opts.id);
-        logger.warn('[BLACKSMITH] ' + pathStr + msg);
+        logger.warn(getLogString(msg, opts));
     }
 
     this.logError = function(msg, opts = {}) {
-        const pathStr = getLogPath(opts.id);
-        logger.error('[BLACKSMITH] ' + pathStr + msg);
+        logger.error(getLogString(msg, opts));
     }
 
     const etFile = xelib.elementTypes.indexOf('etFile');
     const etMainRecord = xelib.elementTypes.indexOf('etMainRecord');
+    const etGroupRecord = xelib.elementTypes.indexOf('etGroupRecord');
 
     const vtNumber = xelib.valueTypes.indexOf('vtNumber');
     const vtArray = xelib.valueTypes.indexOf('vtArray');
     const vtStruct = xelib.valueTypes.indexOf('vtStruct');
     const vtReference = xelib.valueTypes.indexOf('vtReference');
     const vtFlags = xelib.valueTypes.indexOf('vtFlags');
-    const vtEnum = xelib.valueTypes.indexOf('vtEnum');
 
     const stUnknown = xelib.smashTypes.indexOf('stUnknown');
     const stInteger = xelib.smashTypes.indexOf('stInteger');
@@ -52,13 +54,14 @@ ngapp.service('blacksmithHelpersService', function() {
         btUnknown: 0,
         btFile: 1,
         btMainRecord: 2,
-        btStruct: 3,
-        btArray: 4,
-        btReference: 5,
-        btInteger: 6,
-        btFloat: 7,
-        btFlags: 8,
-        btOther: 9
+        btGroup: 3,
+        btStruct: 4,
+        btArray: 5,
+        btReference: 6,
+        btInteger: 7,
+        btFloat: 8,
+        btFlags: 9,
+        btOther: 10
     };
 
     let BlacksmithType = function(id) {
@@ -72,6 +75,9 @@ ngapp.service('blacksmithHelpersService', function() {
             }
             else if (elementType === etMainRecord) {
                 return blacksmithTypes.btMainRecord;
+            }
+            else if (elementType === etGroupRecord) {
+                return blacksmithTypes.btGroup;
             }
             const valueType = xelib.ValueType(id);
             if (valueType === vtArray) {
@@ -102,7 +108,7 @@ ngapp.service('blacksmithHelpersService', function() {
             }
         }
         catch (ex) {
-            this.logError('BlacksmithType failed for id ' + id);
+            logger.error(getLogString('BlacksmithType failed!', { id: id }));
         }
         return blacksmithTypes.btUnknown;
     };
@@ -118,6 +124,9 @@ ngapp.service('blacksmithHelpersService', function() {
             },
             get isMainRecord() {
                 return this.type === blacksmithTypes.btMainRecord;
+            },
+            get isGroup() {
+                return this.type === blacksmithTypes.btGroup;
             },
             get isStruct() {
                 return this.type === blacksmithTypes.btStruct;
@@ -186,25 +195,32 @@ ngapp.service('blacksmithHelpersService', function() {
         return filename && formId ? filename + '\\' + formId : '';
     }
 
-    let forEachElementRecursive = function(id, leafFunc, containerPred) {
-        if (!isValidElementInternal(id)) {
+    let forEachElementRecursive = function(id, leafFunc, containerPred, containerFunc) {
+        if (!isValidElementInternal(id) && id !== 0) {
             return;
         }
 
         if (xelib.ElementCount(id) > 0) {
             if (containerPred(id)) {
+                let children = [];
                 xelib.WithEachHandle(
                     xelib.GetElements(id),
-                    childId => forEachElementRecursive(childId, leafFunc, containerPred)
+                    childId => {
+                        const childValue = forEachElementRecursive(childId, leafFunc, containerPred, containerFunc);
+                        if (childValue !== undefined) {
+                            children.push(childValue);
+                        }
+                    }
                 );
+                return containerFunc(id, children);
             }
         }
         else {
-            leafFunc(id);
+            return leafFunc(id);
         }
     }
 
-    this.forEachElement = function(id, leafFunc, containerPred = id => true) {
-        forEachElementRecursive(id, leafFunc, containerPred);
+    this.forEachElement = function(id, leafFunc, containerPred = id => true, containerFunc = (id, children) => undefined) {
+        return forEachElementRecursive(id, leafFunc, containerPred, containerFunc);
     }
 });

@@ -6,7 +6,9 @@ ngapp.run(function(
     contextMenuFactory,
     pluginTransformService,
     writeObjectToElementService,
-    recordDependencyService
+    recordDependencyService,
+    transformBuilderService,
+    blacksmithHelpersService
     ) {
     settingsService.registerSettings({
         label: 'Blacksmith',
@@ -42,7 +44,7 @@ ngapp.run(function(
                         console.log(dependencies.map(recordPath => xelib.WithHandle(xelib.GetElement(0, recordPath), id => xelib.LongName(id))));
                     }
                     else if (selectedNode) {
-                        let controlFlag = 2;
+                        let controlFlag = 3;
                         debugger;
                         if (controlFlag === 0) {
                             const elementObject = xelib.ElementToObject(selectedNode.handle);
@@ -64,6 +66,14 @@ ngapp.run(function(
                             }
                             finally {
                                 scope.$root.$broadcast('reloadGUI');
+                            }
+                        }
+                        else if (controlFlag === 3) {
+                            transformBuilderService.buildTransformsFromModifiedElements();
+                        }
+                        else if (controlFlag === 4) {
+                            if (blacksmithHelpersService.isValidElement(selectedNode.handle)) {
+                                debugger;
                             }
                         }
                     }
