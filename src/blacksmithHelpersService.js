@@ -195,6 +195,17 @@ ngapp.service('blacksmithHelpersService', function() {
         return filename && formId ? filename + '\\' + formId : '';
     }
 
+    // e.g. (handle to 00012E49) -> 'Skyrim.esm:012E49'
+    this.getReferenceFromRecord = function(recordId) {
+        if (this.isMainRecord(recordId)) {
+            const localFormId = xelib.GetHexFormID(recordId, /*native*/ true, /*local*/ true);
+            const recordPath = xelib.Path(recordId);
+            const [filename] = recordPath.split('\\');
+            return filename + ':' + localFormId;
+        }
+        return '';
+    }
+
     let forEachElementRecursive = function(id, leafFunc, containerPred, containerFunc) {
         if (!isValidElementInternal(id) && id !== 0) {
             return;
