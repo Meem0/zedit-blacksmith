@@ -1,36 +1,56 @@
 ngapp.service('transformBuilderService', function(blacksmithHelpersService) {
+	// e.g. [{a: 1, b: 2}, {c: 3, d: 4}] -> {a: 1, b: 2, c: 3, d: 4}
+	let arrayOfObjectsToObject = function(array) {
+		return Object.assign({}, ...array);
+	}
+	
+	let formatContainer = function(containerId, children) {
+		if (!children) {
+			return;
+		}
+		
+		const containerTypeInfo = blacksmithHelpersService.getTypeInfo(containerId);
+		if (containerId === 0 || containerTypeInfo.isFile || containerTypeInfo.isGroup) {
+			/*
+				for root, files, and groups, we want to transfrom our input from
+				[
+					{
+						record1: { ... },
+						record2: { ... }
+					},
+					{
+						record3: { ... },
+						record4: { ... }
+					}
+				]
+				to
+				{
+					record1: { ... },
+					record2: { ... },
+					record3: { ... },
+					record4: { ... }
+				}
+			*/
+			return arrayOfObjectsToObject(children);
+		}
+		else {
+			const key = containerTypeInfo.isMainRecord
+				? blacksmithHelpersService.getReferenceFromRecord(containerId)
+				: xelib.Name(containerId);
+			const value = containerTypeInfo.isArray ? children : arrayOfObjectsToObject(children);
+			return { [key]: value };
+		}
+	}
+	
     this.buildTransformsFromModifiedElements = function() {
         const transforms = blacksmithHelpersService.forEachElement(
             0,
+            // for each value element:
             leafId => xelib.GetIsModified(leafId) ? xelib.ElementToObject(leafId) : undefined,
+            // should recurse on a container element:
             containerId => containerId === 0 || xelib.GetIsModified(containerId),
-            (containerId, children) => {
-                if (children.length > 0) {
-                    const containerTypeInfo = blacksmithHelpersService.getTypeInfo(containerId);
-                    if (containerTypeInfo.isGroup) {
-                        return children;
-                    }
-                    else if (containerTypeInfo.isFile) {
-                        const records = children.flat();
-                        const filename = xelib.Name(containerId);
-                        return records.map(child => {
-                            const [[formId, value]] = Object.entries(child);
-                            return { [filename + ':' + formId]: value };
-                        });
-                    }
-                    else if (containerId === 0) {
-                        return Object.assign({}, ...children.flat());
-                    }
-                    else {
-                        let value = children;
-                        if (!blacksmithHelpersService.isArray(containerId)) {
-                            value = Object.assign({}, ...children);
-                        }
-                        const keyName = containerTypeInfo.isMainRecord ? xelib.GetHexFormID(containerId, /*native*/ true, /*local*/ true) : xelib.Name(containerId);
-                        return { [keyName]: value };
-                    }
-                }
-            }
+            // how should a container element process the results of its children:
+            formatContainer
         );
         return transforms;
     }
