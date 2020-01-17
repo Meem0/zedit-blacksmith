@@ -42,16 +42,25 @@ ngapp.service('transformBuilderService', function(blacksmithHelpersService) {
 		}
 	}
 	
-    this.buildTransformsFromModifiedElements = function() {
-        const transforms = blacksmithHelpersService.forEachElement(
-            0,
-            // for each value element:
-            leafId => xelib.GetIsModified(leafId) ? xelib.ElementToObject(leafId) : undefined,
-            // should recurse on a container element:
-            containerId => containerId === 0 || xelib.GetIsModified(containerId),
-            // how should a container element process the results of its children:
-            formatContainer
-        );
-        return transforms;
-    }
+	let getRecordsFromModifiedElements = function() {
+		return blacksmithHelpersService.forEachElement(
+			0,
+			// for each value element:
+			leafId => xelib.GetIsModified(leafId) ? xelib.ElementToObject(leafId) : undefined,
+			// should recurse on a container element:
+			containerId => containerId === 0 || xelib.GetIsModified(containerId),
+			// how should a container element process the results of its children:
+			formatContainer
+		);
+	}
+	
+	this.buildTransformsFromModifiedElements = function() {
+		const records = getRecordsFromModifiedElements();
+		return Object.entries(records).map(
+			([recordReference, recordContents]) => {
+				base: recordReference,
+				delta: recordContents
+			}
+		);
+	}
 });
