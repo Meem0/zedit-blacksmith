@@ -1,14 +1,18 @@
-ngapp.service('blacksmithHelpersService', function() {    
+ngapp.service('blacksmithHelpersService', function() {
+    let isValidElementInternal = function(id) {
+        return typeof(id) === 'number' && id > 0 && xelib.HasElement(id, '');
+    }
+
+    this.isValidElement = function(id) {
+        return isValidElementInternal(id);
+    }
+    
     let getLogPath = function(id) {
         let path = '';
-        if (id) {
-            try {
-                path = xelib.Path(id);
-                if (path.length > 0) {
-                    path = '(' + path + ') ';
-                }
-            }
-            catch (ex) {
+        if (isValidElementInternal(id)) {
+            path = xelib.Path(id);
+            if (path.length > 0) {
+                path = '(' + path + ') ';
             }
         }
         return path;
@@ -58,10 +62,10 @@ ngapp.service('blacksmithHelpersService', function() {
     };
 
     let BlacksmithType = function(id) {
+        if (!isValidElementInternal(id)) {
+            return blacksmithTypes.btUnknown;
+        }
         try {
-            if (!id) {
-                return blacksmithTypes.btUnknown;
-            }
             const elementType = xelib.ElementType(id);
             if (elementType === etFile) {
                 return blacksmithTypes.btFile;
@@ -150,7 +154,7 @@ ngapp.service('blacksmithHelpersService', function() {
     this.isReference = function(id) {
         return this.getTypeInfo(id).isReference;
     }
-    
+
     let getFileNameAndFormIdFromReference = function(reference) {
         if (reference && typeof(reference) === 'string') {
             const [filename, formIdStem] = reference.split(':');
@@ -180,5 +184,27 @@ ngapp.service('blacksmithHelpersService', function() {
     this.getPathFromReference = function(reference) {
         const { filename, formId } = getFileNameAndFormIdFromReference(reference);
         return filename && formId ? filename + '\\' + formId : '';
+    }
+
+    let forEachElementRecursive = function(id, leafFunc, containerPred) {
+        if (!isValidElementInternal(id)) {
+            return;
+        }
+
+        if (xelib.ElementCount(id) > 0) {
+            if (containerPred(id)) {
+                xelib.WithEachHandle(
+                    xelib.GetElements(id),
+                    childId => forEachElementRecursive(childId, leafFunc, containerPred)
+                );
+            }
+        }
+        else {
+            leafFunc(id);
+        }
+    }
+
+    this.forEachElement = function(id, leafFunc, containerPred = id => true) {
+        forEachElementRecursive(id, leafFunc, containerPred);
     }
 });
