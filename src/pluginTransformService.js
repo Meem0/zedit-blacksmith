@@ -80,16 +80,6 @@ ngapp.service('pluginTransformService', function(
         return JSON.parse(recordObjectJson);
     }
 
-    let getReferenceFromRecord = function(recordId) {
-        if (recordId) {
-            const localFormId = xelib.GetHexFormID(recordId, /*native*/ true, /*local*/ true);
-            const recordPath = xelib.Path(recordId);
-            const [filename] = recordPath.split('\\');
-            return filename + ':' + localFormId;
-        }
-        return '';
-    }
-
     let writeRecordObjects = function(pluginId, recordObjects) {
         let referenceSubstitutions = [];
         for (let recordObject of recordObjects) {
@@ -97,7 +87,7 @@ ngapp.service('pluginTransformService', function(
             xelib.WithHandle(
                 writeObjectToElementService.writeObjectToRecord(pluginId, recordObjectSubstituted),
                 recordId => {
-                    const newRecordFormId = getReferenceFromRecord(recordId);
+                    const newRecordFormId = blacksmithHelpersService.getReferenceFromRecord(recordId);
                     if (newRecordFormId) {
                         referenceSubstitutions.push({
                             from: recordObject['Record Header']['FormID'],
