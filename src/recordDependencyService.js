@@ -39,8 +39,19 @@ ngapp.service('recordDependencyService', function(blacksmithHelpersService) {
 
         return records;
     };
+    
+    let getRecordPath = function(record) {
+        if (typeof(record) === 'string') {
+            return record;
+        }
+        
+        const recordHeader = record['Record Header'];
+        const formId = recordHeader ? recordHeader['Form ID'] : '';
+        return formId ? formId : '';
+    }
 
-    let buildDependencies = function(recordPath, dependencies) {
+    let buildDependencies = function(record, dependencies) {
+        const recordPath = getRecordPath(record);
         if (dependencies.includes(recordPath)) {
             return;
         }
@@ -52,10 +63,10 @@ ngapp.service('recordDependencyService', function(blacksmithHelpersService) {
         dependencies.push(recordPath);
     };
 
-    this.getDependencies = function(recordPaths) {
+    this.getDependencies = function(records) {
         let dependencies = [];
-        for (const recordPath of recordPaths) {
-            buildDependencies(recordPath, dependencies);
+        for (const record of records) {
+            buildDependencies(record, dependencies);
         }
         return dependencies;
     };
