@@ -20,13 +20,19 @@ ngapp.service('pluginTransformService', function(
     }
 
     /*
-        Loads the element at path base into an object, and merges delta onto the object.
+        Loads the element at basePath into an object, and merges delta onto the object.
     */
-    let transformToElementObject = function({base, delta}) {
-        let baseObject = xelib.WithHandle(
-            xelib.GetElement(0, base),
-            id => id === 0 ? undefined : xelib.ElementToObject(id)
-        );
+    let transformToElementObject = function({basePath, delta}) {
+        let baseObject;
+        if (basePath === '') {
+            baseObject = {};
+        }
+        else {
+            xelib.WithHandle(
+                xelib.GetElement(0, basePath),
+                id => id === 0 ? undefined : xelib.ElementToObject(id)
+            );
+        }
 
         if (!baseObject) {
             return;
@@ -45,28 +51,28 @@ ngapp.service('pluginTransformService', function(
         e.g.
         transforms = [
             {
-                base: CoolSword.esp\\01000001, // form ID of a WEAP
+                basePath: CoolSword.esp\\01000001, // form ID of a WEAP
                 delta: { ... }
             }
         ]
         return = [
             {
-                base: CoolSword.esp\\01000002, // form ID of a STAT that 01000002 references
+                basePath: CoolSword.esp\\01000002, // form ID of a STAT that 01000002 references
                 delta: {}
             },
             {
-                base: CoolSword.esp\\01000001, // form ID of a WEAP
+                basePath: CoolSword.esp\\01000001, // form ID of a WEAP
                 delta: { ... }
             }
         ]
     */
     let addDependenciesToTransformList = function(transforms) {
-        const basePaths = transforms.map(transform => transform.base);
+        const basePaths = transforms.map(transform => transform.basePath);
         const recordDependencies = recordDependencyService.getDependencies(basePaths);
         return recordDependencies.map(recordPath => {
-            const associatedTransform = transforms.find(transform => transform.base === recordPath);
+            const associatedTransform = transforms.find(transform => transform.basePath === recordPath);
             return {
-                base: recordPath,
+                basePath: recordPath,
                 delta: associatedTransform ? associatedTransform.delta : {}
             };
         });
@@ -101,22 +107,31 @@ ngapp.service('pluginTransformService', function(
             );
         }
     }
-
-    // converts each transform.base from 'Skyrim.esm:012E49' -> 'Skyrim.esm\\00012E49'
-    // filters for only transforms that reference valid records
-    let processTransforms = function(transforms) {
-        if (!Array.isArray(transforms)) {
-            blacksmithHelpersService.logInfo('processTransforms failed: transforms is not an array');
-            return [];
-        }
+    
+    let addBasePathsToTransforms = function(transforms) {
         for (let transform of transforms) {
-            transform.base = blacksmithHelpersService.getPathFromReference(transform.base);
+            // base = '' is a special case that doesn't need a path
+            if (transform.base === '') {
+                transform.basePath = '';
+                continue;
+            }
+            const recordPath = blacksmithHelpersService.getPathFromReference(transform.base);
+            if (recordPath) {
+                transform.basePath = recordPath;
+            }
         }
-        return transforms.filter(({base, delta}) => {
-            const validBase = xelib.WithHandle(
-                xelib.GetElement(0, base),
-                id => blacksmithHelpersService.isMainRecord(id)
-            );
+    }
+    
+    let filterForValidTransforms = function(transforms) {
+        return transforms.filter(({base, basePath, delta}) => {
+            const validBase =
+                basePath === ''
+                || (basePath !== undefined
+                    && xelib.WithHandle(
+                        xelib.GetElement(0, basePath),
+                        id => blacksmithHelpersService.isMainRecord(id)
+                    )
+                ));
             if (!validBase) {
                 blacksmithHelpersService.logInfo('Skipping transform ' + base + ': cannot find record');
                 return false;
@@ -129,10 +144,21 @@ ngapp.service('pluginTransformService', function(
             return true;
         });
     }
+    
+    // adds property basePath to each transform (e.g. base = 'Skyrim.esm:012E49' -> basePath = 'Skyrim.esm\\00012E49')
+    // filters for only transforms that reference valid records
+    let processTransformsForWriting = function(transforms) {
+        if (!Array.isArray(transforms)) {
+            blacksmithHelpersService.logWarn('processTransforms failed: transforms is not an array');
+            return [];
+        }
+        addBasePathsToTransforms(transforms);
+        return filterForValidTransforms(transforms);
+    }
 
     this.writeTransforms = function(pluginId, transforms) {
         try {
-            const processedTransforms = processTransforms(transforms);
+            const processedTransforms = processTransformsForWriting(transforms);
             const allTransforms = addDependenciesToTransformList(processedTransforms);
             const recordObjects = allTransforms.map(transform => transformToElementObject(transform));
             writeRecordObjects(pluginId, recordObjects);
