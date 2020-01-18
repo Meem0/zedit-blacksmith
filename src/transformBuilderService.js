@@ -41,15 +41,29 @@ ngapp.service('transformBuilderService', function(blacksmithHelpersService) {
             return { [key]: value };
         }
     }
+
+    let getElementValue = function(id) {
+        if (!xelib.GetIsModified(id) || blacksmithHelpersService.isHeader(id)) {
+            return undefined;
+        }
+        return xelib.ElementToObject(id);
+    }
+
+    let shouldRecurseOnContainer = function(containerId) {
+        return (
+            !blacksmithHelpersService.isHeader(containerId)
+            && !blacksmithHelpersService.isArray(containerId)
+            && (containerId === 0 || xelib.GetIsModified(containerId))
+        );
+    }
     
     let getRecordsFromModifiedElements = function() {
         return blacksmithHelpersService.forEachElement(
             0,
-            // for each value element:
-            leafId => xelib.GetIsModified(leafId) ? xelib.ElementToObject(leafId) : undefined,
+            getElementValue,
             {
                 // should recurse on a container element:
-                containerPred: containerId => !blacksmithHelpersService.isArray(containerId) && (containerId === 0 || xelib.GetIsModified(containerId)),
+                containerPred: shouldRecurseOnContainer,
                 // how should a container element process the results of its children:
                 containerFunc: formatContainer,
                 runLeafFuncOnSkippedContainers: true

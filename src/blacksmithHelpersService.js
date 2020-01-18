@@ -55,13 +55,14 @@ ngapp.service('blacksmithHelpersService', function() {
         btFile: 1,
         btMainRecord: 2,
         btGroup: 3,
-        btStruct: 4,
-        btArray: 5,
-        btReference: 6,
-        btInteger: 7,
-        btFloat: 8,
-        btFlags: 9,
-        btOther: 10
+        btHeader: 4,
+        btStruct: 5,
+        btArray: 6,
+        btReference: 7,
+        btInteger: 8,
+        btFloat: 9,
+        btFlags: 10,
+        btOther: 11
     };
 
     let BlacksmithType = function(id) {
@@ -74,6 +75,10 @@ ngapp.service('blacksmithHelpersService', function() {
                 return blacksmithTypes.btFile;
             }
             else if (elementType === etMainRecord) {
+                const elementName = xelib.Name(id);
+                if (elementName === 'Record Header' || elementName === 'File Header') {
+                    return blacksmithTypes.btHeader;
+                }
                 return blacksmithTypes.btMainRecord;
             }
             else if (elementType === etGroupRecord) {
@@ -128,6 +133,9 @@ ngapp.service('blacksmithHelpersService', function() {
             get isGroup() {
                 return this.type === blacksmithTypes.btGroup;
             },
+            get isHeader() {
+                return this.type === blacksmithTypes.btHeader;
+            },
             get isStruct() {
                 return this.type === blacksmithTypes.btStruct;
             },
@@ -154,6 +162,10 @@ ngapp.service('blacksmithHelpersService', function() {
     
     this.isMainRecord = function(id) {
         return this.getTypeInfo(id).isMainRecord;
+    }
+    
+    this.isHeader = function(id) {
+        return this.getTypeInfo(id).isHeader;
     }
     
     this.isArray = function(id) {
