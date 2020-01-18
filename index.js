@@ -26,56 +26,87 @@ ngapp.run(function(
         visible: (scope) => true,
         build: (scope, items) => {
             items.push({
+                label: 'Blacksmith - Record Modified',
+                callback: () => {
+                    try {
+                        const transforms = transformBuilderService.buildTransformsFromModifiedElements();
+                        fh.saveJsonFile('./transforms.json', transforms, false);
+                    }
+                    catch (ex) {
+                        debugger;
+                    }
+                    finally {
+                        scope.$root.$broadcast('reloadGUI');
+                    }
+                }
+            });
+            items.push({
+                label: 'Blacksmith - Write Transforms',
+                callback: () => {
+                    try {
+                        let selectedNode = scope.selectedNodes[0];
+                        if (selectedNode) {
+                            const transforms = fh.loadJsonFile('./transforms.json');
+                            pluginTransformService.writeTransforms(selectedNode.handle, transforms);
+                        }
+                    }
+                    catch (ex) {
+                        debugger;
+                    }
+                    finally {
+                        scope.$root.$broadcast('reloadGUI');
+                    }
+                }
+            });
+            items.push({
                 label: 'Blacksmith',
                 callback: () => {
-                    let selectedNode = scope.selectedNodes[0];
-                    if (scope.selectedNodes.length > 1) {
-                        let recordPaths = [];
-                        xelib.WithEachHandle(
-                            scope.selectedNodes.map(node => node.handle),
-                            nodeHandle => {
-                                if (xelib.SmashType(nodeHandle) === 1) {
-                                    recordPaths.push(xelib.Path(nodeHandle));
+                    try {
+                        let selectedNode = scope.selectedNodes[0];
+                        if (scope.selectedNodes.length > 1) {
+                            let records = [];
+                            xelib.WithEachHandle(
+                                scope.selectedNodes.map(node => node.handle),
+                                nodeHandle => {
+                                    if (xelib.SmashType(nodeHandle) === 1) {
+                                        records.push(xelib.ElementToObject(nodeHandle));
+                                    }
                                 }
-                            }
-                        );
-                        const dependencies = recordDependencyService.getDependencies(recordPaths);
-                        console.log(dependencies);
-                        console.log(dependencies.map(recordPath => xelib.WithHandle(xelib.GetElement(0, recordPath), id => xelib.LongName(id))));
-                    }
-                    else if (selectedNode) {
-                        let controlFlag = 3;
-                        debugger;
-                        if (controlFlag === 0) {
-                            const elementObject = xelib.ElementToObject(selectedNode.handle);
-                            fh.saveJsonFile('./obj.json', elementObject, false);
+                            );
+                            debugger;
+                            const dependencies = recordDependencyService.getRecordObjectDependencies(records);
+                            console.log(dependencies);
                         }
-                        else if (controlFlag === 1) {
-                            let obj = fh.loadJsonFile('./obj.json');
-                            try {
+                        else if (selectedNode) {
+                            let controlFlag = 3;
+                            debugger;
+                            if (controlFlag === 0) {
+                                const elementObject = xelib.ElementToObject(selectedNode.handle);
+                                fh.saveJsonFile('./obj.json', elementObject, false);
+                            }
+                            else if (controlFlag === 1) {
+                                let obj = fh.loadJsonFile('./obj.json');
                                 writeObjectToElementService.writeObjectToElement(selectedNode.handle, obj);
                             }
-                            finally {
-                                scope.$root.$broadcast('reloadGUI');
-                            }
-                        }
-                        else if (controlFlag === 2) {
-                            let transforms = fh.loadJsonFile('./transforms.json');
-                            try {
+                            else if (controlFlag === 2) {
+                                let transforms = fh.loadJsonFile('./transforms.json');
                                 pluginTransformService.writeTransforms(selectedNode.handle, transforms);
                             }
-                            finally {
-                                scope.$root.$broadcast('reloadGUI');
+                            else if (controlFlag === 3) {
+                                transformBuilderService.buildTransformsFromModifiedElements();
+                            }
+                            else if (controlFlag === 4) {
+                                if (blacksmithHelpersService.isValidElement(selectedNode.handle)) {
+                                    debugger;
+                                }
                             }
                         }
-                        else if (controlFlag === 3) {
-                            transformBuilderService.buildTransformsFromModifiedElements();
-                        }
-                        else if (controlFlag === 4) {
-                            if (blacksmithHelpersService.isValidElement(selectedNode.handle)) {
-                                debugger;
-                            }
-                        }
+                    }
+                    catch (ex) {
+                        debugger;
+                    }
+                    finally {
+                        scope.$root.$broadcast('reloadGUI');
                     }
                 }
             });

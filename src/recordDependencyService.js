@@ -33,26 +33,17 @@ ngapp.service('recordDependencyService', function(blacksmithHelpersService) {
                         records.push(externalRecordPath);
                     }
                 },
-                containerId => xelib.LocalPath(containerId) !== 'Record Header'
+                {
+                    containerPred: containerId => xelib.LocalPath(containerId) !== 'Record Header'
+                }
             )
         );
 
         return records;
     };
     
-    let getRecordPath = function(record) {
-        if (typeof(record) === 'string') {
-            return record;
-        }
-        
-        const recordHeader = record['Record Header'];
-        const formId = recordHeader ? recordHeader['Form ID'] : '';
-        return formId ? formId : '';
-    }
-
-    let buildDependencies = function(record, dependencies) {
-        const recordPath = getRecordPath(record);
-        if (dependencies.includes(recordPath)) {
+    let buildDependencies = function(recordPath, dependencies) {
+        if (recordPath === '' || dependencies.includes(recordPath)) {
             return;
         }
 
@@ -63,11 +54,37 @@ ngapp.service('recordDependencyService', function(blacksmithHelpersService) {
         dependencies.push(recordPath);
     };
 
-    this.getDependencies = function(records) {
+    this.getDependencies = function(recordPaths) {
         let dependencies = [];
-        for (const record of records) {
-            buildDependencies(record, dependencies);
+        for (const recordPath of recordPaths) {
+            buildDependencies(recordPath, dependencies);
         }
         return dependencies;
     };
+
+    let getRecordPath = function(record) {
+        const recordHeader = record['Record Header'];
+        const formId = recordHeader ? recordHeader['FormID'] : '';
+        return formId ? blacksmithHelpersService.getPathFromReference(formId) : '';
+    }
+
+    this.getRecordObjectDependencies = function(records) {
+        const recordPaths = records.map(record => getRecordPath(record));
+        const dependencies = this.getDependencies(recordPaths);
+        // keep track of which records aren't in dependencyObjects
+        const recordsCopy = [...records];
+        const dependencyObjects = dependencies.map(recordPath => {
+            const recordIndex = recordPaths.indexOf(recordPath);
+            if (recordIndex >= 0) {
+                recordsCopy[recordIndex] = undefined;
+                return records[recordIndex];
+            }
+            return xelib.WithHandle(
+                xelib.GetElement(0, recordPath),
+                id => xelib.ElementToObject(id)
+            );
+        });
+        // add the unused records to dependencyObjects
+        return dependencyObjects.concat(recordsCopy.filter(record => record !== undefined));
+    }
 });

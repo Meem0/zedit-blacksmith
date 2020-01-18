@@ -47,20 +47,23 @@ ngapp.service('transformBuilderService', function(blacksmithHelpersService) {
             0,
             // for each value element:
             leafId => xelib.GetIsModified(leafId) ? xelib.ElementToObject(leafId) : undefined,
-            // should recurse on a container element:
-            containerId => containerId === 0 || xelib.GetIsModified(containerId),
-            // how should a container element process the results of its children:
-            formatContainer
+            {
+                // should recurse on a container element:
+                containerPred: containerId => !blacksmithHelpersService.isArray(containerId) && (containerId === 0 || xelib.GetIsModified(containerId)),
+                // how should a container element process the results of its children:
+                containerFunc: formatContainer,
+                runLeafFuncOnSkippedContainers: true
+            }
         );
     }
     
     this.buildTransformsFromModifiedElements = function() {
         const records = getRecordsFromModifiedElements();
         return Object.entries(records).map(
-            ([recordReference, recordContents]) => {
+            ([recordReference, recordContents]) => ({
                 base: recordReference,
                 delta: recordContents
-            }
+            })
         );
     }
 });

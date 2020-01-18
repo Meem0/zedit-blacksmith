@@ -206,32 +206,40 @@ ngapp.service('blacksmithHelpersService', function() {
         return '';
     }
 
-    let forEachElementRecursive = function(id, leafFunc, containerPred, containerFunc) {
+    let forEachElementRecursive = function(id, leafFunc, opts) {
         if (!isValidElementInternal(id) && id !== 0) {
             return;
         }
 
+        let runLeafFunc = true;
         if (xelib.ElementCount(id) > 0) {
-            if (containerPred(id)) {
+            if (opts.containerPred(id)) {
                 let children = [];
                 xelib.WithEachHandle(
                     xelib.GetElements(id),
                     childId => {
-                        const childValue = forEachElementRecursive(childId, leafFunc, containerPred, containerFunc);
+                        const childValue = forEachElementRecursive(childId, leafFunc, opts);
                         if (childValue !== undefined) {
                             children.push(childValue);
                         }
                     }
                 );
-                return containerFunc(id, children);
+                return opts.containerFunc(id, children);
             }
+            runLeafFunc = opts.runLeafFuncOnSkippedContainers;
         }
-        else {
+        if (runLeafFunc) {
             return leafFunc(id);
         }
     }
 
-    this.forEachElement = function(id, leafFunc, containerPred = id => true, containerFunc = (id, children) => undefined) {
-        return forEachElementRecursive(id, leafFunc, containerPred, containerFunc);
+    let defaultOpts = {
+        containerPred: id => true,
+        containerFunc: (id, children) => undefined,
+        runLeafFuncOnSkippedContainers: false
+    }
+
+    this.forEachElement = function(id, leafFunc, opts = defaultOpts) {
+        return forEachElementRecursive(id, leafFunc, Object.assign(defaultOpts, opts));
     }
 });

@@ -28,7 +28,7 @@ ngapp.service('pluginTransformService', function(
             baseObject = {};
         }
         else {
-            xelib.WithHandle(
+            baseObject = xelib.WithHandle(
                 xelib.GetElement(0, basePath),
                 id => id === 0 ? undefined : xelib.ElementToObject(id)
             );
@@ -41,41 +41,6 @@ ngapp.service('pluginTransformService', function(
         mergeObjects(baseObject, delta);
 
         return baseObject;
-    }
-
-    /*
-        Returns an array that includes every entry in transforms,
-        as well as new entries that the entires of transforms are dependent on.
-        Dependencies occur before dependees.
-
-        e.g.
-        transforms = [
-            {
-                basePath: CoolSword.esp\\01000001, // form ID of a WEAP
-                delta: { ... }
-            }
-        ]
-        return = [
-            {
-                basePath: CoolSword.esp\\01000002, // form ID of a STAT that 01000002 references
-                delta: {}
-            },
-            {
-                basePath: CoolSword.esp\\01000001, // form ID of a WEAP
-                delta: { ... }
-            }
-        ]
-    */
-    let addDependenciesToTransformList = function(transforms) {
-        const basePaths = transforms.map(transform => transform.basePath);
-        const recordDependencies = recordDependencyService.getDependencies(basePaths);
-        return recordDependencies.map(recordPath => {
-            const associatedTransform = transforms.find(transform => transform.basePath === recordPath);
-            return {
-                basePath: recordPath,
-                delta: associatedTransform ? associatedTransform.delta : {}
-            };
-        });
     }
 
     let substituteReferences = function(recordObject, substitutions) {
@@ -131,7 +96,7 @@ ngapp.service('pluginTransformService', function(
                         xelib.GetElement(0, basePath),
                         id => blacksmithHelpersService.isMainRecord(id)
                     )
-                ));
+                );
             if (!validBase) {
                 blacksmithHelpersService.logInfo('Skipping transform ' + base + ': cannot find record');
                 return false;
@@ -159,9 +124,9 @@ ngapp.service('pluginTransformService', function(
     this.writeTransforms = function(pluginId, transforms) {
         try {
             const processedTransforms = processTransformsForWriting(transforms);
-            const allTransforms = addDependenciesToTransformList(processedTransforms);
-            const recordObjects = allTransforms.map(transform => transformToElementObject(transform));
-            writeRecordObjects(pluginId, recordObjects);
+            const recordObjects = processedTransforms.map(transform => transformToElementObject(transform));
+            const allRecordObjects = recordDependencyService.getRecordObjectDependencies(recordObjects);
+            writeRecordObjects(pluginId, allRecordObjects);
         }
         catch (ex) {
             blacksmithHelpersService.logWarn('writeTransforms failed: ' + ex, { id: pluginId });
