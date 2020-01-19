@@ -3,7 +3,6 @@ ngapp.service('pluginTransformService', function(
     recordDependencyService,
     writeObjectToElementService
 ) {
-
     let isObject = function(item) {
         return (item && typeof item === 'object' && !Array.isArray(item));
     }
@@ -52,6 +51,8 @@ ngapp.service('pluginTransformService', function(
     }
 
     let writeRecordObjects = function(pluginId, recordObjects) {
+        xelib.AddAllMasters(pluginId);
+
         let referenceSubstitutions = [];
         for (let recordObject of recordObjects) {
             const recordObjectSubstituted = substituteReferences(recordObject, referenceSubstitutions);
@@ -71,6 +72,8 @@ ngapp.service('pluginTransformService', function(
                 }
             );
         }
+        
+        xelib.CleanMasters(pluginId);
     }
     
     let addBasePathsToTransforms = function(transforms) {

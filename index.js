@@ -8,7 +8,8 @@ ngapp.run(function(
     writeObjectToElementService,
     recordDependencyService,
     transformBuilderService,
-    blacksmithHelpersService
+    blacksmithHelpersService,
+    editModalFactory
     ) {
     settingsService.registerSettings({
         label: 'Blacksmith',
@@ -22,26 +23,15 @@ ngapp.run(function(
     });
 
     contextMenuFactory.treeViewItems.push({
-        id: 'Blacksmith',
+        visible: (scope, items) => items.length > 0 && !items.last().divider,
+        build: (scope, items) => items.push({ divider: true })
+    });
+
+    contextMenuFactory.treeViewItems.push({
         visible: (scope) => true,
         build: (scope, items) => {
-            items.push({
-                label: 'Blacksmith - Record Modified',
-                callback: () => {
-                    try {
-                        const transforms = transformBuilderService.buildTransformsFromModifiedElements();
-                        fh.saveJsonFile('./transforms.json', transforms, false);
-                    }
-                    catch (ex) {
-                        debugger;
-                    }
-                    finally {
-                        scope.$root.$broadcast('reloadGUI');
-                    }
-                }
-            });
-            items.push({
-                label: 'Blacksmith',
+            let blacksmithDebug = {
+                label: 'Debug',
                 callback: () => {
                     try {
                         let selectedNode = scope.selectedNodes[0];
@@ -88,23 +78,14 @@ ngapp.run(function(
                         scope.$root.$broadcast('reloadGUI');
                     }
                 }
-            });
-        }
-    });
+            };
 
-    contextMenuFactory.treeViewItems.push({
-        id: 'BlacksmithPlugin',
-        visible: (scope) => scope.selectedNodes.length === 1 && blacksmithHelpersService.isFile(scope.selectedNodes[0].handle),
-        build: (scope, items) => {
-            items.push({
-                label: 'Blacksmith - Write Transforms',
+            let blacksmithCreateTransforms = {
+                label: 'Create transforms from modified elements',
                 callback: () => {
                     try {
-                        const selectedNode = scope.selectedNodes[0];
-                        if (selectedNode) {
-                            const transforms = fh.loadJsonFile('./transforms.json');
-                            pluginTransformService.writeTransforms(selectedNode.handle, transforms);
-                        }
+                        const transforms = transformBuilderService.buildTransformsFromModifiedElements();
+                        fh.saveJsonFile('./transforms.json', transforms, false);
                     }
                     catch (ex) {
                         debugger;
@@ -113,16 +94,33 @@ ngapp.run(function(
                         scope.$root.$broadcast('reloadGUI');
                     }
                 }
-            });
-        }
-    });
+            };
 
-    contextMenuFactory.treeViewItems.push({
-        id: 'BlacksmithRecord',
-        visible: (scope) => scope.selectedNodes.length === 1 && blacksmithHelpersService.isMainRecord(scope.selectedNodes[0].handle),
-        build: (scope, items) => {
-            items.push({
-                label: 'Blacksmith - Add Record to Transforms',
+            let blacksmithLoadTransforms = {
+                label: 'Load transforms',
+                callback: () => {
+                    editModalFactory.addFile(scope, addedFilename => {
+                        xelib.WithHandle(
+                            xelib.AddFile(addedFilename),
+                            fileHandle => {
+                                try {
+                                    const transforms = fh.loadJsonFile('./transforms.json');
+                                    pluginTransformService.writeTransforms(fileHandle, transforms);
+                                }
+                                catch (ex) {
+                                    debugger;
+                                }
+                                finally {
+                                    scope.$root.$broadcast('reloadGUI');
+                                }
+                            }
+                        );
+                    });
+                }
+            };
+
+            let blacksmithAddToTransform = {
+                label: 'Add record to transforms',
                 callback: () => {
                     try {
                         const selectedNode = scope.selectedNodes[0];
@@ -144,6 +142,19 @@ ngapp.run(function(
                         scope.$root.$broadcast('reloadGUI');
                     }
                 }
+            };
+
+            let blacksmithChildren = [];
+            blacksmithChildren.push(blacksmithDebug);
+            blacksmithChildren.push(blacksmithCreateTransforms);
+            blacksmithChildren.push(blacksmithLoadTransforms);
+            if (scope.selectedNodes.length === 1 && blacksmithHelpersService.isMainRecord(scope.selectedNodes[0].handle)) {
+                blacksmithChildren.push(blacksmithAddToTransform);
+            }
+
+            items.push({
+                label: "Blacksmith",
+                children: blacksmithChildren
             });
         }
     });
