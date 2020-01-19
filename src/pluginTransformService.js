@@ -125,7 +125,7 @@ ngapp.service('pluginTransformService', function(
         try {
             const processedTransforms = processTransformsForWriting(transforms);
             const recordObjects = processedTransforms.map(transform => transformToElementObject(transform));
-            const allRecordObjects = recordDependencyService.getRecordObjectDependencies(recordObjects);
+            const allRecordObjects = recordDependencyService.getDependencies(recordObjects);
             writeRecordObjects(pluginId, allRecordObjects);
         }
         catch (ex) {

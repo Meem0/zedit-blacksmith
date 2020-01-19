@@ -159,6 +159,10 @@ ngapp.service('blacksmithHelpersService', function() {
             }
         };
     }
+
+    this.isFile = function(id) {
+        return this.getTypeInfo(id).isFile;
+    }
     
     this.isMainRecord = function(id) {
         return this.getTypeInfo(id).isMainRecord;
@@ -176,18 +180,23 @@ ngapp.service('blacksmithHelpersService', function() {
         return this.getTypeInfo(id).isReference;
     }
 
-    let getFileNameAndFormIdFromReference = function(reference) {
+    this.getFileNameAndFormIdFromReference = function(reference) {
         if (reference && typeof(reference) === 'string') {
             const [filename, formIdStem] = reference.split(':');
             if (filename && formIdStem) {
-                const loadOrder = xelib.WithHandle(
-                    xelib.FileByName(filename),
-                    fileId => fileId ? xelib.GetFileLoadOrder(fileId) : -1
-                );
-                if (loadOrder >= 0) {
-                    const loadOrderString = xelib.Hex(loadOrder, 2);
-                    const formId = loadOrderString + formIdStem;
-                    return { filename: filename, formId: formId };
+                try {
+                    const loadOrder = xelib.WithHandle(
+                        xelib.FileByName(filename),
+                        fileId => fileId ? xelib.GetFileLoadOrder(fileId) : -1
+                    );
+                    if (loadOrder >= 0) {
+                        const loadOrderString = xelib.Hex(loadOrder, 2);
+                        const formId = loadOrderString + formIdStem;
+                        return { filename: filename, formId: formId };
+                    }
+                }
+                catch (ex) {
+                    // swallow errors, we'll return {}
                 }
             }
         }
@@ -197,13 +206,13 @@ ngapp.service('blacksmithHelpersService', function() {
 
     // e.g. 'Skyrim.esm:012E49' -> '00012E49'
     this.getFormIdFromReference = function(reference) {
-        const { formId } = getFileNameAndFormIdFromReference(reference);
+        const { formId } = this.getFileNameAndFormIdFromReference(reference);
         return formId ? formId : '00000000';
     }
 
     // e.g. 'Skyrim.esm:012E49' -> 'Skyrim.esm\\00012E49'
     this.getPathFromReference = function(reference) {
-        const { filename, formId } = getFileNameAndFormIdFromReference(reference);
+        const { filename, formId } = this.getFileNameAndFormIdFromReference(reference);
         return filename && formId ? filename + '\\' + formId : '';
     }
 

@@ -1,90 +1,90 @@
 ngapp.service('recordDependencyService', function(blacksmithHelpersService) {
     const ignoredFilenames = ['Skyrim.esm'];
 
-    let getExternalRecordPathLinkedToByElement = function(id) {
-        let externalRecordPath = '';
-        if (blacksmithHelpersService.isReference(id)) {
-            xelib.WithHandle(
-                xelib.GetLinksTo(id),
-                linkId => {
-                    if (linkId) {
-                        const linkPath = xelib.Path(linkId);
-                        const [linkFilename, linkFormId] = linkPath.split('\\');
-                        if (!ignoredFilenames.includes(linkFilename)) {
-                            externalRecordPath = linkFilename + '\\' + linkFormId;
-                        }
-                    }
-                }
-            );
+    let forEachValue = function(obj, func) {
+        if (Array.isArray(obj)) {
+            for (elem of obj) {
+                forEachValue(elem, func);
+            }
         }
-        return externalRecordPath;
+        else if (typeof(obj) === 'object') {
+            for (value of Object.values(obj)) {
+                forEachValue(value, func);
+            }
+        }
+        else {
+            func(obj);
+        }
     }
 
-    let getReferencedRecords = function(recordPath) {
-        let records = [];
-
-        xelib.WithHandle(
-            xelib.GetElement(0, recordPath),
-            id => blacksmithHelpersService.forEachElement(
-                id,
-                leafId => {
-                    const externalRecordPath = getExternalRecordPathLinkedToByElement(leafId);
-                    if (externalRecordPath && !records.includes(externalRecordPath)) {
-                        records.push(externalRecordPath);
-                    }
-                },
-                {
-                    containerPred: containerId => xelib.LocalPath(containerId) !== 'Record Header'
+    let getReferenceFromRecordObject = function(recordObject) {
+        let formId = '';
+        if (typeof(recordObject) === 'object') {
+            const recordHeader = recordObject['Record Header'];
+            if (typeof(recordHeader) === 'object') {
+                formId = recordHeader['FormID'];
+                if (typeof(formId) !== 'string') {
+                    formId = '';
                 }
-            )
-        );
+            }
+        }
+        return formId;
+    }
 
-        return records;
-    };
-    
-    let buildDependencies = function(recordPath, dependencies) {
-        if (recordPath === '' || dependencies.includes(recordPath)) {
-            return;
+    let getExternalReferencesInRecordObject = function(recordObject) {
+        const myReference = getReferenceFromRecordObject(recordObject);
+        let references = [];
+        forEachValue(recordObject, value => {
+            if (value === myReference) {
+                // ignore self-reference
+                return;
+            }
+
+            const { filename } = blacksmithHelpersService.getFileNameAndFormIdFromReference(value);
+            if (filename && !ignoredFilenames.includes(filename)) {
+                references.push(value);
+            }
+        });
+        return references;
+    }
+
+    let buildDependencies = function(recordObject, dependencies, inputRecordObjects) {
+        const myReference = getReferenceFromRecordObject(recordObject);
+        if (myReference) {
+            // skip this recordObject if it is already in the dependency list
+            const existingDependency = dependencies.find(dependencyRecordObject => myReference === getReferenceFromRecordObject(dependencyRecordObject));
+            if (existingDependency !== undefined) {
+                return;
+            }
         }
 
-        const myDependencies = getReferencedRecords(recordPath);
-        for (const myDependency of myDependencies) {
-            buildDependencies(myDependency, dependencies);
+        const externalReferences = getExternalReferencesInRecordObject(recordObject);
+        for (const externalReference of externalReferences) {
+            const inputRecordObject = inputRecordObjects.find(inputRecordObject => externalReference === getReferenceFromRecordObject(inputRecordObject));
+            let dependencyRecordObject;
+            if (inputRecordObject) {
+                // this reference could be pointing to a record that is part of the input, as a record object
+                // in that case we want to process the input record, not the one on disk, which could have stale values
+                dependencyRecordObject = inputRecordObject;
+            }
+            else {
+                const externalRecordPath = blacksmithHelpersService.getPathFromReference(externalReference);
+                dependencyRecordObject = xelib.WithHandle(
+                    xelib.GetElement(0, externalRecordPath),
+                    id => xelib.ElementToObject(id)
+                );
+            }
+            buildDependencies(dependencyRecordObject, dependencies, inputRecordObjects);
         }
-        dependencies.push(recordPath);
+
+        dependencies.push(recordObject);
     };
 
-    this.getDependencies = function(recordPaths) {
+    this.getDependencies = function(recordObjects) {
         let dependencies = [];
-        for (const recordPath of recordPaths) {
-            buildDependencies(recordPath, dependencies);
+        for (const recordObject of recordObjects) {
+            buildDependencies(recordObject, dependencies, recordObjects);
         }
         return dependencies;
     };
-
-    let getRecordPath = function(record) {
-        const recordHeader = record['Record Header'];
-        const formId = recordHeader ? recordHeader['FormID'] : '';
-        return formId ? blacksmithHelpersService.getPathFromReference(formId) : '';
-    }
-
-    this.getRecordObjectDependencies = function(records) {
-        const recordPaths = records.map(record => getRecordPath(record));
-        const dependencies = this.getDependencies(recordPaths);
-        // keep track of which records aren't in dependencyObjects
-        const recordsCopy = [...records];
-        const dependencyObjects = dependencies.map(recordPath => {
-            const recordIndex = recordPaths.indexOf(recordPath);
-            if (recordIndex >= 0) {
-                recordsCopy[recordIndex] = undefined;
-                return records[recordIndex];
-            }
-            return xelib.WithHandle(
-                xelib.GetElement(0, recordPath),
-                id => xelib.ElementToObject(id)
-            );
-        });
-        // add the unused records to dependencyObjects
-        return dependencyObjects.concat(recordsCopy.filter(record => record !== undefined));
-    }
 });
