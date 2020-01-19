@@ -1,4 +1,4 @@
-ngapp.service('blacksmithHelpersService', function() {
+ngapp.service('blacksmithHelpersService', function(settingsService) {
     let isValidElementInternal = function(id) {
         return typeof(id) === 'number' && id > 0 && xelib.HasElement(id, '');
     }
@@ -24,7 +24,9 @@ ngapp.service('blacksmithHelpersService', function() {
     }
 
     this.logInfo = function(msg, opts = {}) {
-        logger.info(getLogString(msg, opts));
+        if (settingsService.settings.blacksmith.debugMode) {
+            logger.info(getLogString(msg, opts));
+        }
     }
 
     this.logWarn = function(msg, opts = {}) {

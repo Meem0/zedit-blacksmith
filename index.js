@@ -11,16 +11,9 @@ ngapp.run(function(
     blacksmithHelpersService,
     editModalFactory
     ) {
-    settingsService.registerSettings({
-        label: 'Blacksmith',
-        templateUrl: `${modulePath}/partials/blacksmithSettings.html`,
-        controller: 'blacksmithSettingsController',
-        defaultSettings: {
-            blacksmithModule: {
-                message: 'HI!'
-            }
-        }
-    });
+    let getFilePath = function(filename) {
+        return settingsService.settings.blacksmith.getFilePath(filename);
+    }
 
     contextMenuFactory.treeViewItems.push({
         visible: (scope, items) => items.length > 0 && !items.last().divider,
@@ -51,14 +44,14 @@ ngapp.run(function(
                             debugger;
                             if (controlFlag === 0) {
                                 const elementObject = xelib.ElementToObject(selectedNode.handle);
-                                fh.saveJsonFile('./obj.json', elementObject, false);
+                                fh.saveJsonFile(getFilePath('obj.json'), elementObject, false);
                             }
                             else if (controlFlag === 1) {
-                                let obj = fh.loadJsonFile('./obj.json');
+                                let obj = fh.loadJsonFile(getFilePath('obj.json'));
                                 writeObjectToElementService.writeObjectToElement(selectedNode.handle, obj);
                             }
                             else if (controlFlag === 2) {
-                                let transforms = fh.loadJsonFile('./transforms.json');
+                                let transforms = fh.loadJsonFile(getFilePath('transforms.json'));
                                 pluginTransformService.writeTransforms(selectedNode.handle, transforms);
                             }
                             else if (controlFlag === 3) {
@@ -85,7 +78,7 @@ ngapp.run(function(
                 callback: () => {
                     try {
                         const transforms = transformBuilderService.buildTransformsFromModifiedElements();
-                        fh.saveJsonFile('./transforms.json', transforms, false);
+                        fh.saveJsonFile(getFilePath('transforms.json'), transforms, false);
                     }
                     catch (ex) {
                         debugger;
@@ -99,12 +92,17 @@ ngapp.run(function(
             let blacksmithLoadTransforms = {
                 label: 'Load transforms',
                 callback: () => {
+                    const filePath = getFilePath('transforms.json');
+                    const transforms = fh.loadJsonFile(filePath);
+                    if (!transforms) {
+                        blacksmithHelpersService.logWarn(`Could not find file ${filePath}`);
+                        return;
+                    }
                     editModalFactory.addFile(scope, addedFilename => {
                         xelib.WithHandle(
                             xelib.AddFile(addedFilename),
                             fileHandle => {
                                 try {
-                                    const transforms = fh.loadJsonFile('./transforms.json');
                                     pluginTransformService.writeTransforms(fileHandle, transforms);
                                 }
                                 catch (ex) {
@@ -125,14 +123,17 @@ ngapp.run(function(
                     try {
                         const selectedNode = scope.selectedNodes[0];
                         if (selectedNode) {
-                            const transforms = fh.loadJsonFile('./transforms.json');
+                            let transforms = fh.loadJsonFile(getFilePath('transforms.json'));
+                            if (!transforms) {
+                                transforms = [];
+                            }
                             const recordObject = xelib.ElementToObject(selectedNode.handle);
                             recordObject['Record Header']['FormID'] = '';
                             transforms.push({
                                 base: '',
                                 delta: recordObject
                             });
-                            fh.saveJsonFile('./transforms.json', transforms, false);
+                            fh.saveJsonFile(getFilePath('transforms.json'), transforms, false);
                         }
                     }
                     catch (ex) {
@@ -145,7 +146,9 @@ ngapp.run(function(
             };
 
             let blacksmithChildren = [];
-            blacksmithChildren.push(blacksmithDebug);
+            if (settingsService.settings.blacksmith.debugMode) {
+                blacksmithChildren.push(blacksmithDebug);
+            }
             blacksmithChildren.push(blacksmithCreateTransforms);
             blacksmithChildren.push(blacksmithLoadTransforms);
             if (scope.selectedNodes.length === 1 && blacksmithHelpersService.isMainRecord(scope.selectedNodes[0].handle)) {

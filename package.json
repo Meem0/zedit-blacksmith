@@ -2,7 +2,7 @@
   "name": "zedit-blacksmith",
   "productName": "Blacksmith",
   "description": "zEdit module - modify weapons, armour, and crafting recipes and save the changes as patches.",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "author": "Meem0",
   "copyright": "© 2020, Meem0",
   "repository": "https://github.com/Meem0/zedit-blacksmith",
@@ -10,9 +10,6 @@
   "scripts": {
     "build": "gulp build",
     "release": "gulp release"
-  },
-  "dependencies": {
-    "lodash.merge": "^4.6.2"
   },
   "devDependencies": {
     "del": "^5.1.0",

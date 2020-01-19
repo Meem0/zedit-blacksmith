@@ -1,11 +1,12 @@
-<h2>Blacksmith</h2>
+<h2>Blacksmith Settings</h2>
 
 <section>
     <label>
-        <span class="input-label">Message</span>
-        <input type="text" ng-model="settings.blacksmithModule.message"/>
+        <input type="checkbox" ng-model="settings.blacksmith.debugMode"/>
+        <span class="input-label">Enable verbose logging and debug context menu entry</span>
     </label>
-    <div class="subsection">
-        <button class="action-btn" ng-click="printMessage()">Print Message</button>
-    </div>
+    <label>
+        <input type="text" ng-model="settings.blacksmith.fileDirectory"/>
+        <span class="input-label">File directory (relative to module directory)</span>
+    </label>
 </section>
