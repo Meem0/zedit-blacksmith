@@ -11,10 +11,6 @@ ngapp.run(function(
     blacksmithHelpersService,
     editModalFactory
     ) {
-    let getFilePath = function(filename) {
-        return settingsService.settings.blacksmith.getFilePath(filename);
-    }
-
     contextMenuFactory.treeViewItems.push({
         visible: (scope, items) => items.length > 0 && !items.last().divider,
         build: (scope, items) => items.push({ divider: true })
@@ -23,6 +19,11 @@ ngapp.run(function(
     contextMenuFactory.treeViewItems.push({
         visible: (scope) => true,
         build: (scope, items) => {
+            let fileFilters = [{
+                name: 'JSON file',
+                extensions: ['json']
+            }];
+
             let blacksmithDebug = {
                 label: 'Debug',
                 callback: () => {
@@ -40,29 +41,17 @@ ngapp.run(function(
                             console.log(dependencies);
                         }
                         else if (selectedNode) {
-                            let controlFlag = 5;
+                            let controlFlag = 3;
                             debugger;
-                            if (controlFlag === 0) {
-                                const elementObject = blacksmithHelpersService.elementToObject(selectedNode.handle);
-                                fh.saveJsonFile(getFilePath('obj.json'), elementObject, false);
-                            }
-                            else if (controlFlag === 1) {
-                                let obj = fh.loadJsonFile(getFilePath('obj.json'));
-                                writeObjectToElementService.writeObjectToElement(selectedNode.handle, obj);
-                            }
-                            else if (controlFlag === 2) {
-                                let transforms = fh.loadJsonFile(getFilePath('transforms.json'));
-                                pluginTransformService.writeTransforms(selectedNode.handle, transforms);
-                            }
-                            else if (controlFlag === 3) {
+                            if (controlFlag === 1) {
                                 transformBuilderService.buildTransformsFromModifiedElements();
                             }
-                            else if (controlFlag === 4) {
+                            else if (controlFlag === 2) {
                                 if (blacksmithHelpersService.isValidElement(selectedNode.handle)) {
                                     debugger;
                                 }
                             }
-                            else if (controlFlag === 5) {
+                            else if (controlFlag === 3) {
                                 const customObject = blacksmithHelpersService.elementToObject(selectedNode.handle);
                                 const xelibObject = xelib.ElementToObject(selectedNode.handle);
                                 console.log(customObject);
@@ -83,8 +72,11 @@ ngapp.run(function(
                 label: 'Create transforms from modified elements',
                 callback: () => {
                     try {
-                        const transforms = transformBuilderService.buildTransformsFromModifiedElements();
-                        fh.saveJsonFile(getFilePath('transforms.json'), transforms, false);
+                        const selectedFile = fh.saveFile('Select transform file', modulePath, fileFilters);
+                        if (selectedFile) {
+                            const transforms = transformBuilderService.buildTransformsFromModifiedElements();
+                            fh.saveJsonFile(selectedFile, transforms, false);
+                        }
                     }
                     catch (ex) {
                         debugger;
@@ -98,10 +90,13 @@ ngapp.run(function(
             let blacksmithLoadTransforms = {
                 label: 'Load transforms',
                 callback: () => {
-                    const filePath = getFilePath('transforms.json');
-                    const transforms = fh.loadJsonFile(filePath);
+                    const selectedFile = fh.selectFile('Select transform file', modulePath, fileFilters);
+                    if (!selectedFile) {
+                        return;
+                    }
+                    const transforms = fh.loadJsonFile(selectedFile);
                     if (!transforms) {
-                        blacksmithHelpersService.logWarn(`Could not find file ${filePath}`);
+                        blacksmithHelpersService.logWarn(`Could not find file ${selectedFile}`);
                         return;
                     }
                     editModalFactory.addFile(scope, addedFilename => {
@@ -129,7 +124,11 @@ ngapp.run(function(
                     try {
                         const selectedNode = scope.selectedNodes[0];
                         if (selectedNode) {
-                            let transforms = fh.loadJsonFile(getFilePath('transforms.json'));
+                            const selectedInputFile = fh.selectFile('Select input transform file', modulePath, fileFilters);
+                            if (!selectedInputFile) {
+                                return;
+                            }
+                            let transforms = fh.loadJsonFile(selectedInputFile);
                             if (!transforms) {
                                 transforms = [];
                             }
@@ -139,7 +138,11 @@ ngapp.run(function(
                                 base: '',
                                 delta: recordObject
                             });
-                            fh.saveJsonFile(getFilePath('transforms.json'), transforms, false);
+                            const selectedOutputFile = fh.selectFile('Select output transform file', modulePath, fileFilters);
+                            if (!selectedOutputFile) {
+                                return;
+                            }
+                            fh.saveJsonFile(selectedOutputFile, transforms, false);
                         }
                     }
                     catch (ex) {

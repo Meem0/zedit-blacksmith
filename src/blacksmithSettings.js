@@ -8,11 +8,7 @@ ngapp.run(function($rootScope, settingsService) {
         controller: 'blacksmithSettingsController',
         defaultSettings: {
             blacksmith: {
-                debugMode: false,
-                fileDirectory: '\\resources\\',
-                getFilePath(filename) {
-                    return `${modulePath}${this.fileDirectory}${filename}`;
-                }
+                debugMode: false
             }
         }
     });
