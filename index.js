@@ -32,7 +32,7 @@ ngapp.run(function(
                             let records = [];
                             for (const {handle} of scope.selectedNodes) {
                                 if (blacksmithHelpersService.isMainRecord(handle)) {
-                                    records.push(xelib.ElementToObject(handle));
+                                    records.push(blacksmithHelpersService.elementToObject(handle));
                                 }
                             }
                             debugger;
@@ -40,10 +40,10 @@ ngapp.run(function(
                             console.log(dependencies);
                         }
                         else if (selectedNode) {
-                            let controlFlag = 3;
+                            let controlFlag = 5;
                             debugger;
                             if (controlFlag === 0) {
-                                const elementObject = xelib.ElementToObject(selectedNode.handle);
+                                const elementObject = blacksmithHelpersService.elementToObject(selectedNode.handle);
                                 fh.saveJsonFile(getFilePath('obj.json'), elementObject, false);
                             }
                             else if (controlFlag === 1) {
@@ -61,6 +61,12 @@ ngapp.run(function(
                                 if (blacksmithHelpersService.isValidElement(selectedNode.handle)) {
                                     debugger;
                                 }
+                            }
+                            else if (controlFlag === 5) {
+                                const customObject = blacksmithHelpersService.elementToObject(selectedNode.handle);
+                                const xelibObject = xelib.ElementToObject(selectedNode.handle);
+                                console.log(customObject);
+                                console.log(xelibObject);
                             }
                         }
                     }

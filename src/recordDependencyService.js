@@ -71,7 +71,7 @@ ngapp.service('recordDependencyService', function(blacksmithHelpersService) {
                 const externalRecordPath = blacksmithHelpersService.getPathFromReference(externalReference);
                 dependencyRecordObject = xelib.WithHandle(
                     xelib.GetElement(0, externalRecordPath),
-                    id => xelib.ElementToObject(id)
+                    id => blacksmithHelpersService.elementToObject(id)
                 );
             }
             buildDependencies(dependencyRecordObject, dependencies, inputRecordObjects);

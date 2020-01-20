@@ -29,7 +29,7 @@ ngapp.service('pluginTransformService', function(
         else {
             baseObject = xelib.WithHandle(
                 xelib.GetElement(0, basePath),
-                id => id === 0 ? undefined : xelib.ElementToObject(id)
+                id => id === 0 ? undefined : blacksmithHelpersService.elementToObject(id)
             );
         }
 

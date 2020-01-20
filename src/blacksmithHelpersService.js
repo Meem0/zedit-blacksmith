@@ -9,17 +9,38 @@ ngapp.service('blacksmithHelpersService', function(settingsService) {
     
     let getLogPath = function(id) {
         let path = '';
-        if (isValidElementInternal(id)) {
-            path = xelib.Path(id);
-            if (path.length > 0) {
-                path = '(' + path + ') ';
+        try {
+            if (isValidElementInternal(id)) {
+                path = xelib.Path(id);
+                if (path.length > 0) {
+                    path = '(' + path + ') ';
+                }
             }
+        }
+        catch (ex) {
+            // swallow error
         }
         return path;
     }
 
+    let getLogElementName = function(id) {
+        let elementName = '';
+        try {
+            if (isValidElementInternal(id)) {
+                elementName = xelib.LongName(id);
+                if (elementName.length > 0) {
+                    elementName = '(' + elementName + ') ';
+                }
+            }
+        }
+        catch (ex) {
+            // swallow error
+        }
+        return elementName;
+    }
+
     let getLogString = function(msg, opts = {}) {
-        const pathStr = getLogPath(opts.id);
+        const pathStr = getLogElementName(opts.id);
         return '[BLACKSMITH] ' + pathStr + msg;
     }
 
@@ -218,12 +239,31 @@ ngapp.service('blacksmithHelpersService', function(settingsService) {
         return filename && formId ? filename + '\\' + formId : '';
     }
 
+    let getRecordContainingFileName = function(recordId) {
+        return xelib.WithHandle(
+            xelib.GetContainer(recordId),
+            groupId => {
+                if (!groupId) {
+                    return '';
+                }
+                return xelib.WithHandle(
+                    xelib.GetContainer(groupId),
+                    fileId => {
+                        if (!fileId) {
+                            return '';
+                        }
+                        return xelib.Name(fileId);
+                    }
+                )
+            }
+        );
+    }
+
     // e.g. (handle to 00012E49) -> 'Skyrim.esm:012E49'
     this.getReferenceFromRecord = function(recordId) {
         if (this.isMainRecord(recordId)) {
             const localFormId = xelib.GetHexFormID(recordId, /*native*/ true, /*local*/ true);
-            const recordPath = xelib.Path(recordId);
-            const [filename] = recordPath.split('\\');
+            const filename = getRecordContainingFileName(recordId);
             return filename + ':' + localFormId;
         }
         return '';
@@ -256,13 +296,83 @@ ngapp.service('blacksmithHelpersService', function(settingsService) {
         }
     }
 
-    let defaultOpts = {
+    const defaultOpts = {
         containerPred: id => true,
         containerFunc: (id, children) => undefined,
         runLeafFuncOnSkippedContainers: false
     }
 
     this.forEachElement = function(id, leafFunc, opts = defaultOpts) {
-        return forEachElementRecursive(id, leafFunc, Object.assign(defaultOpts, opts));
+        return forEachElementRecursive(id, leafFunc, Object.assign({}, defaultOpts, opts));
+    }
+
+    let arrayOfObjectsToObject = function(array) {
+        return Object.assign({}, ...array);
+    }
+    
+    this.elementToObject = function(elementId) {
+        let formatContainer = (containerId, children) => {
+            if (!children) {
+                return;
+            }
+            
+            const containerTypeInfo = this.getTypeInfo(containerId);
+            const key = xelib.Name(containerId);
+            let value;
+            if (containerTypeInfo.isArray) {
+                const canRemoveKeys = children.every(child => typeof(child) === 'object' && !Array.isArray(child) && Object.keys(child).length === 1);
+                if (canRemoveKeys) {
+                    value = children.map(child => Object.values(child)[0]);
+                }
+                else {
+                    value = children;
+                }
+            }
+            else {
+                value = arrayOfObjectsToObject(children);
+            }
+
+            if (containerTypeInfo.isMainRecord) {
+                return value;
+            }
+
+            return { [key]: value };
+        };
+    
+        let getElementValue = (id) => {
+            if (this.isReference(id)) {
+                return xelib.WithHandle(
+                    xelib.GetLinksTo(id),
+                    linksToId => {
+                        if (!linksToId) {
+                            return 0;
+                        }
+                        const formId = xelib.GetHexFormID(linksToId);
+                        const loadOrder = Number.parseInt(formId.substring(0, 2));
+                        const filename = xelib.WithHandle(
+                            xelib.FileByLoadOrder(loadOrder),
+                            fileId => xelib.GetFileName(fileId)
+                        );
+                        const localFormId = formId.substring(2);
+                        return { [xelib.Name(id)]: filename + ':' + localFormId };
+                    }
+                );
+            }
+            return xelib.ElementToObject(id);
+        };
+    
+        const typeInfo = this.getTypeInfo(elementId);
+        if (!this.isValidElement(elementId) || typeInfo.isFile || typeInfo.isGroup) {
+            this.logWarn('elementToObject called on unsupported element type', { id: id });
+            return {};
+        }
+
+        return this.forEachElement(
+            elementId,
+            getElementValue,
+            {
+                containerFunc: formatContainer
+            }
+        );
     }
 });

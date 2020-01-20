@@ -70,15 +70,15 @@ ngapp.service('writeObjectToElementService', function(blacksmithHelpersService) 
             const writeValue = getWriteValue(id, value, typeInfo);
 
             if (writeValue === undefined) {
-                console.log(xelib.Path(id) + ': skipped' + recordValue);
+                blacksmithHelpersService.logInfo('Skipped ' + recordValue, { id: id });
             }
 
             if (!areValuesEqual(recordValue, writeValue, typeInfo)) {
-                console.log(xelib.Path(id) + ': ' + recordValue + ' -> ' + writeValue);
+                blacksmithHelpersService.logInfo(recordValue + ' -> ' + writeValue, { id: id });
                 writeValueToRecord(id, writeValue, typeInfo);
             }
             else {
-                console.log(xelib.Path(id) + ': ' + recordValue + ' == ' + writeValue);
+                blacksmithHelpersService.logInfo(recordValue + ' == ' + writeValue, { id: id });
             }
         }
         catch (ex) {
@@ -113,7 +113,7 @@ ngapp.service('writeObjectToElementService', function(blacksmithHelpersService) 
             childId = xelib.GetElement(id, path);
             if (childId === 0) {
                 if (blacksmithHelpersService.isArray(id)) {
-                    childId = xelib.AddArrayItem(id, '');
+                    childId = xelib.AddArrayItem(id, '', '', '');
                     blacksmithHelpersService.logInfo('Added array item at ' + path, { id: childId });
                 }
                 else {

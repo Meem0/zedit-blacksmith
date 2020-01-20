@@ -46,7 +46,7 @@ ngapp.service('transformBuilderService', function(blacksmithHelpersService) {
         if (!xelib.GetIsModified(id) || blacksmithHelpersService.isHeader(id)) {
             return undefined;
         }
-        return xelib.ElementToObject(id);
+        return blacksmithHelpersService.elementToObject(id);
     }
 
     let shouldRecurseOnContainer = function(containerId) {
