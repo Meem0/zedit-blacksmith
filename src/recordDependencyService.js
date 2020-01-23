@@ -1,6 +1,4 @@
-ngapp.service('recordDependencyService', function(blacksmithHelpersService) {
-    const ignoredFilenames = ['Skyrim.esm'];
-
+ngapp.service('recordDependencyService', function(blacksmithHelpersService, gameService) {
     let forEachValue = function(obj, func) {
         if (Array.isArray(obj)) {
             for (elem of obj) {
@@ -41,7 +39,7 @@ ngapp.service('recordDependencyService', function(blacksmithHelpersService) {
             }
 
             const { filename } = blacksmithHelpersService.getFileNameAndFormIdFromReference(value);
-            if (filename && !ignoredFilenames.includes(filename)) {
+            if (filename && !gameService.isBethesdaPlugin(filename)) {
                 references.push(value);
             }
         });
