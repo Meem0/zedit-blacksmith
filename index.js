@@ -1,15 +1,15 @@
 /* global ngapp, xelib, modulePath */
-//= require ./src/*.js
+//=require src/**/*.js
 
 ngapp.run(function(
     settingsService,
     contextMenuFactory,
     pluginTransformService,
-    writeObjectToElementService,
     recordDependencyService,
     transformBuilderService,
     blacksmithHelpersService,
-    editModalFactory
+    editModalFactory,
+    workflowService
     ) {
     contextMenuFactory.treeViewItems.push({
         visible: (scope, items) => items.length > 0 && !items.last().divider,
@@ -66,6 +66,13 @@ ngapp.run(function(
                         scope.$root.$broadcast('reloadGUI');
                     }
                 }
+            };
+
+            let blacksmithOpenWorkflow = {
+                label: 'Open workflow',
+                callback: () => scope.$emit('openModal', 'workflow', {
+                    basePath: `${moduleUrl}/../workflowSystem/partials`
+                })
             };
 
             let blacksmithCreateTransforms = {
@@ -158,6 +165,7 @@ ngapp.run(function(
             if (settingsService.settings.blacksmith.debugMode) {
                 blacksmithChildren.push(blacksmithDebug);
             }
+            blacksmithChildren.push(blacksmithOpenWorkflow);
             blacksmithChildren.push(blacksmithCreateTransforms);
             blacksmithChildren.push(blacksmithLoadTransforms);
             if (scope.selectedNodes.length === 1 && blacksmithHelpersService.isMainRecord(scope.selectedNodes[0].handle)) {

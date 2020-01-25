@@ -19,13 +19,16 @@ function build() {
     let partials = gulp.src('partials/*.html')
         .pipe(gulp.dest('dist/partials'));
 
+    let resources = gulp.src('resources/**/*')
+        .pipe(gulp.dest('dist/resources'));
+
     let docs = gulp.src('docs/*.html')
         .pipe(gulp.dest('dist/docs'));
 
     let moduleJson = gulp.src('module.json')
         .pipe(gulp.dest('dist'));
     
-    return merge(scripts, partials, docs, moduleJson);
+    return merge(scripts, partials, resources, docs, moduleJson);
 }
 
 function release() {
