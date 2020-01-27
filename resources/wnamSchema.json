@@ -1,0 +1,12 @@
+{
+    "Record Header": {
+        "forceValue": {
+            "Signature": "STAT"
+        }
+    },
+    "DNAM - Direction Material": {
+        "forceValue": {
+            "Max Angle (30-120)": 90
+        }
+    }
+}

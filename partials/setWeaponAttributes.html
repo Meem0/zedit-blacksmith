@@ -3,8 +3,6 @@
     <input type="text" ng-model="model.weapon['FULL - Name']" />
 </label>
 
-<item-template-loader item-type="weapon" model="model.weapon" model-item-type="model.weaponType" model-material="model.material"></item-template-loader>
-
 <edit-material model="model.material"></edit-material>
 
 <label>
@@ -12,10 +10,7 @@
     <edit-path model="model.weapon.Model['MODL - Model Filename']" type="mesh"></edit-path>
 </label>
 
-<label>
-    <span class="input-label">First Person Model</span>
-    <edit-path model="model.weapon.Model['WNAM - 1st Person Model Object']" type="mesh"></edit-path>
-</label>
+<edit-wnam model="model.weapon['WNAM - 1st Person Model Object']"></edit-wnam>
 
 <label>
     <span class="input-label">Gold Value</span>
