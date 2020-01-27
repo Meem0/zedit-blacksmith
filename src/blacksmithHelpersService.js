@@ -363,7 +363,7 @@ ngapp.service('blacksmithHelpersService', function(settingsService) {
     
         const typeInfo = this.getTypeInfo(elementId);
         if (!this.isValidElement(elementId) || typeInfo.isFile || typeInfo.isGroup) {
-            this.logWarn('elementToObject called on unsupported element type', { id: id });
+            this.logWarn('elementToObject called on unsupported element type', { id: elementId });
             return {};
         }
 

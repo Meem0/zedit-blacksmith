@@ -1,11 +1,14 @@
-[
-    "Iron",
-    "Steel",
-    "Orcish",
-    "Dwarven",
-    "Elven",
-    "Glass",
-    "Ebony",
-    "Daedric",
-    "Dragonbone"
-]
+{
+    "Skyrim.esm": [
+        "Iron",
+        "Steel",
+        "Orcish",
+        "Dwarven",
+        "Elven",
+        "Glass",
+        "Ebony",
+        "Daedric"
+    ], "Dawnguard.esm": [
+        "Dragonbone"
+    ]
+}

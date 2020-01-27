@@ -11,8 +11,8 @@ ngapp.run(function(workflowService, skyrimWeaponService) {
             view: 'pluginSelector'
         }, {
             name: 'Select a Weapon Type',
-            view: 'modelTileSelect',
-            model: 'weaponType',
+            view: 'tileSelect',
+            modelKey: 'weaponType',
             tiles: () => {
                 return getWeaponTypes().map(weaponType => ({
                     image: `${moduleUrl}/resources/images/${weaponType}.png`,
