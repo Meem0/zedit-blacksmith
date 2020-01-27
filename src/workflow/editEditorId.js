@@ -3,6 +3,7 @@ ngapp.directive('editEditorId', function() {
         scope.$watch('basedOn', function() {
             if (typeof(scope.basedOn) !== 'string') return;
             scope.model = scope.basedOn.toPascalCase();
+            // TODO - more intelligent editor ID behaviour (check for conflicts, prefix / suffix)
         });
     };
 
