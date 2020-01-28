@@ -1,11 +1,31 @@
-ngapp.run(function(workflowService, skyrimWeaponService) {
+ngapp.run(function(workflowService, skyrimWeaponService, writeObjectToElementService) {
     let {getWeaponTypes} = skyrimWeaponService;
+
+    let getOrAddFile = function(filename) {
+        let fileId = xelib.FileByName(filename);
+        if (!fileId) {
+            fileId = xelib.AddFile(filename);
+        }
+        return fileId;
+    };
+
+    let finishWorkflow = function(model) {
+        xelib.WithHandle(
+            getOrAddFile(model.plugin),
+            pluginId => {
+                xelib.AddAllMasters(pluginId);
+                writeObjectToElementService.writeObjectToRecord(pluginId, model.weapon);
+                xelib.CleanMasters(pluginId);
+            }
+        );
+    };
 
     workflowService.addWorkflow({
         name: 'Make a Weapon',
         label: 'Make a Weapon',
         image: `${modulePath}/resources/images/Sword.png`,
         games: [xelib.gmTES5, xelib.gmSSE],
+        finish: finishWorkflow,
         stages: [{
             name: 'Select Plugin',
             view: 'pluginSelector'
@@ -22,7 +42,7 @@ ngapp.run(function(workflowService, skyrimWeaponService) {
         }, {
             name: 'Set Weapon Attributes',
             view: 'setWeaponAttributes'
-        }, {
+        }/*, {
             name: 'Select Options',
             view: 'optionSelector',
             options: [{
@@ -61,6 +81,6 @@ ngapp.run(function(workflowService, skyrimWeaponService) {
         }, {
             name: 'Review',
             view: 'reviewWeapon'
-        }]
+        }*/]
     });
 });

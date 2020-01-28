@@ -1,5 +1,5 @@
 ngapp.service('writeObjectToElementService', function(blacksmithHelpersService) {
-    let getRecordValue = function(id, typeInfo) {
+    let getElementValue = function(id, typeInfo) {
         if (typeInfo.isInteger) {
             return xelib.GetIntValue(id, '');
         }
@@ -16,9 +16,9 @@ ngapp.service('writeObjectToElementService', function(blacksmithHelpersService) 
         else {
             return xelib.GetValue(id, '');
         }
-    }
+    };
 
-    let writeValueToRecord = function(id, value, typeInfo) {
+    let setElementValue = function(id, value, typeInfo) {
         if (typeInfo.isInteger) {
             xelib.SetIntValue(id, '', value);
         }
@@ -31,7 +31,7 @@ ngapp.service('writeObjectToElementService', function(blacksmithHelpersService) 
         else {
             xelib.SetValue(id, '', value);
         }
-    }
+    };
 
     let getWriteValue = function(id, value, typeInfo) {
         if (typeInfo.isReference) {
@@ -49,7 +49,7 @@ ngapp.service('writeObjectToElementService', function(blacksmithHelpersService) 
         else {
             return value;
         }
-    }
+    };
 
     let areValuesEqual = function(recordValue, writeValue, typeInfo) {
         if (typeInfo.isNumber) {
@@ -62,29 +62,45 @@ ngapp.service('writeObjectToElementService', function(blacksmithHelpersService) 
         else {
             return recordValue === writeValue;
         }
-    }
+    };
+
+    let writeReferencedRecord = function(referenceId, recordObject) {
+        return xelib.WithHandle(
+            blacksmithHelpersService.getFileContainingElement(referenceId),
+            fileId => xelib.WithHandle(
+                writeObjectToRecordInternal(fileId, recordObject),
+                recordId => blacksmithHelpersService.getReferenceFromRecord(recordId)
+            )
+        );
+    };
 
     let writeValueToElement = function(id, value, typeInfo) {
         try {
-            const recordValue = getRecordValue(id, typeInfo);
+            if (typeInfo.isReference && typeof(value) === 'object') {
+                // special case: instead of a reference string, value is a record object
+                // write value as a new record, and get the resulting reference string
+                value = writeReferencedRecord(id, value);
+            }
+
+            const elementValue = getElementValue(id, typeInfo);
             const writeValue = getWriteValue(id, value, typeInfo);
 
             if (writeValue === undefined) {
-                blacksmithHelpersService.logInfo('Skipped ' + recordValue, { id: id });
+                blacksmithHelpersService.logInfo('Skipped ' + elementValue, { id: id });
             }
 
-            if (!areValuesEqual(recordValue, writeValue, typeInfo)) {
-                blacksmithHelpersService.logInfo(recordValue + ' -> ' + writeValue, { id: id });
-                writeValueToRecord(id, writeValue, typeInfo);
+            if (!areValuesEqual(elementValue, writeValue, typeInfo)) {
+                blacksmithHelpersService.logInfo(elementValue + ' -> ' + writeValue, { id: id });
+                setElementValue(id, writeValue, typeInfo);
             }
             else {
-                blacksmithHelpersService.logInfo(recordValue + ' == ' + writeValue, { id: id });
+                blacksmithHelpersService.logInfo(elementValue + ' == ' + writeValue, { id: id });
             }
         }
         catch (ex) {
             blacksmithHelpersService.logWarn('writeValueToElement failed: ' + ex, { id: id });
         }
-    }
+    };
 
     let writeArrayToElement = function(id, path, value) {
         try {
@@ -104,7 +120,7 @@ ngapp.service('writeObjectToElementService', function(blacksmithHelpersService) 
         catch (ex) {
             blacksmithHelpersService.logWarn('writeArrayToElement failed: ' + ex, { id: id });
         }
-    }
+    };
 
     // path must be a direct child of id
     let getOrAddElement = function(id, path) {
@@ -136,7 +152,7 @@ ngapp.service('writeObjectToElementService', function(blacksmithHelpersService) 
             }
         }
         return childId;
-    }
+    };
 
     let writeObjectToElementRecursive = function(id, obj) {
         if (!obj || typeof(obj) !== 'object' || Array.isArray(obj)) {
@@ -173,16 +189,32 @@ ngapp.service('writeObjectToElementService', function(blacksmithHelpersService) 
                 }
             );
         }
-    }
+    };
 
-    this.writeObjectToElement = function(id, elementObject) {
-        writeObjectToElementRecursive(id, elementObject);
-    }
-    
-    this.writeObjectToRecord = function(pluginId, recordObject) {
-        const signature = recordObject['Record Header']['Signature'];
+    let writeObjectToRecordInternal = function(pluginId, recordObject) {
+        const signature = blacksmithHelpersService.getRecordObjectSignature(recordObject);
+        if (!signature) {
+            blacksmithHelpersService.logWarn('writeObjectToRecordInternal: recordObject has no signature', {id: pluginId});
+            return 0;
+        }
+
+        if (recordObject.reference) {
+            // we already wrote this recordObject!
+            return blacksmithHelpersService.getRecordFromReference(recordObject.reference);
+        }
+
         const recordId = getOrAddElement(pluginId, signature + '\\' + signature)
-        this.writeObjectToElement(recordId, recordObject);
+        writeObjectToElementRecursive(recordId, recordObject);
+
+        // make a "note" that we wrote this recordObject to a record
+        const reference = blacksmithHelpersService.getReferenceFromRecord(recordId);
+        if (reference) {
+            recordObject.reference = reference;
+        }
+
         return recordId;
-    }
+    };
+    
+    this.writeObjectToElement = writeObjectToElementRecursive;
+    this.writeObjectToRecord = writeObjectToRecordInternal;
 });

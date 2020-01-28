@@ -4,12 +4,17 @@ ngapp.directive('editWnam', function(elementSchemaService) {
             scope.model = {};
         }
         elementSchemaService.process(scope.model, 'wnamSchema');
+
+        scope.$watch('editorIdBasedOn', function() {
+            scope.model['EDID - Editor ID'] = '1st' + scope.editorIdBasedOn;
+        });
     };
 
     return {
         restrict: 'E',
         scope: {
-            model: '='
+            model: '=',
+            editorIdBasedOn: '<'
         },
         templateUrl: `${modulePath}/partials/editWnam.html`,
         link: editWnamLink

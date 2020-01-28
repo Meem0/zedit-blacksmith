@@ -1,28 +1,10 @@
 ngapp.service('blacksmithHelpersService', function(settingsService) {
     let isValidElementInternal = function(id) {
         return typeof(id) === 'number' && id > 0 && xelib.HasElement(id, '');
-    }
+    };
 
-    this.isValidElement = function(id) {
-        return isValidElementInternal(id);
-    }
+    this.isValidElement = isValidElementInternal;
     
-    let getLogPath = function(id) {
-        let path = '';
-        try {
-            if (isValidElementInternal(id)) {
-                path = xelib.Path(id);
-                if (path.length > 0) {
-                    path = '(' + path + ') ';
-                }
-            }
-        }
-        catch (ex) {
-            // swallow error
-        }
-        return path;
-    }
-
     let getLogElementName = function(id) {
         let elementName = '';
         try {
@@ -37,26 +19,26 @@ ngapp.service('blacksmithHelpersService', function(settingsService) {
             // swallow error
         }
         return elementName;
-    }
+    };
 
     let getLogString = function(msg, opts = {}) {
         const pathStr = getLogElementName(opts.id);
         return '[BLACKSMITH] ' + pathStr + msg;
-    }
+    };
 
     this.logInfo = function(msg, opts = {}) {
         if (settingsService.settings.blacksmith.debugMode) {
             logger.info(getLogString(msg, opts));
         }
-    }
+    };
 
     this.logWarn = function(msg, opts = {}) {
         logger.warn(getLogString(msg, opts));
-    }
+    };
 
     this.logError = function(msg, opts = {}) {
         logger.error(getLogString(msg, opts));
-    }
+    };
 
     const etFile = xelib.elementTypes.indexOf('etFile');
     const etMainRecord = xelib.elementTypes.indexOf('etMainRecord');
@@ -181,27 +163,27 @@ ngapp.service('blacksmithHelpersService', function(settingsService) {
                 return this.isInteger || this.isFloat;
             }
         };
-    }
+    };
 
     this.isFile = function(id) {
         return this.getTypeInfo(id).isFile;
-    }
+    };
     
     this.isMainRecord = function(id) {
         return this.getTypeInfo(id).isMainRecord;
-    }
+    };
     
     this.isHeader = function(id) {
         return this.getTypeInfo(id).isHeader;
-    }
+    };
     
     this.isArray = function(id) {
         return this.getTypeInfo(id).isArray;
-    }
+    };
     
     this.isReference = function(id) {
         return this.getTypeInfo(id).isReference;
-    }
+    };
 
     this.getFileNameAndFormIdFromReference = function(reference) {
         if (reference && typeof(reference) === 'string') {
@@ -225,49 +207,80 @@ ngapp.service('blacksmithHelpersService', function(settingsService) {
         }
 
         return {};
-    }
+    };
 
     // e.g. 'Skyrim.esm:012E49' -> '00012E49'
     this.getFormIdFromReference = function(reference) {
         const { formId } = this.getFileNameAndFormIdFromReference(reference);
         return formId ? formId : '00000000';
-    }
+    };
 
     // e.g. 'Skyrim.esm:012E49' -> 'Skyrim.esm\\00012E49'
     this.getPathFromReference = function(reference) {
         const { filename, formId } = this.getFileNameAndFormIdFromReference(reference);
         return filename && formId ? filename + '\\' + formId : '';
-    }
+    };
 
-    let getRecordContainingFileName = function(recordId) {
-        return xelib.WithHandle(
-            xelib.GetContainer(recordId),
-            groupId => {
-                if (!groupId) {
-                    return '';
-                }
-                return xelib.WithHandle(
-                    xelib.GetContainer(groupId),
-                    fileId => {
-                        if (!fileId) {
-                            return '';
-                        }
-                        return xelib.Name(fileId);
-                    }
-                )
+    this.getFileContainingElement = function(elementId) {
+        if (!this.isValidElement(elementId)) {
+            return 0;
+        }
+
+        let findParentFile = id => {
+            if (id === 0) {
+                return 0;
             }
+            if (this.isFile(id)) {
+                // duplicate handle so it isn't freed by caller
+                return xelib.GetElement(id, '');
+            }
+            return xelib.WithHandle(
+                xelib.GetContainer(id),
+                parentId => findParentFile(parentId)
+            );
+        };
+
+        return findParentFile(elementId);
+    };
+
+    this.getFilenameContainingElement = function(elementId) {
+        return xelib.WithHandle(
+            this.getFileContainingElement(elementId),
+            fileId => fileId ? xelib.Name(fileId) : ''
         );
-    }
+    };
 
     // e.g. (handle to 00012E49) -> 'Skyrim.esm:012E49'
     this.getReferenceFromRecord = function(recordId) {
         if (this.isMainRecord(recordId)) {
             const localFormId = xelib.GetHexFormID(recordId, /*native*/ true, /*local*/ true);
-            const filename = getRecordContainingFileName(recordId);
+            const filename = this.getFilenameContainingElement(recordId);
             return filename + ':' + localFormId;
         }
         return '';
-    }
+    };
+
+    // e.g. 'Skyrim.esm:012E49' -> (handle to 00012E49)
+    this.getRecordFromReference = function(reference) {
+        const path = this.getPathFromReference(reference);
+        if (path) {
+            return xelib.GetElement(0, path);
+        }
+        return 0;
+    };
+
+    this.getRecordObjectSignature = function(recordObject) {
+        if (typeof(recordObject) === 'object') {
+            const recordHeader = recordObject['Record Header'];
+            if (typeof(recordHeader) === 'object') {
+                const signature = recordHeader.Signature;
+                if (typeof(signature === 'string')) {
+                    return signature;
+                }
+            }
+        }
+        return '';
+    };
 
     let forEachElementRecursive = function(id, leafFunc, opts) {
         if (!isValidElementInternal(id) && id !== 0) {
@@ -294,21 +307,21 @@ ngapp.service('blacksmithHelpersService', function(settingsService) {
         if (runLeafFunc) {
             return leafFunc(id);
         }
-    }
+    };
 
     const defaultOpts = {
         containerPred: id => true,
         containerFunc: (id, children) => undefined,
         runLeafFuncOnSkippedContainers: false
-    }
+    };
 
     this.forEachElement = function(id, leafFunc, opts = defaultOpts) {
         return forEachElementRecursive(id, leafFunc, Object.assign({}, defaultOpts, opts));
-    }
+    };
 
     let arrayOfObjectsToObject = function(array) {
         return Object.assign({}, ...array);
-    }
+    };
     
     this.elementToObject = function(elementId) {
         let formatContainer = (containerId, children) => {
@@ -374,5 +387,5 @@ ngapp.service('blacksmithHelpersService', function(settingsService) {
                 containerFunc: formatContainer
             }
         );
-    }
+    };
 });
