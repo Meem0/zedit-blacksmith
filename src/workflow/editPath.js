@@ -23,7 +23,6 @@ ngapp.directive('editPath', function() {
         scope.browse = function() {
             const basePath = getBasePath(scope.type);
             const selectedFile = fh.selectFile('Select file', basePath, getFilters(scope.type));
-            debugger;
             if (!selectedFile) {
                 return;
             }
