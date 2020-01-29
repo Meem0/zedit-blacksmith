@@ -1,6 +1,5 @@
-ngapp.service('skyrimWeaponService', function(blacksmithHelpersService) {
+ngapp.service('skyrimWeaponService', function(blacksmithHelpersService, elementSchemaService) {
     let weaponTypes = fh.loadJsonFile(`${modulePath}/resources/weaponTypes.json`);
-    let weaponAttributes = fh.loadJsonFile(`${modulePath}/resources/weaponAttributes.json`);
 
     let getEditorId = function(fileId, weaponType, material) {
         let prefix = '';
@@ -33,6 +32,6 @@ ngapp.service('skyrimWeaponService', function(blacksmithHelpersService) {
             findItem('WEAP', weaponType, material),
             itemId => blacksmithHelpersService.elementToObject(itemId)
         );
-        return Object.copyProperties(weaponRecordObject, weaponAttributes);
+        return elementSchemaService.process(weaponRecordObject, 'weaponTemplateSchema');
     };
 });
