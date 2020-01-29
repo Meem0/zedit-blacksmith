@@ -3,7 +3,7 @@ ngapp.directive('editWnam', function(elementSchemaService) {
         if (!scope.model) {
             scope.model = {};
         }
-        elementSchemaService.process(scope.model, 'wnamSchema');
+        elementSchemaService.process(scope.model, 'wnamSchema', {inPlace: true});
 
         scope.$watch('editorIdBasedOn', function() {
             scope.model['EDID - Editor ID'] = '1st' + scope.editorIdBasedOn;
