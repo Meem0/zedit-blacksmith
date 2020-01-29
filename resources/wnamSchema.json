@@ -4,6 +4,9 @@
             "Signature": "STAT"
         }
     },
+	"EDID - Editor ID": {},
+	"OBND - Object Bounds": {},
+	"Model": {},
     "DNAM - Direction Material": {
         "forceValue": {
             "Max Angle (30-120)": 90
