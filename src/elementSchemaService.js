@@ -1,5 +1,14 @@
 ngapp.service('elementSchemaService', function() {
-    let assignAtPath = function(object, keys, value) {
+    let getAtPath = function(object, keys) {
+        return keys.reduce((subObj, key, idx) => {
+            if (Array.isArray(subObj) || typeof(subObj) !== 'object') {
+                return undefined;
+            }
+            return subObj[key];
+        }, object);
+    };
+    
+    let setAtPath = function(object, keys, value) {
         keys.reduce((subObj, key, idx) => {
             if (idx === keys.length - 1) {
                 subObj[key] = value;
@@ -12,14 +21,21 @@ ngapp.service('elementSchemaService', function() {
         }, object);
     };
 
-    let processRecursive = function(elementRoot, schema, keyStack) {
-        for (const key of Object.keys(schema)) {
-            if (key === 'forceValue') {
-                assignAtPath(elementRoot, keyStack, schema[key]);
+    let processRecursive = function(sourceObj, targetObj, schema, keyStack) {
+        const keys = Object.keys(schema);
+        if (keys) {
+            for (const key of keys) {
+                if (key === 'forceValue') {
+                    setAtPath(targetObj, keyStack, schema[key]);
+                }
+                else {
+                    processRecursive(sourceObj, targetObj, schema[key], keyStack.concat(key));
+                }
             }
-            else {
-                processRecursive(elementRoot, schema[key], keyStack.concat(key));
-            }
+        }
+        else {
+            // default action: copy from source to target
+            setAtPath(targetObj, keyStack, getAtPath(sourceObj, keyStack));
         }
     };
 
@@ -32,6 +48,6 @@ ngapp.service('elementSchemaService', function() {
             schema = fh.loadJsonFile(`${modulePath}\\resources\\${schema}.json`, {});
         }
 
-        processRecursive(element, schema, []);
+        processRecursive(element, {}, schema, []);
     };
 });
