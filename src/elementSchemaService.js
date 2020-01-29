@@ -39,7 +39,12 @@ ngapp.service('elementSchemaService', function() {
         }
     };
 
-    this.process = function(element, schema) {
+    let defaultOpts = {
+        inPlace: false
+    };
+    this.process = function(element, schema, opts = {}) {
+        opts = Object.assign({}, defaultOpts, opts);
+
         if (typeof(element) !== 'object' || Array.isArray(element)) {
             return;
         }
@@ -48,7 +53,7 @@ ngapp.service('elementSchemaService', function() {
             schema = fh.loadJsonFile(`${modulePath}\\resources\\${schema}.json`, {});
         }
 
-        let targetObj = {};
+        let targetObj = opts.inPlace ? element : {};
         processRecursive(element, targetObj, schema, []);
         return targetObj;
     };
