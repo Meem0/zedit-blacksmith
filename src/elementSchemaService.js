@@ -48,6 +48,8 @@ ngapp.service('elementSchemaService', function() {
             schema = fh.loadJsonFile(`${modulePath}\\resources\\${schema}.json`, {});
         }
 
-        processRecursive(element, {}, schema, []);
+        let targetObj = {};
+        processRecursive(element, targetObj, schema, []);
+        return targetObj;
     };
 });
