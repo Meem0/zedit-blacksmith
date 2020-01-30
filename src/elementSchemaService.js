@@ -23,7 +23,7 @@ ngapp.service('elementSchemaService', function() {
 
     let processRecursive = function(sourceObj, targetObj, schema, keyStack) {
         const keys = Object.keys(schema);
-        if (keys) {
+        if (keys.length > 0) {
             for (const key of keys) {
                 if (key === 'forceValue') {
                     setAtPath(targetObj, keyStack, schema[key]);
