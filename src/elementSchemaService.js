@@ -35,7 +35,10 @@ ngapp.service('elementSchemaService', function() {
         }
         else {
             // default action: copy from source to target
-            setAtPath(targetObj, keyStack, getAtPath(sourceObj, keyStack));
+            const sourceValue = getAtPath(sourceObj, keyStack);
+            if (sourceValue !== undefined) {
+                setAtPath(targetObj, keyStack, sourceValue);
+            }
         }
     };
 

@@ -1,0 +1,38 @@
+<label>
+    <span class="input-label">Armor Name</span>
+    <input type="text" ng-model="model.armor['FULL - Name']" />
+</label>
+
+<edit-material model="model.material"></edit-material>
+
+<label>
+    <span class="input-label">Male World Model</span>
+    <edit-path model="model.armor['Male world model']['MOD2 - Model Filename']" type="mesh"></edit-path>
+</label>
+
+<label>
+    <span class="input-label">Female World Model</span>
+    <edit-path model="model.armor['Female world model']['MOD4 - Model Filename']" type="mesh"></edit-path>
+</label>
+
+<label>
+    <span class="input-label">Gold Value</span>
+    <number-input model="model.armor['DATA - Data'].Value" type="integer"></number-input>
+</label>
+
+<label>
+    <span class="input-label">Weight</span>
+    <number-input model="model.armor['DATA - Data'].Weight" type="decimal"></number-input>
+</label>
+
+<label>
+    <span class="input-label">Armor Rating</span>
+    <number-input model="model.armor['DNAM - Armor Rating']" type="integer"></number-input>
+</label>
+
+<expandable-section>
+    <title>Advanced</title>
+    <content>
+        <edit-editor-id model="model.armor['EDID - Editor ID']" based-on="model.armor['FULL - Name']"></edit-editor-id>
+    </content>
+</expandable-section>

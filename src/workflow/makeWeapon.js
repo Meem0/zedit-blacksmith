@@ -21,7 +21,7 @@ ngapp.run(function(workflowService, skyrimWeaponService, writeObjectToElementSer
     };
 
     workflowService.addWorkflow({
-        name: 'Make a Weapon',
+        name: 'makeWeapon',
         label: 'Make a Weapon',
         image: `${modulePath}/resources/images/Sword.png`,
         games: [xelib.gmTES5, xelib.gmSSE],
