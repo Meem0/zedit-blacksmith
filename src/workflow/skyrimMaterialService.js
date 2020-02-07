@@ -18,4 +18,20 @@ ngapp.service('skyrimMaterialService', function() {
     this.getMaterialForKeyword = function(keyword) {
         return Object.keys(materials).find(key => materials[key].keywords.includes(keyword));
     };
+    
+    // get an array with the maximum set of component types across all materials, including duplicate component types
+    // e.g. ["Primary", "Major", "Major", "Binding", "Minor"]
+    this.getComponentTypes = function() {
+        const componentCounts = Object.values(materials).reduce((componentCounts, {components}) => {
+            components.forEach(component => {
+                const numTypes = components.reduce((num, curComponent) => num + (curComponent.type === component.type ? 1 : 0), 0);
+                componentCounts[component.type] = Math.max(numTypes, componentCounts[component.type] || 0);
+            });
+            return componentCounts;
+        }, {});
+        // at this point, componentCounts is e.g. {Primary: 1, Major: 2, Binding: 1, Minor: 1}
+        return Object.entries(componentCounts).reduce((componentTypes, [componentType, count]) => {
+            return componentTypes.concat(Array(count).fill(componentType));
+        }, []);
+    };
 });
