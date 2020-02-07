@@ -207,13 +207,16 @@
     "Light Armor": {
         "componentSpecs": [{
             "type": "Primary",
-            "count": 1
+            "count": 2
         }, {
             "type": "Major",
-            "count": 5
+            "count": 3
         }, {
             "type": "Binding",
             "count": 3
+        }, {
+            "type": "Minor",
+            "count": 1
         }]
     },
     "Light Boots": {

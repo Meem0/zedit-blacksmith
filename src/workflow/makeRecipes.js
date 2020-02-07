@@ -3,14 +3,14 @@ ngapp.run(function(workflowService) {
     };
 
     workflowService.addWorkflow({
-        name: 'makeRecipies',
+        name: 'makeRecipes',
         label: 'Make Crafting Recipes',
         image: `${modulePath}/resources/images/Recipe.png`,
         games: [xelib.gmTES5, xelib.gmSSE],
         finish: finishWorkflow,
         stages: [{
-            name: 'Select Plugin',
-            view: 'pluginSelector'
+            name: 'Edit Recipes',
+            view: 'editRecipes'
         }]
     });
 });

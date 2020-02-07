@@ -1,4 +1,20 @@
 {
+    "Leather": {
+        "components": [{
+            "type": "Primary",
+            "name": "Leather"
+        }, {
+            "type": "Major",
+            "name": "Leather"
+        }, {
+            "type": "Binding",
+            "name": "Leather Strips"
+        }],
+        "keywords": [
+            "ArmorMaterialHide",
+            "ArmorMaterialLeather"
+        ]
+    },
     "Iron": {
         "components": [{
             "type": "Primary",
@@ -9,7 +25,12 @@
         }, {
             "type": "Binding",
             "name": "Leather Strips"
-        }]
+        }],
+        "keywords": [
+            "ArmorMaterialIron",
+            "ArmorMaterialIronBanded",
+            "WeapMaterialIron"
+        ]
     },
     "Steel": {
         "components": [{
@@ -24,7 +45,33 @@
         }, {
             "type": "Binding",
             "name": "Leather Strips"
-        }]
+        }],
+        "keywords": [
+            "ArmorMaterialSteel",
+            "ArmorMaterialSteelPlate",
+            "WeapMaterialSteel"
+        ]
+    },
+    "Scaled": {
+        "components": [{
+            "type": "Primary",
+            "name": "Steel Ingot"
+        }, {
+            "type": "Major",
+            "name": "Corundum Ingot"
+        }, {
+            "type": "Major",
+            "name": "Steel Ingot"
+        }, {
+            "type": "Binding",
+            "name": "Leather Strips"
+        }, {
+            "type": "Minor",
+            "name": "Leather"
+        }],
+        "keywords": [
+            "ArmorMaterialScaled"
+        ]
     },
     "Elven": {
         "components": [{
@@ -42,7 +89,12 @@
         }, {
             "type": "Binding",
             "name": "Leather Strips"
-        }]
+        }],
+        "keywords": [
+            "ArmorMaterialElven",
+            "ArmorMaterialElvenGilded",
+            "WeapMaterialElven"
+        ]
     },
     "Dwarven": {
         "components": [{
@@ -60,7 +112,11 @@
         }, {
             "type": "Binding",
             "name": "Leather Strips"
-        }]
+        }],
+        "keywords": [
+            "ArmorMaterialDwarven",
+            "WeapMaterialDwarven"
+        ]
     },
     "Orcish": {
         "components": [{
@@ -75,7 +131,11 @@
         }, {
             "type": "Binding",
             "name": "Leather Strips"
-        }]
+        }],
+        "keywords": [
+            "ArmorMaterialOrcish",
+            "WeapMaterialOrcish"
+        ]
     },
     "Glass": {
         "components": [{
@@ -90,7 +150,11 @@
         }, {
             "type": "Binding",
             "name": "Leather Strips"
-        }]
+        }],
+        "keywords": [
+            "ArmorMaterialGlass",
+            "WeapMaterialGlass"
+        ]
     },
     "Ebony": {
         "components": [{
@@ -102,7 +166,11 @@
         }, {
             "type": "Binding",
             "name": "Leather Strips"
-        }]
+        }],
+        "keywords": [
+            "ArmorMaterialEbony",
+            "WeapMaterialEbony"
+        ]
     },
     "Daedric": {
         "components": [{
@@ -117,7 +185,11 @@
         }, {
             "type": "Binding",
             "name": "Leather Strips"
-        }]
+        }],
+        "keywords": [
+            "ArmorMaterialDaedric",
+            "WeapMaterialDaedric"
+        ]
     },
     "Dragonbone": {
         "components": [{
@@ -132,6 +204,28 @@
         }, {
             "type": "Binding",
             "name": "Leather Strips"
-        }]
+        }],
+        "keywords": [
+            "DLC1WeapMaterialDragonboneDG",
+            "ArmorMaterialDragonplate"
+        ]
+    },
+    "Dragonscale": {
+        "components": [{
+            "type": "Primary",
+            "name": "Dragon Scale"
+        }, {
+            "type": "Major",
+            "name": "Dragon Scale"
+        }, {
+            "type": "Major",
+            "name": "Ebony Ingot"
+        }, {
+            "type": "Binding",
+            "name": "Leather Strips"
+        }],
+        "keywords": [
+            "ArmorMaterialDragonscale"
+        ]
     }
 }
