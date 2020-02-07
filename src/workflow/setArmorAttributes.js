@@ -5,8 +5,6 @@ ngapp.run(function(workflowService) {
                 return;
             }
 
-            debugger;
-
             const attributes = skyrimArmorService.getArmorAttributes($scope.model.armorType, $scope.model.material);
             Object.assign($scope.model.armor, attributes);
         };
