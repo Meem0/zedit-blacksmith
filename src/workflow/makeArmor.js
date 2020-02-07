@@ -23,7 +23,7 @@ ngapp.run(function(workflowService, skyrimArmorService, writeObjectToElementServ
     workflowService.addWorkflow({
         name: 'makeArmor',
         label: 'Make an Armor Piece',
-        image: `${modulePath}/resources/images/Armor.png`,
+        image: `${modulePath}/resources/images/Heavy Armor.png`,
         games: [xelib.gmTES5, xelib.gmSSE],
         finish: finishWorkflow,
         stages: [{

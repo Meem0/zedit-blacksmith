@@ -1,0 +1,258 @@
+{
+    "Arrow": {
+        "componentSpecs": [{
+            "type": "Primary",
+            "count": 1
+        }],
+        "additionalComponents": [{
+            "name": "Firewood",
+            "count": 1
+        }],
+        "craftingYield": 10
+    },
+    "Bow": {
+        "componentSpecs": [{
+            "type": "Primary",
+            "count": 2
+        }, {
+            "type": "TwoHandExtra",
+            "count": 1
+        }, {
+            "type": "Minor",
+            "count": 1
+        }, {
+            "type": "Binding",
+            "count": 1
+        }]
+    },
+    "Dagger": {
+        "componentSpecs": [{
+            "type": "Major",
+            "count": 1
+        }, {
+            "type": "Binding",
+            "count": 1
+        }, {
+            "type": "Minor",
+            "count": 1
+        }]
+    },
+    "Sword": {
+        "componentSpecs": [{
+            "type": "Major",
+            "count": 2
+        }, {
+            "type": "Binding",
+            "count": 1
+        }, {
+            "type": "Minor",
+            "count": 1
+        }]
+    },
+    "Greatsword": {
+        "componentSpecs": [{
+            "type": "Major",
+            "count": 4
+        }, {
+            "type": "TwoHandExtra",
+            "count": 1
+        }, {
+            "type": "Binding",
+            "count": 3
+        }, {
+            "type": "Minor",
+            "count": 1
+        }]
+    },
+    "War Axe": {
+        "componentSpecs": [{
+            "type": "Major",
+            "count": 2
+        }, {
+            "type": "Binding",
+            "count": 2
+        }, {
+            "type": "Minor",
+            "count": 1
+        }]
+    },
+    "Battleaxe": {
+        "componentSpecs": [{
+            "type": "Major",
+            "count": 4
+        }, {
+            "type": "TwoHandExtra",
+            "count": 1
+        }, {
+            "type": "Binding",
+            "count": 2
+        }, {
+            "type": "Minor",
+            "count": 1
+        }]
+    },
+    "Mace": {
+        "componentSpecs": [{
+            "type": "Major",
+            "count": 3
+        }, {
+            "type": "Binding",
+            "count": 1
+        }, {
+            "type": "Minor",
+            "count": 1
+        }]
+    },
+    "Warhammer": {
+        "componentSpecs": [{
+            "type": "Major",
+            "count": 4
+        }, {
+            "type": "TwoHandExtra",
+            "count": 1
+        }, {
+            "type": "Binding",
+            "count": 3
+        }, {
+            "type": "Minor",
+            "count": 1
+        }]
+    },
+    "Crossbow": {
+        "componentSpecs": [{
+            "type": "Primary",
+            "count": 4
+        }, {
+            "type": "Minor",
+            "count": 1
+        }],
+        "additionalComponents": [{
+            "name": "Firewood",
+            "count": 3
+        }]
+    },
+    "Bolt": {
+        "componentSpecs": [{
+            "type": "Primary",
+            "count": 1
+        }],
+        "additionalComponents": [{
+            "name": "Firewood",
+            "count": 1
+        }]
+    },
+    "Heavy Armor": {
+        "componentSpecs": [{
+            "type": "Primary",
+            "count": 2
+        }, {
+            "type": "Major",
+            "count": 2
+        }, {
+            "type": "Binding",
+            "count": 3
+        }, {
+            "type": "Minor",
+            "count": 1
+        }]
+    },
+    "Heavy Boots": {
+        "componentSpecs": [{
+            "type": "Major",
+            "count": 3
+        }, {
+            "type": "Binding",
+            "count": 2
+        }, {
+            "type": "Minor",
+            "count": 1
+        }]
+    },
+    "Heavy Gauntlets": {
+        "componentSpecs": [{
+            "type": "Major",
+            "count": 2
+        }, {
+            "type": "Binding",
+            "count": 2
+        }, {
+            "type": "Minor",
+            "count": 1
+        }]
+    },
+    "Heavy Helmet": {
+        "componentSpecs": [{
+            "type": "Major",
+            "count": 3
+        }, {
+            "type": "Binding",
+            "count": 2
+        }, {
+            "type": "Minor",
+            "count": 1
+        }]
+    },
+    "Heavy Shield": {
+        "componentSpecs": [{
+            "type": "Major",
+            "count": 3
+        }, {
+            "type": "Binding",
+            "count": 1
+        }, {
+            "type": "Minor",
+            "count": 1
+        }]
+    },
+    "Light Armor": {
+        "componentSpecs": [{
+            "type": "Primary",
+            "count": 1
+        }, {
+            "type": "Major",
+            "count": 5
+        }, {
+            "type": "Binding",
+            "count": 3
+        }]
+    },
+    "Light Boots": {
+        "componentSpecs": [{
+            "type": "Major",
+            "count": 3
+        }, {
+            "type": "Binding",
+            "count": 2
+        }]
+    },
+    "Light Gauntlets": {
+        "componentSpecs": [{
+            "type": "Major",
+            "count": 2
+        }, {
+            "type": "Binding",
+            "count": 2
+        }]
+    },
+    "Light Helmet": {
+        "componentSpecs": [{
+            "type": "Major",
+            "count": 3
+        }, {
+            "type": "Binding",
+            "count": 1
+        }]
+    },
+    "Light Shield": {
+        "componentSpecs": [{
+            "type": "Primary",
+            "count": 2
+        }, {
+            "type": "Major",
+            "count": 3
+        }, {
+            "type": "Binding",
+            "count": 2
+        }]
+    }
+}

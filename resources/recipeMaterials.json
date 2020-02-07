@@ -1,0 +1,137 @@
+{
+    "Iron": {
+        "components": [{
+            "type": "Primary",
+            "name": "Iron Ingot"
+        }, {
+            "type": "Major",
+            "name": "Iron Ingot"
+        }, {
+            "type": "Binding",
+            "name": "Leather Strips"
+        }]
+    },
+    "Steel": {
+        "components": [{
+            "type": "Primary",
+            "name": "Steel Ingot"
+        }, {
+            "type": "Major",
+            "name": "Steel Ingot"
+        }, {
+            "type": "Minor",
+            "name": "Iron Ingot"
+        }, {
+            "type": "Binding",
+            "name": "Leather Strips"
+        }]
+    },
+    "Elven": {
+        "components": [{
+            "type": "Primary",
+            "name": "Refined Moonstone"
+        }, {
+            "type": "Major",
+            "name": "Refined Moonstone"
+        }, {
+            "type": "Major",
+            "name": "Iron Ingot"
+        }, {
+            "type": "Minor",
+            "name": "Quicksilver Ingot"
+        }, {
+            "type": "Binding",
+            "name": "Leather Strips"
+        }]
+    },
+    "Dwarven": {
+        "components": [{
+            "type": "Primary",
+            "name": "Dwarven Metal Ingot"
+        }, {
+            "type": "Major",
+            "name": "Dwarven Metal Ingot"
+        }, {
+            "type": "Major",
+            "name": "Steel Ingot"
+        }, {
+            "type": "Minor",
+            "name": "Iron Ingot"
+        }, {
+            "type": "Binding",
+            "name": "Leather Strips"
+        }]
+    },
+    "Orcish": {
+        "components": [{
+            "type": "Primary",
+            "name": "Orichalcum Ingot"
+        }, {
+            "type": "Major",
+            "name": "Orichalcum Ingot"
+        }, {
+            "type": "Minor",
+            "name": "Iron Ingot"
+        }, {
+            "type": "Binding",
+            "name": "Leather Strips"
+        }]
+    },
+    "Glass": {
+        "components": [{
+            "type": "Primary",
+            "name": "Refined Malachite"
+        }, {
+            "type": "Major",
+            "name": "Refined Malachite"
+        }, {
+            "type": "Major",
+            "name": "Refined Moonstone"
+        }, {
+            "type": "Binding",
+            "name": "Leather Strips"
+        }]
+    },
+    "Ebony": {
+        "components": [{
+            "type": "Primary",
+            "name": "Ebony Ingot"
+        }, {
+            "type": "Major",
+            "name": "Ebony Ingot"
+        }, {
+            "type": "Binding",
+            "name": "Leather Strips"
+        }]
+    },
+    "Daedric": {
+        "components": [{
+            "type": "Primary",
+            "name": "Ebony Ingot"
+        }, {
+            "type": "Major",
+            "name": "Ebony Ingot"
+        }, {
+            "type": "Minor",
+            "name": "Daedra Heart"
+        }, {
+            "type": "Binding",
+            "name": "Leather Strips"
+        }]
+    },
+    "Dragonbone": {
+        "components": [{
+            "type": "Primary",
+            "name": "Dragon Bone"
+        }, {
+            "type": "Major",
+            "name": "Dragon Bone"
+        }, {
+            "type": "Major",
+            "name": "Ebony Ingot"
+        }, {
+            "type": "Binding",
+            "name": "Leather Strips"
+        }]
+    }
+}

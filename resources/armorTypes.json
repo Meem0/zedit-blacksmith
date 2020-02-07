@@ -1,7 +1,12 @@
 [
-    "Helmet",
-    "Armor",
-    "Gauntlets",
-    "Boots",
-    "Shield"
+    "Heavy Helmet",
+    "Heavy Armor",
+    "Heavy Gauntlets",
+    "Heavy Boots",
+    "Heavy Shield",
+    "Light Helmet",
+    "Light Armor",
+    "Light Gauntlets",
+    "Light Boots",
+    "Light Shield"
 ]

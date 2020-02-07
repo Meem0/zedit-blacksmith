@@ -3,18 +3,19 @@ ngapp.service('skyrimArmorService', function(blacksmithHelpersService, elementSc
 
     let getEditorId = function(fileId, armorType, material) {
         let prefix = 'Armor';
+        let [armorCategory, armorPieceType] = armorType.split(' ');
 
         let editorIdMaterialType = material;
         if (material.toLowerCase() === 'steel') {
             editorIdMaterialType = 'SteelPlate';
         }
 
-        let editorIdArmorType = armorType;
-        if (armorType.toLowerCase() === 'armor') {
-            editorIdArmorType = 'Cuirass';
+        let editorIdArmorPieceType = armorPieceType;
+        if (armorPieceType.toLowerCase() === 'armor') {
+            editorIdArmorPieceType = 'Cuirass';
         }
 
-        return prefix + (editorIdMaterialType + editorIdArmorType).toPascalCase();
+        return prefix + (editorIdMaterialType + editorIdArmorPieceType).toPascalCase();
     };
 
     let findItem = function(signature, armorType, material) {
