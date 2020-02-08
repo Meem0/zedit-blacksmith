@@ -1,7 +1,7 @@
 ngapp.service('skyrimArmorService', function(blacksmithHelpersService, elementSchemaService) {
     let armorTypes = fh.loadJsonFile(`${modulePath}/resources/armorTypes.json`);
 
-    let getEditorId = function(fileId, armorType, material) {
+    let getEditorId = function(armorType, material) {
         let prefix = 'Armor';
         let suffix = '';
 
@@ -18,20 +18,9 @@ ngapp.service('skyrimArmorService', function(blacksmithHelpersService, elementSc
     };
 
     let findItem = function(signature, armorType, material) {
-        let itemId = 0;
-        xelib.WithHandles(
-            xelib.GetElements(0, ''),
-            fileIds => {
-                for (const fileId of fileIds) {
-                    const edid = getEditorId(fileId, armorType, material);
-                    itemId = xelib.GetElement(fileId, signature + '\\' + edid);
-                    if (itemId !== 0) {
-                        break;
-                    }
-                }
-            }
-        );
-        return itemId;
+        const edid = getEditorId(armorType, material);
+        const path = signature + '\\' + edid;
+        return blacksmithHelpersService.findElementInFiles(path);
     };
 
     this.getArmorTypes = function() {

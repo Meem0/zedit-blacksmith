@@ -282,6 +282,22 @@ ngapp.service('blacksmithHelpersService', function(settingsService) {
         return '';
     };
 
+    this.findElementInFiles = function(path) {
+        let itemId = 0;
+        xelib.WithHandles(
+            xelib.GetElements(0, ''),
+            fileIds => {
+                for (const fileId of fileIds) {
+                    itemId = xelib.GetElement(fileId, path);
+                    if (itemId) {
+                        break;
+                    }
+                }
+            }
+        );
+        return itemId;
+    };
+
     let forEachElementRecursive = function(id, leafFunc, opts) {
         if (!isValidElementInternal(id) && id !== 0) {
             return;
