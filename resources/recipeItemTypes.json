@@ -141,121 +141,157 @@
             "count": 1
         }]
     },
-    "Heavy Armor": {
-        "componentSpecs": [{
-            "type": "Primary",
-            "count": 2
-        }, {
-            "type": "Major",
-            "count": 2
-        }, {
-            "type": "Binding",
-            "count": 3
-        }, {
-            "type": "Minor",
-            "count": 1
-        }]
+    "Armor": {
+        "classes": {
+            "Heavy": {
+                "componentSpecs": [{
+                    "type": "Primary",
+                    "count": 2
+                }, {
+                    "type": "Major",
+                    "count": 2
+                }, {
+                    "type": "Binding",
+                    "count": 3
+                }, {
+                    "type": "Minor",
+                    "count": 1
+                }]
+            },
+            "Light": {
+                "componentSpecs": [{
+                    "type": "Primary",
+                    "count": 2
+                }, {
+                    "type": "Major",
+                    "count": 3
+                }, {
+                    "type": "Binding",
+                    "count": 3
+                }, {
+                    "type": "Minor",
+                    "count": 1
+                }],
+                "additionalComponents": [{
+                    "name": "Leather",
+                    "count": 1
+                }]
+            }
+        }
     },
-    "Heavy Boots": {
-        "componentSpecs": [{
-            "type": "Major",
-            "count": 3
-        }, {
-            "type": "Binding",
-            "count": 2
-        }, {
-            "type": "Minor",
-            "count": 1
-        }]
+    "Boots": {
+        "classes": {
+            "Heavy": {
+                "componentSpecs": [{
+                    "type": "Major",
+                    "count": 3
+                }, {
+                    "type": "Binding",
+                    "count": 2
+                }, {
+                    "type": "Minor",
+                    "count": 1
+                }]
+            },
+            "Light": {
+                "componentSpecs": [{
+                    "type": "Major",
+                    "count": 3
+                }, {
+                    "type": "Binding",
+                    "count": 2
+                }],
+                "additionalComponents": [{
+                    "name": "Leather",
+                    "count": 1
+                }]
+            }
+        }
     },
-    "Heavy Gauntlets": {
-        "componentSpecs": [{
-            "type": "Major",
-            "count": 2
-        }, {
-            "type": "Binding",
-            "count": 2
-        }, {
-            "type": "Minor",
-            "count": 1
-        }]
+    "Gauntlets": {
+        "classes": {
+            "Heavy": {
+                "componentSpecs": [{
+                    "type": "Major",
+                    "count": 2
+                }, {
+                    "type": "Binding",
+                    "count": 2
+                }, {
+                    "type": "Minor",
+                    "count": 1
+                }]
+            },
+            "Light": {
+                "componentSpecs": [{
+                    "type": "Major",
+                    "count": 2
+                }, {
+                    "type": "Binding",
+                    "count": 2
+                }],
+                "additionalComponents": [{
+                    "name": "Leather",
+                    "count": 1
+                }]
+            }
+        }
     },
-    "Heavy Helmet": {
-        "componentSpecs": [{
-            "type": "Major",
-            "count": 3
-        }, {
-            "type": "Binding",
-            "count": 2
-        }, {
-            "type": "Minor",
-            "count": 1
-        }]
+    "Helmet": {
+        "classes": {
+            "Heavy": {
+                "componentSpecs": [{
+                    "type": "Major",
+                    "count": 3
+                }, {
+                    "type": "Binding",
+                    "count": 2
+                }, {
+                    "type": "Minor",
+                    "count": 1
+                }]
+            },
+            "Light": {
+                "componentSpecs": [{
+                    "type": "Major",
+                    "count": 3
+                }, {
+                    "type": "Binding",
+                    "count": 1
+                }],
+                "additionalComponents": [{
+                    "name": "Leather",
+                    "count": 1
+                }]
+            }
+        }
     },
-    "Heavy Shield": {
-        "componentSpecs": [{
-            "type": "Major",
-            "count": 3
-        }, {
-            "type": "Binding",
-            "count": 1
-        }, {
-            "type": "Minor",
-            "count": 1
-        }]
-    },
-    "Light Armor": {
-        "componentSpecs": [{
-            "type": "Primary",
-            "count": 2
-        }, {
-            "type": "Major",
-            "count": 3
-        }, {
-            "type": "Binding",
-            "count": 3
-        }, {
-            "type": "Minor",
-            "count": 1
-        }]
-    },
-    "Light Boots": {
-        "componentSpecs": [{
-            "type": "Major",
-            "count": 3
-        }, {
-            "type": "Binding",
-            "count": 2
-        }]
-    },
-    "Light Gauntlets": {
-        "componentSpecs": [{
-            "type": "Major",
-            "count": 2
-        }, {
-            "type": "Binding",
-            "count": 2
-        }]
-    },
-    "Light Helmet": {
-        "componentSpecs": [{
-            "type": "Major",
-            "count": 3
-        }, {
-            "type": "Binding",
-            "count": 1
-        }]
-    },
-    "Light Shield": {
-        "componentSpecs": [{
-            "type": "Primary",
-            "count": 2
-        }, {
-            "type": "Major",
-            "count": 3
-        }, {
-            "type": "Binding",
-            "count": 2
-        }]
+    "Shield": {
+        "classes": {
+            "Heavy": {
+                "componentSpecs": [{
+                    "type": "Major",
+                    "count": 3
+                }, {
+                    "type": "Binding",
+                    "count": 1
+                }, {
+                    "type": "Minor",
+                    "count": 1
+                }]
+            },
+            "Light": {
+                "componentSpecs": [{
+                    "type": "Primary",
+                    "count": 2
+                }, {
+                    "type": "Major",
+                    "count": 3
+                }, {
+                    "type": "Binding",
+                    "count": 2
+                }]
+            }
+        }
     }
 }

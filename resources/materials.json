@@ -13,7 +13,8 @@
         "keywords": [
             "ArmorMaterialHide",
             "ArmorMaterialLeather"
-        ]
+        ],
+        "class": "Light"
     },
     "Iron": {
         "components": [{
@@ -30,7 +31,8 @@
             "ArmorMaterialIron",
             "ArmorMaterialIronBanded",
             "WeapMaterialIron"
-        ]
+        ],
+        "class": "Heavy"
     },
     "Steel": {
         "components": [{
@@ -50,7 +52,8 @@
             "ArmorMaterialSteel",
             "ArmorMaterialSteelPlate",
             "WeapMaterialSteel"
-        ]
+        ],
+        "class": "Heavy"
     },
     "Scaled": {
         "components": [{
@@ -71,7 +74,8 @@
         }],
         "keywords": [
             "ArmorMaterialScaled"
-        ]
+        ],
+        "class": "Light"
     },
     "Elven": {
         "components": [{
@@ -94,7 +98,8 @@
             "ArmorMaterialElven",
             "ArmorMaterialElvenGilded",
             "WeapMaterialElven"
-        ]
+        ],
+        "class": "Light"
     },
     "Dwarven": {
         "components": [{
@@ -116,7 +121,8 @@
         "keywords": [
             "ArmorMaterialDwarven",
             "WeapMaterialDwarven"
-        ]
+        ],
+        "class": "Heavy"
     },
     "Orcish": {
         "components": [{
@@ -135,7 +141,8 @@
         "keywords": [
             "ArmorMaterialOrcish",
             "WeapMaterialOrcish"
-        ]
+        ],
+        "class": "Heavy"
     },
     "Glass": {
         "components": [{
@@ -154,7 +161,8 @@
         "keywords": [
             "ArmorMaterialGlass",
             "WeapMaterialGlass"
-        ]
+        ],
+        "class": "Light"
     },
     "Ebony": {
         "components": [{
@@ -170,7 +178,8 @@
         "keywords": [
             "ArmorMaterialEbony",
             "WeapMaterialEbony"
-        ]
+        ],
+        "class": "Heavy"
     },
     "Daedric": {
         "components": [{
@@ -189,7 +198,8 @@
         "keywords": [
             "ArmorMaterialDaedric",
             "WeapMaterialDaedric"
-        ]
+        ],
+        "class": "Heavy"
     },
     "Dragonbone": {
         "components": [{
@@ -208,7 +218,8 @@
         "keywords": [
             "DLC1WeapMaterialDragonboneDG",
             "ArmorMaterialDragonplate"
-        ]
+        ],
+        "class": "Heavy"
     },
     "Dragonscale": {
         "components": [{
@@ -226,6 +237,7 @@
         }],
         "keywords": [
             "ArmorMaterialDragonscale"
-        ]
+        ],
+        "class": "Light"
     }
 }

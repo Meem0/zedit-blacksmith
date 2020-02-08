@@ -24,7 +24,7 @@ ngapp.service('skyrimWeaponService', function(blacksmithHelpersService, elementS
     };
 
     this.getWeaponTypes = function() {
-        return weaponTypes;
+        return Object.keys(weaponTypes);
     };
 
     this.getWeaponAttributes = function(weaponType, material) {

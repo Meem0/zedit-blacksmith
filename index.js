@@ -71,7 +71,8 @@ ngapp.run(function(
             let blacksmithOpenWorkflow = {
                 label: 'Open workflow',
                 callback: () => scope.$emit('openModal', 'workflow', {
-                    basePath: `${moduleUrl}/../workflowSystem/partials`
+                    basePath: `${moduleUrl}/../workflowSystem/partials`,
+                    selectedNodes: scope.selectedNodes
                 })
             };
 

@@ -1,10 +1,42 @@
-[
-    "Dagger",
-    "Sword",
-    "War Axe",
-    "Mace",
-    "Greatsword",
-    "Battleaxe",
-    "Warhammer",
-    "Bow"
-]
+{
+    "Dagger": {
+        "keywords": [
+            "WeapTypeDagger"
+        ]
+    },
+    "Sword": {
+        "keywords": [
+            "WeapTypeSword"
+        ]
+    },
+    "War Axe": {
+        "keywords": [
+            "WeapTypeWarAxe"
+        ]
+    },
+    "Mace": {
+        "keywords": [
+            "WeapTypeMace"
+        ]
+    },
+    "Greatsword": {
+        "keywords": [
+            "WeapTypeGreatsword"
+        ]
+    },
+    "Battleaxe": {
+        "keywords": [
+            "WeapTypeBattleaxe"
+        ]
+    },
+    "Warhammer": {
+        "keywords": [
+            "WeapTypeWarhammer"
+        ]
+    },
+    "Bow": {
+        "keywords": [
+            "WeapTypeBow"
+        ]
+    }
+}
