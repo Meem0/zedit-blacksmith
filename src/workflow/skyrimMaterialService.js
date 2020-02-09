@@ -22,6 +22,10 @@ ngapp.service('skyrimMaterialService', function() {
     this.getComponentsForMaterial = function(material) {
         return materials[material] ? materials[material].components : [];
     };
+
+    this.getMaterialClass = function(material) {
+        return materials[material] ? materials[material].class : '';
+    };
     
     // get an array with the maximum set of component types across all materials, including duplicate component types
     // e.g. ["Primary", "Major", "Major", "Binding", "Minor"]

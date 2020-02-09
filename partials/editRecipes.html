@@ -1,14 +1,19 @@
 Material: {{model.material}}
 
-<div>
-    <div ng-repeat="component in components">
-        <label>
-            <span class="input-label">{{component.type}}</span>
-            <reference-select
-                model="component.name"
-                signature="component.signature"
-                signatures="ingredientSignatures">
-            </reference-select>
-        </label>
+<div ng-repeat="component in components">
+    <label>
+        <span class="input-label">{{component.type}}</span>
+        <reference-select
+            model="component.name"
+            signature="component.signature"
+            signatures="ingredientSignatures">
+        </reference-select>
+    </label>
+</div>
+
+<div ng-repeat="item in model.items">
+    {{item.name}} - {{item.type}}
+    <div ng-repeat="ingredient in item.ingredients">
+        {{ingredient.name}} - {{ingredient.count}}
     </div>
 </div>

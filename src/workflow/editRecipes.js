@@ -29,7 +29,7 @@ ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialServ
 
             items.push({
                 name: xelib.FullName(handle),
-                itemType: getItemType(handle)
+                type: getItemType(handle)
             });
             return items;
         }, []);
@@ -60,8 +60,39 @@ ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialServ
         return components;
     };
 
+    let buildIngredientsList = function(components, itemType, componentClass) {
+        let ingredients = skyrimGearService.getRecipeAdditionalComponents(itemType, componentClass);
+        const groupedComponents = components.reduce((groupedComponents, component) => {
+            if (component.name) {
+                groupedComponents[component.type] = (groupedComponents[component.type] || []).concat(component.name);
+            }
+            return groupedComponents;
+        }, {});
+        // groupedComponents: e.g. {Primary:["Dragon Bone"],Major:["Dragon Bone","Ebony Ingot"],Binding:["Leather Strips"]}
+        Object.entries(groupedComponents).forEach(([componentType, componentItemNames]) => {
+            const quantity = skyrimGearService.getRecipeComponentQuantity(itemType, componentType, componentClass);
+            if (!quantity) {
+                return;
+            }
+            let additionalQuantity = quantity % componentItemNames.length;
+            componentItemNames.forEach(componentItemName => {
+                const myQuantity = Math.floor(quantity / componentItemNames.length) + (additionalQuantity-- > 0 ? 1 : 0);
+                let ingredient = ingredients.find(({name}) => name === componentItemName);
+                if (!ingredient) {
+                    ingredients.push({
+                        name: componentItemName,
+                        count: myQuantity
+                    });
+                }
+                else {
+                    ingredient.count += myQuantity;
+                }
+            });
+        });
+        return ingredients;
+    };
+
     let editRecipesController = function($scope) {
-        debugger;
         const selectedNodes = $scope.modalOptions && Array.isArray($scope.modalOptions.selectedNodes) ? $scope.modalOptions.selectedNodes : [];
         if (!$scope.model.items) {
             $scope.model.items = getItemsFromSelectedNodes(selectedNodes);
@@ -71,6 +102,13 @@ ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialServ
         }
         $scope.components = getComponentsForMaterial($scope.model.material);
         $scope.ingredientSignatures = ingredientSignatures;
+        const componentClass = skyrimMaterialService.getMaterialClass($scope.model.material);
+
+        $scope.$watch('components', function() {
+            $scope.model.items.forEach(item => {
+                item.ingredients = buildIngredientsList($scope.components, item.type, componentClass);
+            });
+        }, true);
     };
 
     workflowService.addView('editRecipes', {
