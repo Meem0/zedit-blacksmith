@@ -1,0 +1,58 @@
+[
+    {
+        "name": "Corundum Ingot",
+        "reference": "Skyrim.esm:05AD93"
+    },
+    {
+        "name": "Daedra Heart",
+        "reference": "Skyrim.esm:03AD5B"
+    },
+    {
+        "name": "Dragon Bone",
+        "reference": "Skyrim.esm:03ADA4"
+    },
+    {
+        "name": "Dragon Scales",
+        "reference": "Skyrim.esm:03ADA3"
+    },
+    {
+        "name": "Dwarven Metal Ingot",
+        "reference": "Skyrim.esm:0DB8A2"
+    },
+    {
+        "name": "Ebony Ingot",
+        "reference": "Skyrim.esm:05AD9D"
+    },
+    {
+        "name": "Iron Ingot",
+        "reference": "Skyrim.esm:05ACE4"
+    },
+    {
+        "name": "Leather",
+        "reference": "Skyrim.esm:0DB5D2"
+    },
+    {
+        "name": "Leather Strips",
+        "reference": "Skyrim.esm:0800E4"
+    },
+    {
+        "name": "Orichalcum Ingot",
+        "reference": "Skyrim.esm:05AD99"
+    },
+    {
+        "name": "Quicksilver Ingot",
+        "reference": "Skyrim.esm:05ADA0"
+    },
+    {
+        "name": "Refined Malachite",
+        "reference": "Skyrim.esm:05ADA1"
+    },
+    {
+        "name": "Refined Moonstone",
+        "reference": "Skyrim.esm:05AD9F"
+    },
+    {
+        "name": "Steel Ingot",
+        "reference": "Skyrim.esm:05ACE5"
+    }
+]

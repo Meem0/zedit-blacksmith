@@ -14,6 +14,13 @@ ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialServ
         return skyrimGearService.getItemTypeForKeyword(itemTypeKeyword);
     };
 
+    let getFullNameFromReference = function(reference) {
+        return xelib.WithHandle(
+            blacksmithHelpersService.getRecordFromReference(reference),
+            id => id ? xelib.FullName(id) : ''
+        );
+    };
+
     let getItemsFromSelectedNodes = function(selectedNodes) {
         if (!selectedNodes) {
             return [];
@@ -28,34 +35,41 @@ ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialServ
             }
 
             items.push({
-                name: xelib.FullName(handle),
-                type: getItemType(handle)
+                reference: blacksmithHelpersService.getReferenceFromRecord(handle),
+                type: getItemType(handle),
+                get name() {
+                    return getFullNameFromReference(this.reference);
+                }
             });
             return items;
         }, []);
     };
 
     let getComponentsForMaterial = function(material) {
-        let components = skyrimMaterialService.getComponentTypes().map(componentType => ({
-            type: componentType,
-            name: '',
-            signature: ''
-        }));
-        skyrimMaterialService.getComponentsForMaterial(material).forEach(({type, name}) => {
-            for (const component of components) {
-                if (component.type === type && !component.name) {
-                    xelib.WithHandle(
-                        blacksmithHelpersService.findElementInFiles(`"${name}"`),
-                        id => {
-                            if (id) {
-                                component.name = name;
-                                component.signature = xelib.Signature(id);
-                            }
-                        }
-                    );
-                    break;
+        let components = skyrimMaterialService.getComponentsForMaterial(material, /*includePlaceholders*/ true);
+        components.forEach(component => {
+            xelib.WithHandle(
+                blacksmithHelpersService.getRecordFromReference(component.itemReference),
+                id => {
+                    if (id) {
+                        component.signature = xelib.Signature(id);
+                    }
                 }
-            }
+            );
+            Object.defineProperty(component, 'longName', {
+                get() {
+                    return xelib.WithHandle(
+                        blacksmithHelpersService.getRecordFromReference(this.itemReference),
+                        id => id ? xelib.LongName(id) : ''
+                    );
+                },
+                set(longName) {
+                    this.itemReference = xelib.WithHandle(
+                        blacksmithHelpersService.getRecordFromLongName(longName),
+                        id => blacksmithHelpersService.getReferenceFromRecord(id)
+                    );
+                }
+            });
         });
         return components;
     };
@@ -63,25 +77,31 @@ ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialServ
     let buildIngredientsList = function(components, itemType, componentClass) {
         let ingredients = skyrimGearService.getRecipeAdditionalComponents(itemType, componentClass);
         const groupedComponents = components.reduce((groupedComponents, component) => {
-            if (component.name) {
-                groupedComponents[component.type] = (groupedComponents[component.type] || []).concat(component.name);
+            if (component.itemReference) {
+                groupedComponents[component.type] = (groupedComponents[component.type] || []).concat(component.itemReference);
             }
             return groupedComponents;
         }, {});
-        // groupedComponents: e.g. {Primary:["Dragon Bone"],Major:["Dragon Bone","Ebony Ingot"],Binding:["Leather Strips"]}
-        Object.entries(groupedComponents).forEach(([componentType, componentItemNames]) => {
+        // groupedComponents: e.g. {Primary:["Skyrim.esm:03ADA4"],Major:["Skyrim.esm:03ADA4","Skyrim.esm:05AD9D"],Binding:["Skyrim.esm:0800E4"]}
+        Object.entries(groupedComponents).forEach(([componentType, componentItemReferences]) => {
             const quantity = skyrimGearService.getRecipeComponentQuantity(itemType, componentType, componentClass);
             if (!quantity) {
                 return;
             }
-            let additionalQuantity = quantity % componentItemNames.length;
-            componentItemNames.forEach(componentItemName => {
-                const myQuantity = Math.floor(quantity / componentItemNames.length) + (additionalQuantity-- > 0 ? 1 : 0);
-                let ingredient = ingredients.find(({name}) => name === componentItemName);
+            let additionalQuantity = quantity % componentItemReferences.length;
+            componentItemReferences.forEach(componentItemReference => {
+                const myQuantity = Math.floor(quantity / componentItemReferences.length) + (additionalQuantity-- > 0 ? 1 : 0);
+                if (myQuantity <= 0) {
+                    return;
+                }
+                let ingredient = ingredients.find(({itemReference}) => itemReference === componentItemReference);
                 if (!ingredient) {
                     ingredients.push({
-                        name: componentItemName,
-                        count: myQuantity
+                        itemReference: componentItemReference,
+                        count: myQuantity,
+                        get name() {
+                            return getFullNameFromReference(this.itemReference);
+                        }
                     });
                 }
                 else {
@@ -92,6 +112,35 @@ ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialServ
         return ingredients;
     };
 
+    /*
+    $scope: {
+        model: {
+            items: [
+                {
+                    reference: (e.g. "Skyrim.esm:012E49"),
+                    name: (e.g. "Iron Sword") (get from reference)
+                    type: (e.g. "Sword"),
+                    ingredients: [
+                        {
+                            itemReference: (e.g. "Skyrim.esm:05ACE4"),
+                            name: (e.g. "Iron Ingot") (get from itemReference)
+                            count: (e.g. 2)
+                        }
+                    ]
+                }
+            ],
+            material: (e.g. "Iron")
+        },
+        components: [
+            {
+                type: (e.g. "Major"),
+                itemReference: (e.g. "Skyrim.esm:05ACE4"),
+                longName: (e.g. "IngotIron "Iron Ingot" [MISC:Skyrim.esm:05ACE4]") (get / set from itemReference)
+                signature: (e.g. "MISC")
+            }
+        ]
+    }
+    */
     let editRecipesController = function($scope) {
         const selectedNodes = $scope.modalOptions && Array.isArray($scope.modalOptions.selectedNodes) ? $scope.modalOptions.selectedNodes : [];
         if (!$scope.model.items) {

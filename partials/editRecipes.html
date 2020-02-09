@@ -4,7 +4,7 @@ Material: {{model.material}}
     <label>
         <span class="input-label">{{component.type}}</span>
         <reference-select
-            model="component.name"
+            model="component.longName"
             signature="component.signature"
             signatures="ingredientSignatures">
         </reference-select>
@@ -12,8 +12,12 @@ Material: {{model.material}}
 </div>
 
 <div ng-repeat="item in model.items">
-    {{item.name}} - {{item.type}}
-    <div ng-repeat="ingredient in item.ingredients">
-        {{ingredient.name}} - {{ingredient.count}}
-    </div>
+    <expandable-section>
+        <title>{{item.name}} - {{item.type}}</title>
+        <content>
+            <div ng-repeat="ingredient in item.ingredients">
+                {{ingredient.name}} - {{ingredient.count}}
+            </div>
+        </content>
+    </expandable-section>
 </div>

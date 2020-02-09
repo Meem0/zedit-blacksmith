@@ -250,6 +250,21 @@ ngapp.service('blacksmithHelpersService', function(settingsService) {
         );
     };
 
+    this.getRecordFromLongName = function(longName) {
+        if (typeof(longName) !== 'string') {
+            return 0;
+        }
+        const idxStart = longName.lastIndexOf('[');
+        const idxEnd = longName.lastIndexOf(']');
+        if (idxStart < 0 || idxEnd < 0) {
+            return 0;
+        }
+        const sigAndFormId = longName.substring(idxStart + 1, idxEnd);
+        const formIdStr = sigAndFormId.substring(sigAndFormId.lastIndexOf(':') + 1);
+        const formId = Number.parseInt(formIdStr, 16) || 0;
+        return xelib.GetRecord(0, formId);
+    };
+
     // e.g. (handle to 00012E49) -> 'Skyrim.esm:012E49'
     this.getReferenceFromRecord = function(recordId) {
         if (this.isMainRecord(recordId)) {

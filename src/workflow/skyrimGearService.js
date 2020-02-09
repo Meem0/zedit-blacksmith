@@ -1,4 +1,4 @@
-ngapp.service('skyrimGearService', function() {
+ngapp.service('skyrimGearService', function(skyrimReferenceService) {
     let armorTypes = fh.loadJsonFile(`${modulePath}/resources/armorTypes.json`);
     let weaponTypes = fh.loadJsonFile(`${modulePath}/resources/weaponTypes.json`);
     let itemTypes = Object.assign({}, armorTypes, weaponTypes);
@@ -14,10 +14,14 @@ ngapp.service('skyrimGearService', function() {
 
     let getItemRecipeDefinition = function(itemType, componentClass) {
         let recipeDefinition = recipeItemTypes[itemType];
-        if (recipeDefinition && recipeDefinition.classes) {
-            return recipeDefinition.classes[componentClass];
+        let itemRecipeDefinition = recipeDefinition && recipeDefinition.classes ? recipeDefinition.classes[componentClass] : recipeDefinition;
+        if (itemRecipeDefinition.additionalComponents) {
+            itemRecipeDefinition.additionalComponents = itemRecipeDefinition.additionalComponents.map(({name, ...rest}) => ({
+                itemReference: skyrimReferenceService.getReferenceFromName(name),
+                ...rest
+            }));
         }
-        return recipeDefinition;
+        return itemRecipeDefinition;
     };
 
     this.getRecipeComponentQuantity = function(itemType, componentType, componentClass) {

@@ -1,6 +1,18 @@
-ngapp.service('skyrimMaterialService', function() {
+ngapp.service('skyrimMaterialService', function(skyrimReferenceService) {
     let materialTypes = fh.loadJsonFile(`${modulePath}/resources/materialTypes.json`);
-    let materials = fh.loadJsonFile(`${modulePath}/resources/materials.json`);
+    
+    // transform the "name" properties in materials.json into references (e.g. name: "Dragon Bone" becomes itemReference: "Skyrim.esm:03ADA4")
+    let materials = Object.entries(fh.loadJsonFile(`${modulePath}/resources/materials.json`)).reduce(
+        (materials, [materialName, {components, ...rest}]) => {
+            materials[materialName] = {
+                components: components.map(({type, name}) => ({
+                    type: type,
+                    itemReference: skyrimReferenceService.getReferenceFromName(name)
+                })),
+                ...rest
+            };
+            return materials;
+        }, {});
 
     this.getMaterials = function() {
         return Object.keys(materialTypes).reduce((materials, filename) => {
@@ -18,18 +30,10 @@ ngapp.service('skyrimMaterialService', function() {
     this.getMaterialForKeyword = function(keyword) {
         return Object.keys(materials).find(key => materials[key].keywords.includes(keyword));
     };
-
-    this.getComponentsForMaterial = function(material) {
-        return materials[material] ? materials[material].components : [];
-    };
-
-    this.getMaterialClass = function(material) {
-        return materials[material] ? materials[material].class : '';
-    };
     
     // get an array with the maximum set of component types across all materials, including duplicate component types
     // e.g. ["Primary", "Major", "Major", "Binding", "Minor"]
-    this.getComponentTypes = function() {
+    let getComponentTypes = function() {
         const componentCounts = Object.values(materials).reduce((componentCounts, {components}) => {
             components.forEach(component => {
                 const numTypes = components.reduce((num, curComponent) => num + (curComponent.type === component.type ? 1 : 0), 0);
@@ -41,5 +45,30 @@ ngapp.service('skyrimMaterialService', function() {
         return Object.entries(componentCounts).reduce((componentTypes, [componentType, count]) => {
             return componentTypes.concat(Array(count).fill(componentType));
         }, []);
+    };
+
+    this.getComponentsForMaterial = function(material, includePlaceholders = false) {
+        const materialComponents = materials[material] ? materials[material].components : [];
+        if (!includePlaceholders) {
+            return materialComponents;
+        }
+
+        let componentSlots = getComponentTypes().map(componentType => ({
+            type: componentType,
+            itemReference: ''
+        }));
+        materialComponents.forEach(({type, itemReference}) => {
+            for (let componentSlot of componentSlots) {
+                if (componentSlot.type === type && !componentSlot.itemReference) {
+                    componentSlot.itemReference = itemReference;
+                    break;
+                }
+            }
+        });
+        return componentSlots;
+    };
+
+    this.getMaterialClass = function(material) {
+        return materials[material] ? materials[material].class : '';
     };
 });
