@@ -15,8 +15,27 @@ Material: {{model.material}}
     <expandable-section>
         <title>{{item.name}} - {{item.type}}</title>
         <content>
+            <label>
+                <input type="checkbox" ng-model="item.editManually" ng-change="toggleEditManually(item)"/>
+                <span class="input-label">Edit manually</span>
+            </label>
             <div ng-repeat="ingredient in item.ingredients">
-                {{ingredient.name}} - {{ingredient.count}}
+                <span ng-show="!item.editManually">
+                    {{ingredient.name}} - {{ingredient.count}}
+                </span>
+                <div ng-show="item.editManually">
+                    <button class="action-btn positive small" ng-click="addIngredient(item)">Add Ingredient</button>
+                    <reference-select
+                        model="ingredient.longName"
+                        signature="ingredient.signature"
+                        signatures="ingredientSignatures">
+                    </reference-select>
+                    <label>
+                        <span class="input-label">Count</span>
+                        <number-input model="ingredient.count" type="integer"></number-input>
+                    </label>
+                    <div class="remove-item" ng-click="removeIngredient(item, ingredient)"></div>
+                </div>
             </div>
         </content>
     </expandable-section>
