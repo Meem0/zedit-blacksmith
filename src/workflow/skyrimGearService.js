@@ -12,6 +12,14 @@ ngapp.service('skyrimGearService', function(skyrimReferenceService) {
         return Object.keys(itemTypes).find(key => itemTypes[key].keywords.includes(keyword));
     };
 
+    this.isArmor = function(itemType) {
+        return Object.keys(armorTypes).includes(itemType);
+    };
+
+    this.isWeapon = function(itemType) {
+        return Object.keys(weaponTypes).includes(itemType);
+    };
+
     let getItemRecipeDefinition = function(itemType, componentClass) {
         let recipeDefinition = recipeItemTypes[itemType];
         let itemRecipeDefinition = recipeDefinition && recipeDefinition.classes ? recipeDefinition.classes[componentClass] : recipeDefinition;

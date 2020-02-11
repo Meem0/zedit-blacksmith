@@ -53,7 +53,8 @@
             "ArmorMaterialSteelPlate",
             "WeapMaterialSteel"
         ],
-        "class": "Heavy"
+        "class": "Heavy",
+        "perk": "Steel Smithing"
     },
     "Scaled": {
         "components": [{
@@ -75,7 +76,8 @@
         "keywords": [
             "ArmorMaterialScaled"
         ],
-        "class": "Light"
+        "class": "Light",
+        "perk": "Advanced Armors"
     },
     "Elven": {
         "components": [{
@@ -99,7 +101,8 @@
             "ArmorMaterialElvenGilded",
             "WeapMaterialElven"
         ],
-        "class": "Light"
+        "class": "Light",
+        "perk": "Elven Smithing"
     },
     "Dwarven": {
         "components": [{
@@ -122,7 +125,8 @@
             "ArmorMaterialDwarven",
             "WeapMaterialDwarven"
         ],
-        "class": "Heavy"
+        "class": "Heavy",
+        "perk": "Dwarven Smithing"
     },
     "Orcish": {
         "components": [{
@@ -142,7 +146,8 @@
             "ArmorMaterialOrcish",
             "WeapMaterialOrcish"
         ],
-        "class": "Heavy"
+        "class": "Heavy",
+        "perk": "Orcish Smithing"
     },
     "Glass": {
         "components": [{
@@ -162,7 +167,8 @@
             "ArmorMaterialGlass",
             "WeapMaterialGlass"
         ],
-        "class": "Light"
+        "class": "Light",
+        "perk": "Glass Smithing"
     },
     "Ebony": {
         "components": [{
@@ -179,7 +185,8 @@
             "ArmorMaterialEbony",
             "WeapMaterialEbony"
         ],
-        "class": "Heavy"
+        "class": "Heavy",
+        "perk": "Ebony Smithing"
     },
     "Daedric": {
         "components": [{
@@ -199,7 +206,8 @@
             "ArmorMaterialDaedric",
             "WeapMaterialDaedric"
         ],
-        "class": "Heavy"
+        "class": "Heavy",
+        "perk": "Daedric Smithing"
     },
     "Dragonbone": {
         "components": [{
@@ -219,7 +227,8 @@
             "DLC1WeapMaterialDragonboneDG",
             "ArmorMaterialDragonplate"
         ],
-        "class": "Heavy"
+        "class": "Heavy",
+        "perk": "Dragon Armor"
     },
     "Dragonscale": {
         "components": [{
@@ -238,6 +247,7 @@
         "keywords": [
             "ArmorMaterialDragonscale"
         ],
-        "class": "Light"
+        "class": "Light",
+        "perk": "Dragon Armor"
     }
 }

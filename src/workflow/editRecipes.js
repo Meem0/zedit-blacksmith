@@ -78,7 +78,12 @@ ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialServ
                 get name() {
                     return getFullNameFromReference(this.reference);
                 },
-                editManually: false
+                get editorId() {
+                    return xelib.WithHandle(
+                        blacksmithHelpersService.getRecordFromReference(this.reference),
+                        id => id ? xelib.EditorID(id) : ''
+                    );
+                }
             });
             return items;
         }, []);
@@ -132,33 +137,34 @@ ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialServ
     /*
     $scope: {
         model: {
-            items: [
-                {
+            recipes: [
+                item: {
                     reference: (e.g. "Skyrim.esm:012E49"),
                     name: (e.g. "Iron Sword") (get from reference),
-                    type: (e.g. "Sword"),
-                    editManually: (true / false),
-                    ingredients: [
-                        {
-                            itemReference: (e.g. "Skyrim.esm:05ACE4"),
-                            name: (e.g. "Iron Ingot") (get from itemReference),
-                            longName: (e.g. "IngotIron "Iron Ingot" [MISC:Skyrim.esm:05ACE4]") (get / set from itemReference),
-                            count: (e.g. 2),
-                            signature: (e.g. "MISC")
-                        }
-                    ]
-                }
+                    editorId: (e.g. "WeaponIronSword") (get from reference)
+                    type: (e.g. "Sword")
+                },
+                ingredients: [
+                    {
+                        itemReference: (e.g. "Skyrim.esm:05ACE4"),
+                        name: (e.g. "Iron Ingot") (get from itemReference),
+                        longName: (e.g. "IngotIron "Iron Ingot" [MISC:Skyrim.esm:05ACE4]") (get / set from itemReference),
+                        count: (e.g. 2),
+                        signature: (e.g. "MISC")
+                    }
+                ],
+                editManually: (true / false)
             ],
-            material: (e.g. "Iron")
-        },
-        components: [
-            {
-                type: (e.g. "Major"),
-                itemReference: (e.g. "Skyrim.esm:05ACE4"),
-                longName: (e.g. "IngotIron "Iron Ingot" [MISC:Skyrim.esm:05ACE4]") (get / set from itemReference)
-                signature: (e.g. "MISC")
-            }
-        ]
+            material: (e.g. "Iron"),
+            components: [
+                {
+                    type: (e.g. "Major"),
+                    itemReference: (e.g. "Skyrim.esm:05ACE4"),
+                    longName: (e.g. "IngotIron "Iron Ingot" [MISC:Skyrim.esm:05ACE4]") (get / set from itemReference)
+                    signature: (e.g. "MISC")
+                }
+            ]
+        }
     }
     */
     let editRecipesController = function($scope) {
@@ -169,32 +175,39 @@ ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialServ
         if (!$scope.model.material && selectedNodes.length > 0) {
             $scope.model.material = getItemMaterial(selectedNodes[0].handle);
         }
-        $scope.components = getComponentsForMaterial($scope.model.material);
+        $scope.model.recipes = $scope.model.items.map(item => ({
+            item: item,
+            editManually: false,
+            get editorId() {
+                return 'Recipe' + this.item.editorId;
+            }
+        }));
+        $scope.model.components = getComponentsForMaterial($scope.model.material);
         $scope.ingredientSignatures = ingredientSignatures;
         const componentClass = skyrimMaterialService.getMaterialClass($scope.model.material);
 
-        $scope.$watch('components', function() {
-            $scope.model.items.forEach(item => {
-                if (!item.editManually) {
-                    item.ingredients = buildIngredientsList($scope.components, item.type, componentClass);
+        $scope.$watch('model.components', function() {
+            $scope.model.recipes.forEach(recipe => {
+                if (!recipe.editManually) {
+                    recipe.ingredients = buildIngredientsList($scope.model.components, recipe.item.type, componentClass);
                 }
             });
         }, true);
         
-        $scope.toggleEditManually = function(item) {
-            if (!item.editManually) {
-                item.ingredients = buildIngredientsList($scope.components, item.type, componentClass);
+        $scope.toggleEditManually = function(recipe) {
+            if (!recipe.editManually) {
+                recipe.ingredients = buildIngredientsList($scope.model.components, recipe.item.type, componentClass);
             }
         };
         
-        $scope.addIngredient = function(item) {
-            item.ingredients.push(createIngredient());
+        $scope.addIngredient = function(recipe) {
+            recipe.ingredients.push(createIngredient());
         };
         
-        $scope.removeIngredient = function(item, ingredient) {
-            const index = item.ingredients.indexOf(ingredient);
+        $scope.removeIngredient = function(recipe, ingredient) {
+            const index = recipe.ingredients.indexOf(ingredient);
             if (index >= 0) {
-                item.ingredients.splice(index);
+                recipe.ingredients.splice(index, 1);
             }
         };
     };

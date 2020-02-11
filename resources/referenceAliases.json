@@ -54,5 +54,41 @@
     {
         "name": "Steel Ingot",
         "reference": "Skyrim.esm:05ACE5"
+    },
+    {
+        "name": "Advanced Armors",
+        "reference": "Skyrim.esm:0CB414"
+    },
+    {
+        "name": "Daedric Smithing",
+        "reference": "Skyrim.esm:0CB413"
+    },
+    {
+        "name": "Dragon Armor",
+        "reference": "Skyrim.esm:052190"
+    },
+    {
+        "name": "Dwarven Smithing",
+        "reference": "Skyrim.esm:0CB40E"
+    },
+    {
+        "name": "Ebony Smithing",
+        "reference": "Skyrim.esm:0CB412"
+    },
+    {
+        "name": "Elven Smithing",
+        "reference": "Skyrim.esm:0CB40F"
+    },
+    {
+        "name": "Glass Smithing",
+        "reference": "Skyrim.esm:0CB411"
+    },
+    {
+        "name": "Orcish Smithing",
+        "reference": "Skyrim.esm:0CB410"
+    },
+    {
+        "name": "Steel Smithing",
+        "reference": "Skyrim.esm:0CB40D"
     }
 ]

@@ -68,6 +68,10 @@ ngapp.service('skyrimMaterialService', function(skyrimReferenceService) {
         return componentSlots;
     };
 
+    this.getMaterialSmithingPerk = function(material) {
+        return materials[material] ? skyrimReferenceService.getReferenceFromName(materials[material].perk) : '';
+    };
+
     this.getMaterialClass = function(material) {
         return materials[material] ? materials[material].class : '';
     };

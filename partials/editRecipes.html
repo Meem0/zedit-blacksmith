@@ -11,7 +11,7 @@
     .edit-ingredient {
         padding-block-start: 5px;
     }
-    .item-container section.content {
+    .recipe-container section.content {
         margin-top: 0;
     }
 </style>
@@ -19,7 +19,7 @@
 Material: {{model.material}}
 
 <section>
-    <div ng-repeat="component in components">
+    <div ng-repeat="component in model.components">
         <label>
             <span class="input-label">{{component.type}}</span>
             <reference-select
@@ -32,28 +32,28 @@ Material: {{model.material}}
 </section>
 
 <section>
-    <div ng-repeat="item in model.items">
-        <expandable-section class="item-container">
-            <title>{{item.name}} - {{item.type}}</title>
+    <div ng-repeat="recipe in model.recipes">
+        <expandable-section class="recipe-container">
+            <title>{{recipe.item.name}} - {{recipe.item.type}}</title>
             <content>
                 <label>
-                    <input type="checkbox" ng-model="item.editManually" ng-change="toggleEditManually(item)"/>
+                    <input type="checkbox" ng-model="recipe.editManually" ng-change="toggleEditManually(recipe)"/>
                     <span class="input-label">Edit manually</span>
                 </label>
-                <button class="action-btn positive small" ng-show="item.editManually" ng-click="addIngredient(item)">Add Ingredient</button>
+                <button class="action-btn positive small" ng-show="recipe.editManually" ng-click="addIngredient(recipe)">Add Ingredient</button>
                 <ul class="ingredients">
-                    <li ng-repeat="ingredient in item.ingredients" class="ingredient">
-                        <span ng-show="!item.editManually">
+                    <li ng-repeat="ingredient in recipe.ingredients" class="ingredient">
+                        <span ng-show="!recipe.editManually">
                             {{ingredient.name}} - {{ingredient.count}}
                         </span>
-                        <div class="edit-ingredient" ng-show="item.editManually">
+                        <div class="edit-ingredient" ng-show="recipe.editManually">
                             <reference-select
                                 model="ingredient.longName"
                                 signature="ingredient.signature"
                                 signatures="ingredientSignatures">
                             </reference-select>
                             <number-input model="ingredient.count" type="integer"></number-input>
-                            <div class="remove-item" ng-click="removeIngredient(item, ingredient)"></div>
+                            <div class="remove-item" ng-click="removeIngredient(recipe, ingredient)"></div>
                         </div>
                     </li>
                 </ul>
