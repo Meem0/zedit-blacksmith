@@ -14,11 +14,49 @@ ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialServ
         return skyrimGearService.getItemTypeForKeyword(itemTypeKeyword);
     };
 
+    let getLongNameFromReference = function(reference) {
+        return xelib.WithHandle(
+            blacksmithHelpersService.getRecordFromReference(reference),
+            id => id ? xelib.LongName(id) : ''
+        );
+    };
+    
+    let getReferenceFromLongName = function(longName) {
+        return xelib.WithHandle(
+            blacksmithHelpersService.getRecordFromLongName(longName),
+            id => blacksmithHelpersService.getReferenceFromRecord(id)
+        );
+    };
+
     let getFullNameFromReference = function(reference) {
         return xelib.WithHandle(
             blacksmithHelpersService.getRecordFromReference(reference),
             id => id ? xelib.FullName(id) : ''
         );
+    };
+    
+    let getSignatureFromReference = function(reference) {
+        return xelib.WithHandle(
+            blacksmithHelpersService.getRecordFromReference(reference),
+            id => id ? xelib.Signature(id) : ''
+        );
+    };
+    
+    let createIngredient = function(itemReference = '', count = 0) {
+        return {
+            itemReference: itemReference,
+            count: count,
+            signature: getSignatureFromReference(itemReference) || 'MISC',
+            get name() {
+                return getFullNameFromReference(this.itemReference);
+            },
+            get longName() {
+                return getLongNameFromReference(this.itemReference);
+            },
+            set longName(value) {
+                this.itemReference = getReferenceFromLongName(value);
+            }
+        };
     };
 
     let getItemsFromSelectedNodes = function(selectedNodes) {
@@ -39,39 +77,24 @@ ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialServ
                 type: getItemType(handle),
                 get name() {
                     return getFullNameFromReference(this.reference);
-                }
+                },
+                editManually: false
             });
             return items;
         }, []);
     };
 
     let getComponentsForMaterial = function(material) {
-        let components = skyrimMaterialService.getComponentsForMaterial(material, /*includePlaceholders*/ true);
-        components.forEach(component => {
-            xelib.WithHandle(
-                blacksmithHelpersService.getRecordFromReference(component.itemReference),
-                id => {
-                    if (id) {
-                        component.signature = xelib.Signature(id);
-                    }
-                }
-            );
-            Object.defineProperty(component, 'longName', {
-                get() {
-                    return xelib.WithHandle(
-                        blacksmithHelpersService.getRecordFromReference(this.itemReference),
-                        id => id ? xelib.LongName(id) : ''
-                    );
-                },
-                set(longName) {
-                    this.itemReference = xelib.WithHandle(
-                        blacksmithHelpersService.getRecordFromLongName(longName),
-                        id => blacksmithHelpersService.getReferenceFromRecord(id)
-                    );
-                }
-            });
-        });
-        return components;
+        return skyrimMaterialService.getComponentsForMaterial(material, /*includePlaceholders*/ true).map(component => ({
+            ...component,
+            signature: getSignatureFromReference(component.itemReference) || 'MISC',
+            get longName() {
+                return getLongNameFromReference(this.itemReference);
+            },
+            set longName(value) {
+                this.itemReference = getReferenceFromLongName(value);
+            }
+        }));
     };
 
     let buildIngredientsList = function(components, itemType, componentClass) {
@@ -96,13 +119,7 @@ ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialServ
                 }
                 let ingredient = ingredients.find(({itemReference}) => itemReference === componentItemReference);
                 if (!ingredient) {
-                    ingredients.push({
-                        itemReference: componentItemReference,
-                        count: myQuantity,
-                        get name() {
-                            return getFullNameFromReference(this.itemReference);
-                        }
-                    });
+                    ingredients.push(createIngredient(componentItemReference, myQuantity));
                 }
                 else {
                     ingredient.count += myQuantity;
@@ -118,13 +135,16 @@ ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialServ
             items: [
                 {
                     reference: (e.g. "Skyrim.esm:012E49"),
-                    name: (e.g. "Iron Sword") (get from reference)
+                    name: (e.g. "Iron Sword") (get from reference),
                     type: (e.g. "Sword"),
+                    editManually: (true / false),
                     ingredients: [
                         {
                             itemReference: (e.g. "Skyrim.esm:05ACE4"),
-                            name: (e.g. "Iron Ingot") (get from itemReference)
-                            count: (e.g. 2)
+                            name: (e.g. "Iron Ingot") (get from itemReference),
+                            longName: (e.g. "IngotIron "Iron Ingot" [MISC:Skyrim.esm:05ACE4]") (get / set from itemReference),
+                            count: (e.g. 2),
+                            signature: (e.g. "MISC")
                         }
                     ]
                 }
@@ -155,9 +175,28 @@ ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialServ
 
         $scope.$watch('components', function() {
             $scope.model.items.forEach(item => {
-                item.ingredients = buildIngredientsList($scope.components, item.type, componentClass);
+                if (!item.editManually) {
+                    item.ingredients = buildIngredientsList($scope.components, item.type, componentClass);
+                }
             });
         }, true);
+        
+        $scope.toggleEditManually = function(item) {
+            if (!item.editManually) {
+                item.ingredients = buildIngredientsList($scope.components, item.type, componentClass);
+            }
+        };
+        
+        $scope.addIngredient = function(item) {
+            item.ingredients.push(createIngredient());
+        };
+        
+        $scope.removeIngredient = function(item, ingredient) {
+            const index = item.ingredients.indexOf(ingredient);
+            if (index >= 0) {
+                item.ingredients.splice(index);
+            }
+        };
     };
 
     workflowService.addView('editRecipes', {
