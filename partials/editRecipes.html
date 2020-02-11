@@ -1,42 +1,63 @@
+<style>
+    ul.ingredients {
+        list-style-type: none;
+        padding-inline-start: unset;
+        margin-block-start: unset;
+        margin-block-end: unset;
+    }
+    .ingredient .remove-item {
+        display: inline;
+    }
+    .edit-ingredient {
+        padding-block-start: 5px;
+    }
+    .item-container section.content {
+        margin-top: 0;
+    }
+</style>
+
 Material: {{model.material}}
 
-<div ng-repeat="component in components">
-    <label>
-        <span class="input-label">{{component.type}}</span>
-        <reference-select
-            model="component.longName"
-            signature="component.signature"
-            signatures="ingredientSignatures">
-        </reference-select>
-    </label>
-</div>
+<section>
+    <div ng-repeat="component in components">
+        <label>
+            <span class="input-label">{{component.type}}</span>
+            <reference-select
+                model="component.longName"
+                signature="component.signature"
+                signatures="ingredientSignatures">
+            </reference-select>
+        </label>
+    </div>
+</section>
 
-<div ng-repeat="item in model.items">
-    <expandable-section>
-        <title>{{item.name}} - {{item.type}}</title>
-        <content>
-            <label>
-                <input type="checkbox" ng-model="item.editManually" ng-change="toggleEditManually(item)"/>
-                <span class="input-label">Edit manually</span>
-            </label>
-            <div ng-repeat="ingredient in item.ingredients">
-                <span ng-show="!item.editManually">
-                    {{ingredient.name}} - {{ingredient.count}}
-                </span>
-                <div ng-show="item.editManually">
-                    <button class="action-btn positive small" ng-click="addIngredient(item)">Add Ingredient</button>
-                    <reference-select
-                        model="ingredient.longName"
-                        signature="ingredient.signature"
-                        signatures="ingredientSignatures">
-                    </reference-select>
-                    <label>
-                        <span class="input-label">Count</span>
-                        <number-input model="ingredient.count" type="integer"></number-input>
-                    </label>
-                    <div class="remove-item" ng-click="removeIngredient(item, ingredient)"></div>
-                </div>
-            </div>
-        </content>
-    </expandable-section>
-</div>
+<section>
+    <div ng-repeat="item in model.items">
+        <expandable-section class="item-container">
+            <title>{{item.name}} - {{item.type}}</title>
+            <content>
+                <label>
+                    <input type="checkbox" ng-model="item.editManually" ng-change="toggleEditManually(item)"/>
+                    <span class="input-label">Edit manually</span>
+                </label>
+                <button class="action-btn positive small" ng-show="item.editManually" ng-click="addIngredient(item)">Add Ingredient</button>
+                <ul class="ingredients">
+                    <li ng-repeat="ingredient in item.ingredients" class="ingredient">
+                        <span ng-show="!item.editManually">
+                            {{ingredient.name}} - {{ingredient.count}}
+                        </span>
+                        <div class="edit-ingredient" ng-show="item.editManually">
+                            <reference-select
+                                model="ingredient.longName"
+                                signature="ingredient.signature"
+                                signatures="ingredientSignatures">
+                            </reference-select>
+                            <number-input model="ingredient.count" type="integer"></number-input>
+                            <div class="remove-item" ng-click="removeIngredient(item, ingredient)"></div>
+                        </div>
+                    </li>
+                </ul>
+            </content>
+        </expandable-section>
+    </div>
+</section>
