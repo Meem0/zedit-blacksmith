@@ -17,6 +17,7 @@ ngapp.run(function(workflowService) {
 
         $scope.$watch('model.weaponType', loadWeaponTemplate);
         $scope.$watch('model.material', loadWeaponTemplate);
+        loadWeaponTemplate();
     };
 
     workflowService.addView('setWeaponAttributes', {
