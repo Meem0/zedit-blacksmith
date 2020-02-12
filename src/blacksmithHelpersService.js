@@ -284,6 +284,13 @@ ngapp.service('blacksmithHelpersService', function(settingsService) {
         return 0;
     };
 
+    this.runOnReferenceRecord = function(reference, func, ...args) {
+        return xelib.WithHandle(
+            this.getRecordFromReference(reference),
+            id => id ? func(id, ...args) : null
+        );
+    };
+
     this.getRecordObjectSignature = function(recordObject) {
         if (typeof(recordObject) === 'object') {
             const recordHeader = recordObject['Record Header'];

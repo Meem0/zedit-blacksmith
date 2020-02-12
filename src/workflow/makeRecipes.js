@@ -1,4 +1,4 @@
-ngapp.run(function(workflowService, skyrimMaterialService, writeObjectToElementService) {
+ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialService, skyrimGearService, writeObjectToElementService) {
     let createRecipeObject = function(editorId, ingredients, perkReference, createdObjectReference, workbenchReference, createdObjectCount) {
         let recipeObject = {
             "Record Header": {
@@ -35,6 +35,57 @@ ngapp.run(function(workflowService, skyrimMaterialService, writeObjectToElementS
         return fileId;
     };
 
+    let getItemMaterial = function(handle) {
+        const materialKeywords = skyrimMaterialService.getMaterialKeywords();
+        const materialKeyword = materialKeywords.find(keyword => xelib.HasKeyword(handle, keyword));
+        return skyrimMaterialService.getMaterialForKeyword(materialKeyword);
+    };
+
+    let getItemType = function(handle) {
+        const itemTypeKeywords = skyrimGearService.getItemTypeKeywords();
+        const itemTypeKeyword = itemTypeKeywords.find(keyword => xelib.HasKeyword(handle, keyword));
+        return skyrimGearService.getItemTypeForKeyword(itemTypeKeyword);
+    };
+
+    const constructibleItemSignatures = ['AMMO', 'ARMO', 'WEAP'];
+
+    let getItemsFromSelectedNodes = function(selectedNodes) {
+        if (!selectedNodes) {
+            return [];
+        }
+
+        return selectedNodes.reduce((items, {handle}) => {
+            if (!blacksmithHelpersService.isMainRecord(handle)) {
+                return items;
+            }
+            if (!constructibleItemSignatures.includes(xelib.Signature(handle))) {
+                return items;
+            }
+
+            items.push({
+                reference: blacksmithHelpersService.getReferenceFromRecord(handle),
+                type: getItemType(handle),
+                get name() {
+                    return blacksmithHelpersService.runOnReferenceRecord(this.reference, xelib.FullName) || '';
+                },
+                get editorId() {
+                    return blacksmithHelpersService.runOnReferenceRecord(this.reference, xelib.EditorID) || '';
+                }
+            });
+            return items;
+        }, []);
+    };
+
+    let startWorkflow = function(model, scope) {
+        const selectedNodes = scope.modalOptions && Array.isArray(scope.modalOptions.selectedNodes) ? scope.modalOptions.selectedNodes : [];
+        if (!model.items) {
+            model.items = getItemsFromSelectedNodes(selectedNodes);
+        }
+        if (!model.material && selectedNodes.length > 0) {
+            model.material = getItemMaterial(selectedNodes[0].handle);
+        }
+    };
+
     let finishWorkflow = function(model) {
         if (model && model.recipes) {
             const perkReference = skyrimMaterialService.getMaterialSmithingPerk(model.material);
@@ -65,6 +116,7 @@ ngapp.run(function(workflowService, skyrimMaterialService, writeObjectToElementS
         label: 'Make Crafting Recipes',
         image: `${modulePath}/resources/images/Recipe.png`,
         games: [xelib.gmTES5, xelib.gmSSE],
+        start: startWorkflow,
         finish: finishWorkflow,
         stages: [{
             name: 'Select Plugin',
