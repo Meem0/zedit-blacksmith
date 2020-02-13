@@ -1,0 +1,14 @@
+<h2>{{::stage.name}}</h2>
+
+<div ng-repeat="itemGroup in itemGroups">
+    <input type="radio" ng-model="model.material" ng-value="itemGroup.material" ng-change="selectItemGroup()"/>
+    <span>{{::itemGroup.material}}</span>
+    <expandable-section>
+        <title>Items</title>
+        <content>
+            <div ng-repeat="item in itemGroup.items">
+                {{::item.name}}
+            </div>
+        </content>
+    </expandable-section>
+</div>

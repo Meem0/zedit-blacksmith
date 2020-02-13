@@ -65,6 +65,7 @@ ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialServ
             items.push({
                 reference: blacksmithHelpersService.getReferenceFromRecord(handle),
                 type: getItemType(handle),
+                material: getItemMaterial(handle),
                 get name() {
                     return blacksmithHelpersService.runOnReferenceRecord(this.reference, xelib.FullName) || '';
                 },
@@ -80,9 +81,6 @@ ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialServ
         const selectedNodes = scope.modalOptions && Array.isArray(scope.modalOptions.selectedNodes) ? scope.modalOptions.selectedNodes : [];
         if (!model.items) {
             model.items = getItemsFromSelectedNodes(selectedNodes);
-        }
-        if (!model.material && selectedNodes.length > 0) {
-            model.material = getItemMaterial(selectedNodes[0].handle);
         }
     };
 
@@ -119,11 +117,14 @@ ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialServ
         start: startWorkflow,
         finish: finishWorkflow,
         stages: [{
-            name: 'Select Plugin',
-            view: 'pluginSelector'
+            name: 'Select Material',
+            view: 'selectRecipeMaterial'
         }, {
             name: 'Edit Recipes',
             view: 'editRecipes'
+        }, {
+            name: 'Select Plugin',
+            view: 'pluginSelector'
         }]
     });
 });

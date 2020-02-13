@@ -104,13 +104,18 @@ ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialServ
     }
     */
     let editRecipesController = function($scope) {
-        $scope.model.recipes = $scope.model.items.map(item => ({
-            item: item,
-            editManually: false,
-            get editorId() {
-                return 'Recipe' + this.item.editorId;
+        $scope.model.recipes = $scope.model.items.reduce((recipes, item) => {
+            if (item.material === $scope.model.material) {
+                recipes.push({
+                    item: item,
+                    editManually: false,
+                    get editorId() {
+                        return 'Recipe' + this.item.editorId;
+                    }
+                });
             }
-        }));
+            return recipes;
+        }, []);
         $scope.model.components = getComponentsForMaterial($scope.model.material);
         $scope.ingredientSignatures = ingredientSignatures;
         const componentClass = skyrimMaterialService.getMaterialClass($scope.model.material);
