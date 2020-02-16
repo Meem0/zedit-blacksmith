@@ -39,7 +39,9 @@ ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialServ
     };
 
     let buildIngredientsList = function(components, itemType, componentClass) {
-        let ingredients = skyrimGearService.getRecipeAdditionalComponents(itemType, componentClass);
+        let ingredients = skyrimGearService.getRecipeAdditionalComponents(itemType, componentClass).map(
+            ({itemReference, count}) => createIngredient(itemReference, count)
+        );
         const groupedComponents = components.reduce((groupedComponents, component) => {
             if (component.itemReference) {
                 groupedComponents[component.type] = (groupedComponents[component.type] || []).concat(component.itemReference);

@@ -1,8 +1,6 @@
 ngapp.run(function(workflowService) {
     let selectRecipeMaterialController = function($scope) {
-        debugger;
         $scope.selectItemGroup = function() {
-            debugger;
             $scope.validateStage();
         };
 
