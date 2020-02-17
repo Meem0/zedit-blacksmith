@@ -18,7 +18,7 @@
 
 Material: {{model.material}}
 
-<section>
+<section ng-if="!model.makeTemperRecipes">
     <div ng-repeat="component in model.components">
         <label>
             <span class="input-label">{{component.type}}</span>
@@ -29,6 +29,17 @@ Material: {{model.material}}
             </reference-select>
         </label>
     </div>
+</section>
+
+<section ng-if="model.makeTemperRecipes">
+    <label>
+        <span class="input-label">Temper Ingredient</span>
+        <reference-select
+            model="model.temperIngredient.longName"
+            signature="model.temperIngredient.signature"
+            signatures="ingredientSignatures">
+        </reference-select>
+    </label>
 </section>
 
 <section>

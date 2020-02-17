@@ -5,7 +5,7 @@ ngapp.run(function(workflowService) {
         image: `${modulePath}/resources/images/Blacksmith.png`,
         games: [xelib.gmTES5, xelib.gmSSE],
         workflows: [
-            'makeWeapon', 'makeArmor', 'makeRecipes'
+            'makeWeapon', 'makeArmor', 'makeRecipes', 'makeTemperRecipes'
         ]
     });
 });

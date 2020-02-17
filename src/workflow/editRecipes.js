@@ -111,29 +111,42 @@ ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialServ
                 recipes.push({
                     item: item,
                     editManually: false,
+                    isTemper: $scope.model.makeTemperRecipes,
                     get editorId() {
-                        return 'Recipe' + this.item.editorId;
+                        return (this.isTemper ? 'Temper' : 'Recipe') + this.item.editorId;
                     }
                 });
             }
             return recipes;
         }, []);
-        $scope.model.components = getComponentsForMaterial($scope.model.material);
+
+        if ($scope.model.makeTemperRecipes) {
+            $scope.model.temperIngredient = createIngredient(skyrimMaterialService.getTemperIngredientForMaterial($scope.model.material), 1);
+        }
+        else {
+            $scope.model.components = getComponentsForMaterial($scope.model.material);
+        }
+
         $scope.ingredientSignatures = ingredientSignatures;
         const componentClass = skyrimMaterialService.getMaterialClass($scope.model.material);
 
-        $scope.$watch('model.components', function() {
-            $scope.model.recipes.forEach(recipe => {
-                if (!recipe.editManually) {
+        let rebuildRecipe = function(recipe) {
+            if (recipe && !recipe.editManually) {
+                if ($scope.model.makeTemperRecipes) {
+                    recipe.ingredients = [createIngredient($scope.model.temperIngredient.itemReference, $scope.model.temperIngredient.count)];
+                }
+                else {
                     recipe.ingredients = buildIngredientsList($scope.model.components, recipe.item.type, componentClass);
                 }
-            });
+            }
+        };
+
+        $scope.$watch($scope.model.makeTemperRecipes ? 'model.temperIngredient' : 'model.components', function() {
+            $scope.model.recipes.forEach(rebuildRecipe);
         }, true);
         
         $scope.toggleEditManually = function(recipe) {
-            if (!recipe.editManually) {
-                recipe.ingredients = buildIngredientsList($scope.model.components, recipe.item.type, componentClass);
-            }
+            rebuildRecipe(recipe);
         };
         
         $scope.addIngredient = function(recipe) {

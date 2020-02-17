@@ -1,5 +1,13 @@
 ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialService, skyrimGearService, writeObjectToElementService) {
-    let createRecipeObject = function(editorId, ingredients, perkReference, createdObjectReference, workbenchReference, createdObjectCount) {
+    let createRecipeObject = function({
+        editorId,
+        ingredients,
+        createdObjectReference,
+        workbenchReference,
+        createdObjectCount,
+        isTemper,
+        perkReference
+    }) {
         let recipeObject = {
             "Record Header": {
                 "Signature": "COBJ"
@@ -15,7 +23,22 @@ ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialServ
             "BNAM": workbenchReference,
             "NAM1": createdObjectCount
         };
-        if (perkReference) {
+        if (isTemper) {
+            recipeObject["Conditions"] = [{
+                "CTDA": {
+                    "Type": 33, // OR
+                    "Comparison Value": 1,
+                    "Function": 659, // EPTemperingItemIsEnchanted
+                }
+            }, {
+                "CTDA": {
+                    "Comparison Value": 1,
+                    "Function": 448, // HasPerk
+                    "Parameter #1": 'Skyrim.esm:05218E' // ArcaneBlacksmith
+                }
+            }];
+        }
+        else if (perkReference) {
             recipeObject["Conditions"] = [{
                 "CTDA": {
                     "Comparison Value": 1,
@@ -77,30 +100,40 @@ ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialServ
         }, []);
     };
 
-    let startWorkflow = function(model, scope) {
+    let startWorkflow = function(model, scope, makeTemperRecipes) {
         const selectedNodes = scope.modalOptions && Array.isArray(scope.modalOptions.selectedNodes) ? scope.modalOptions.selectedNodes : [];
         if (!model.items) {
             model.items = getItemsFromSelectedNodes(selectedNodes);
         }
+        model.makeTemperRecipes = makeTemperRecipes;
+    };
+
+    let getWorkbenchReference = function(isTemper, itemType) {
+        if (!isTemper) {
+            return 'Skyrim.esm:088105';
+        }
+        return skyrimGearService.isWeapon(itemType) ? 'Skyrim.esm:088108' : 'Skyrim.esm:0ADB78';
     };
 
     let finishWorkflow = function(model) {
         if (model && model.recipes) {
-            const perkReference = skyrimMaterialService.getMaterialSmithingPerk(model.material);
-            const workbenchReference = 'Skyrim.esm:088105';
             xelib.WithHandle(
                 getOrAddFile(model.plugin),
                 pluginId => {
                     xelib.AddAllMasters(pluginId);
                     model.recipes.forEach(recipe => {
-                        const recipeObject = createRecipeObject(
-                            recipe.editorId,
-                            recipe.ingredients,
-                            perkReference,
-                            recipe.item.reference,
-                            workbenchReference,
-                            1
-                        );
+                        let recipeProperties = {
+                            editorId: recipe.editorId,
+                            ingredients: recipe.ingredients,
+                            createdObjectReference: recipe.item.reference,
+                            workbenchReference: getWorkbenchReference(recipe.isTemper, recipe.item.type),
+                            createdObjectCount: 1,
+                            isTemper: recipe.isTemper
+                        };
+                        if (!recipe.isTemper) {
+                            recipeProperties.perkReference = skyrimMaterialService.getMaterialSmithingPerk(model.material);
+                        }
+                        const recipeObject = createRecipeObject(recipeProperties);
                         writeObjectToElementService.writeObjectToRecord(pluginId, recipeObject);
                     });
                     xelib.CleanMasters(pluginId);
@@ -114,13 +147,32 @@ ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialServ
         label: 'Make Crafting Recipes',
         image: `${modulePath}/resources/images/Recipe.png`,
         games: [xelib.gmTES5, xelib.gmSSE],
-        start: startWorkflow,
+        start: (model, scope) => startWorkflow(model, scope, /*makeTemperRecipes*/ false),
         finish: finishWorkflow,
         stages: [{
             name: 'Select Material',
             view: 'selectRecipeMaterial'
         }, {
             name: 'Edit Recipes',
+            view: 'editRecipes'
+        }, {
+            name: 'Select Plugin',
+            view: 'pluginSelector'
+        }]
+    });
+
+    workflowService.addWorkflow({
+        name: 'makeTemperRecipes',
+        label: 'Make Temper Recipes',
+        image: `${modulePath}/resources/images/Recipe.png`,
+        games: [xelib.gmTES5, xelib.gmSSE],
+        start: (model, scope) => startWorkflow(model, scope, /*makeTemperRecipes*/ true),
+        finish: finishWorkflow,
+        stages: [{
+            name: 'Select Material',
+            view: 'selectRecipeMaterial'
+        }, {
+            name: 'Edit Temper Recipes',
             view: 'editRecipes'
         }, {
             name: 'Select Plugin',

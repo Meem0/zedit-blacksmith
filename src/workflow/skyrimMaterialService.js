@@ -68,6 +68,12 @@ ngapp.service('skyrimMaterialService', function(skyrimReferenceService) {
         return componentSlots;
     };
 
+    this.getTemperIngredientForMaterial = function(material) {
+        const components = this.getComponentsForMaterial(material);
+        const primaryComponent = components.find(({type}) => type === 'Primary');
+        return primaryComponent ? primaryComponent.itemReference : '';
+    };
+
     this.getMaterialSmithingPerk = function(material) {
         return materials[material] ? skyrimReferenceService.getReferenceFromName(materials[material].perk) : '';
     };
