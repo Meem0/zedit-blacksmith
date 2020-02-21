@@ -1,21 +1,22 @@
 ngapp.run(function(workflowService) {
     let setWeaponAttributesController = function($scope, skyrimWeaponService) {
         let loadWeaponTemplate = function() {
-            if (!$scope.model.weaponType || !$scope.model.material) {
+            if (!$scope.input.weaponType || !$scope.model.material) {
                 return;
             }
 
-            const attributes = skyrimWeaponService.getWeaponAttributes($scope.model.weaponType, $scope.model.material);
+            const attributes = skyrimWeaponService.getWeaponAttributes($scope.input.weaponType, $scope.model.material);
             Object.assign($scope.model.weapon, attributes);
         };
         
-        $scope.model.weapon = {
-            'Record Header': {
-                Signature: 'WEAP'
-            }
-        };
+        if (!$scope.model.weapon) {
+            $scope.model.weapon = {
+                'Record Header': {
+                    Signature: 'WEAP'
+                }
+            };
+        }
 
-        $scope.$watch('model.weaponType', loadWeaponTemplate);
         $scope.$watch('model.material', loadWeaponTemplate);
         loadWeaponTemplate();
     };
@@ -23,6 +24,11 @@ ngapp.run(function(workflowService) {
     workflowService.addView('setWeaponAttributes', {
         templateUrl: `${moduleUrl}/partials/setWeaponAttributes.html`,
         controller: setWeaponAttributesController,
-        validate: () => true
+        requireInput: ['weaponType'],
+        process: function(input, model) {
+            if (model.weapon && model.weapon['EDID - Editor ID']) {
+                return { weapon: model.weapon };
+            }
+        }
     });
 });
