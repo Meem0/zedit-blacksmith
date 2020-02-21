@@ -1,0 +1,49 @@
+conceptualize workflow as input + selections = output
+	- inputs to a stage:
+		- previous stage outputs?
+		- workflow inputs + previous stage outputs?
+	- each stage has a function "process", (inputs, selection) => output
+	- to calculate output of workflow:
+		{
+			outputN = stageN.process(inputN, selections[stageN])
+			inputN+1 = Object.assign({}, inputN, outputN)
+		}
+		- where input0 is the input to the workflow, and inputN is the output of a workflow with N stages
+	- memoization:
+		- each stage specifies the set of properties of input that it is interested in
+		- only call process if a stage's selections have changed, or the subset of input that it cares about has changed
+
+
+function processWorkflow(input) {
+	let model = input;
+	let stage;
+	while (true) {
+		stage = getNextStage(stage);
+		model = processStage(stage, model, selections[stage], cache[stage]);
+	}
+}
+
+function processStage(stage, model, selections, cache) {
+	input = model[...stage.inputProperties]
+	if (input === cache.input && selections === cache.selections) {
+		output = cache.output
+	}
+	else {
+		output = stage.process(input, selections)
+		cache.input = input
+		cache.selections = selections
+		cache.output = output
+	}
+	return Object.assign({}, model, output)
+}
+
+
+subflows
+
+spawn subflow (e.g. button press to immediately enter subflow):
+	returns a result if completed
+	destroys model if cancelled (back out to parent flow)
+
+include subflow (e.g. select option to add subflow in a future step)
+	subflow is "inline"
+		can navigate back / forth
