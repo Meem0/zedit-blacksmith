@@ -1,28 +1,34 @@
 ngapp.run(function(workflowService) {
     let setArmorAttributesController = function($scope, skyrimArmorService) {
         let loadArmorTemplate = function() {
-            if (!$scope.model.armorType || !$scope.model.material) {
+            if (!$scope.input.armorType || !$scope.model.material) {
                 return;
             }
 
-            const attributes = skyrimArmorService.getArmorAttributes($scope.model.armorType, $scope.model.material);
+            const attributes = skyrimArmorService.getArmorAttributes($scope.input.armorType, $scope.model.material);
             Object.assign($scope.model.armor, attributes);
         };
         
-        $scope.model.armor = {
-            'Record Header': {
-                Signature: 'ARMO'
-            }
-        };
+        if (!$scope.model.armor) {
+            $scope.model.armor = {
+                'Record Header': {
+                    Signature: 'ARMO'
+                }
+            };
+        }
 
-        $scope.$watch('model.armorType', loadArmorTemplate);
         $scope.$watch('model.material', loadArmorTemplate);
-        loadWeaponTemplate();
+        loadArmorTemplate();
     };
 
     workflowService.addView('setArmorAttributes', {
         templateUrl: `${moduleUrl}/partials/setArmorAttributes.html`,
         controller: setArmorAttributesController,
-        validate: () => true
+        requireInput: ['armorType'],
+        process: function(input, model) {
+            if (model.armor && model.armor['EDID - Editor ID']) {
+                return { armor: model.armor };
+            }
+        }
     });
 });
