@@ -4,7 +4,7 @@ ngapp.run(function(workflowService) {
             $scope.validateStage();
         };
 
-        $scope.itemGroups = $scope.model.items.reduce((itemGroups, item) => {
+        $scope.itemGroups = $scope.input.items.reduce((itemGroups, item) => {
             let itemGroup = itemGroups.find(({material}) => item.material === material);
             if (!itemGroup) {
                 itemGroup = {
@@ -21,6 +21,13 @@ ngapp.run(function(workflowService) {
     workflowService.addView('selectRecipeMaterial', {
         templateUrl: `${moduleUrl}/partials/selectRecipeMaterial.html`,
         controller: selectRecipeMaterialController,
-        validate: model => model.material
+        requireInput: ['items'],
+        process: function(input, model) {
+            if (model.material && input.items) {
+                if (input.items.some(({material}) => material === model.material)) {
+                    return { material: model.material };
+                }
+            }
+        }
     });
 });
