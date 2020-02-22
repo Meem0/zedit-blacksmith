@@ -16,9 +16,9 @@
     }
 </style>
 
-Material: {{model.material}}
+Material: {{input.material}}
 
-<section ng-if="!model.makeTemperRecipes">
+<section ng-if="!input.makeTemperRecipes">
     <div ng-repeat="component in model.components">
         <label>
             <span class="input-label">{{component.type}}</span>
@@ -31,7 +31,7 @@ Material: {{model.material}}
     </div>
 </section>
 
-<section ng-if="model.makeTemperRecipes">
+<section ng-if="input.makeTemperRecipes">
     <label>
         <span class="input-label">Temper Ingredient</span>
         <reference-select
