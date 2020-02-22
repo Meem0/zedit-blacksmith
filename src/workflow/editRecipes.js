@@ -71,17 +71,40 @@ ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialServ
         });
         return ingredients;
     };
+    
+    let generateRecipes = function(items, material, isTemper, existingRecipes) {
+        return items.reduce((recipes, item) => {
+            if (item.material === material) {
+                const existingRecipe = existingRecipes.find(existingRecipe => existingRecipe.item.reference === item.reference);
+                
+                recipes.push({
+                    item: item,
+                    ingredients: existingRecipe ? existingRecipe.ingredients : [],
+                    editManually: existingRecipe ? existingRecipe.editManually : false,
+                    isTemper: isTemper,
+                    get editorId() {
+                        return (this.isTemper ? 'Temper' : 'Recipe') + this.item.editorId;
+                    }
+                });
+            }
+            return recipes;
+        }, []);
+    };
 
     /*
     $scope: {
+        input: {
+            material: (e.g. "Iron"),
+            items: [{
+                reference: (e.g. "Skyrim.esm:012E49"),
+                name: (e.g. "Iron Sword") (get from reference),
+                editorId: (e.g. "WeaponIronSword") (get from reference)
+                type: (e.g. "Sword")
+            }]
+        }
         model: {
             recipes: [
-                item: {
-                    reference: (e.g. "Skyrim.esm:012E49"),
-                    name: (e.g. "Iron Sword") (get from reference),
-                    editorId: (e.g. "WeaponIronSword") (get from reference)
-                    type: (e.g. "Sword")
-                },
+                item: { (same as input.items) },
                 ingredients: [
                     {
                         itemReference: (e.g. "Skyrim.esm:05ACE4"),
@@ -91,9 +114,10 @@ ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialServ
                         signature: (e.g. "MISC")
                     }
                 ],
-                editManually: (true / false)
+                editManually: (true / false),
+                isTemper: (true / false),
+                editorId: (e.g. "RecipeIronSword") (get from item.editorId and isTemper)
             ],
-            material: (e.g. "Iron"),
             components: [
                 {
                     type: (e.g. "Major"),
@@ -101,38 +125,43 @@ ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialServ
                     longName: (e.g. "IngotIron "Iron Ingot" [MISC:Skyrim.esm:05ACE4]") (get / set from itemReference)
                     signature: (e.g. "MISC")
                 }
-            ]
+            ],
+            temperItem: {
+                itemReference: (e.g. "Skyrim.esm:05ACE4"),
+                name: (e.g. "Iron Ingot") (get from itemReference),
+                longName: (e.g. "IngotIron "Iron Ingot" [MISC:Skyrim.esm:05ACE4]") (get / set from itemReference),
+                count: (e.g. 2),
+                signature: (e.g. "MISC")
+            }
         }
     }
     */
     let editRecipesController = function($scope) {
-        $scope.model.recipes = $scope.model.items.reduce((recipes, item) => {
-            if (item.material === $scope.model.material) {
-                recipes.push({
-                    item: item,
-                    editManually: false,
-                    isTemper: $scope.model.makeTemperRecipes,
-                    get editorId() {
-                        return (this.isTemper ? 'Temper' : 'Recipe') + this.item.editorId;
-                    }
-                });
-            }
-            return recipes;
-        }, []);
+        $scope.model.recipes = generateRecipes(
+            $scope.input.items,
+            $scope.input.material,
+            $scope.input.makeTemperRecipes,
+            $scope.model.recipes
+        );
 
-        if ($scope.model.makeTemperRecipes) {
-            $scope.model.temperIngredient = createIngredient(skyrimMaterialService.getTemperIngredientForMaterial($scope.model.material), 1);
+        const inputMaterialChanged = $scope.model.cachedInputMaterial !== $scope.input.material;
+        if ($scope.input.makeTemperRecipes && (inputMaterialChanged || !$scope.model.temperIngredient)) {
+            $scope.model.temperIngredient = createIngredient(
+                skyrimMaterialService.getTemperIngredientForMaterial($scope.input.material),
+                1
+            );
         }
-        else {
-            $scope.model.components = getComponentsForMaterial($scope.model.material);
+        else if (!$scope.input.makeTemperRecipes && (inputMaterialChanged || !$scope.model.components)) {
+            $scope.model.components = getComponentsForMaterial($scope.input.material);
         }
+        $scope.model.cachedInputMaterial = $scope.input.material;
 
         $scope.ingredientSignatures = ingredientSignatures;
-        const componentClass = skyrimMaterialService.getMaterialClass($scope.model.material);
+        const componentClass = skyrimMaterialService.getMaterialClass($scope.input.material);
 
         let rebuildRecipe = function(recipe) {
             if (recipe && !recipe.editManually) {
-                if ($scope.model.makeTemperRecipes) {
+                if ($scope.input.makeTemperRecipes) {
                     recipe.ingredients = [createIngredient($scope.model.temperIngredient.itemReference, $scope.model.temperIngredient.count)];
                 }
                 else {
@@ -141,7 +170,7 @@ ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialServ
             }
         };
 
-        $scope.$watch($scope.model.makeTemperRecipes ? 'model.temperIngredient' : 'model.components', function() {
+        $scope.$watch($scope.input.makeTemperRecipes ? 'model.temperIngredient' : 'model.components', function() {
             $scope.model.recipes.forEach(rebuildRecipe);
         }, true);
         
@@ -164,6 +193,24 @@ ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialServ
     workflowService.addView('editRecipes', {
         templateUrl: `${moduleUrl}/partials/editRecipes.html`,
         controller: editRecipesController,
-        validate: () => true
+        requireInput: ['items', 'material', 'makeTemperRecipes'],
+        validateInput: function({items, material, makeTemperRecipes}) {
+            if (!Array.isArray(items)) return false;
+            if (typeof(material) !== 'string') return false;
+            if (typeof(makeTemperRecipes) !== 'boolean') return false;
+            return true;
+        },
+        process: function(input, model) {
+            if (!Array.isArray(model.recipes)) {
+                return;
+            }
+            const outputRecipes = generateRecipes(
+                input.items,
+                input.material,
+                input.makeTemperRecipes,
+                model.recipes
+            );
+            return { recipes: outputRecipes };
+        }
     });
 });
