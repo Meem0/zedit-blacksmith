@@ -32,12 +32,14 @@ ngapp.run(function(workflowService, skyrimWeaponService, writeObjectToElementSer
         }, {
             name: 'Select a Weapon Type',
             view: 'tileSelect',
-            modelKey: 'weaponType',
-            tiles: () => {
-                return getWeaponTypes().map(weaponType => ({
-                    image: `${moduleUrl}/resources/images/${weaponType}.png`,
-                    label: weaponType
-                }));
+            input: {
+                modelKey: 'weaponType',
+                tiles: () => {
+                    return getWeaponTypes().map(weaponType => ({
+                        image: `${moduleUrl}/resources/images/${weaponType}.png`,
+                        label: weaponType
+                    }));
+                }
             }
         }, {
             name: 'Set Weapon Attributes',

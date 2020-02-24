@@ -100,12 +100,16 @@ ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialServ
         }, []);
     };
 
-    let startWorkflow = function(model, scope, makeTemperRecipes) {
-        const selectedNodes = scope.modalOptions && Array.isArray(scope.modalOptions.selectedNodes) ? scope.modalOptions.selectedNodes : [];
-        if (!model.items) {
-            model.items = getItemsFromSelectedNodes(selectedNodes);
+    let startWorkflow = function(input, scope, makeTemperRecipes) {
+        let items = input.items;
+        if (!items) {
+            const selectedNodes = scope.modalOptions && Array.isArray(scope.modalOptions.selectedNodes) ? scope.modalOptions.selectedNodes : [];
+            items = getItemsFromSelectedNodes(selectedNodes);
         }
-        model.makeTemperRecipes = makeTemperRecipes;
+        return {
+            makeTemperRecipes: makeTemperRecipes,
+            items
+        };
     };
 
     let getWorkbenchReference = function(isTemper, itemType) {
@@ -147,7 +151,7 @@ ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialServ
         label: 'Make Crafting Recipes',
         image: `${modulePath}/resources/images/Recipe.png`,
         games: [xelib.gmTES5, xelib.gmSSE],
-        start: (model, scope) => startWorkflow(model, scope, /*makeTemperRecipes*/ false),
+        start: (input, scope) => startWorkflow(input, scope, /*makeTemperRecipes*/ false),
         finish: finishWorkflow,
         stages: [{
             name: 'Select Material',
@@ -166,7 +170,7 @@ ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialServ
         label: 'Make Temper Recipes',
         image: `${modulePath}/resources/images/Recipe.png`,
         games: [xelib.gmTES5, xelib.gmSSE],
-        start: (model, scope) => startWorkflow(model, scope, /*makeTemperRecipes*/ true),
+        start: (scope) => startWorkflow(scope, /*makeTemperRecipes*/ true),
         finish: finishWorkflow,
         stages: [{
             name: 'Select Material',

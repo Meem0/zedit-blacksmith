@@ -1,3 +1,36 @@
+if we successfully processed N stages, we are able to determine what the N+1th stage is
+what about going back and changing something?
+e.g. 10 stages
+	- successfully completed up to stage 8
+	- go back to stage 4
+	- change stage 4 so that stage 6 is no longer completable
+	- do not want to wipe the model of stages 7 and 8
+	- stages 7 and 8 should still appear in the roadmap, but cannot navigate to them
+
+every time we process the workflow, rebuild the roadmap:
+	- stage = get next stage
+	- process stage (input, model)
+	- set stage status (complete / incomplete)
+	- if stage is complete, move to next stage
+	- if stage is incomplete
+		- compare new roadmap to previous roadmap
+		- if all N elements of new roadmap match first N elements of previous roadmap
+			- append remaining elements of previous roadmap to new
+			- set all appended stages to unavailable
+
+stage validation
+some stages might not let you leave until certain conditions have been met - "exit criteria"
+	- e.g. a tile is selected in tileSelect
+some stages might not be available to enter until certain conditions have been met - "entry criteria"
+	- e.g. editRecipes needs a material to be set
+Q: are entry criteria unnecessary?  every entry criterion can be replaced with an exit criterion?
+Q: if there are only exit criteria, does cross-stage validation become unnecessary?  only need to validate current stage?
+
+stage validation feedback:
+instead of errors inline with form, use a collapsable message box that shows a list of errors
+
+
+
 conceptualize workflow as input + selections = output
 	- inputs to a stage:
 		- previous stage outputs?

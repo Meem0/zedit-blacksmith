@@ -141,7 +141,7 @@ ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialServ
             $scope.input.items,
             $scope.input.material,
             $scope.input.makeTemperRecipes,
-            $scope.model.recipes
+            $scope.model.recipes || []
         );
 
         const inputMaterialChanged = $scope.model.cachedInputMaterial !== $scope.input.material;
@@ -194,12 +194,6 @@ ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialServ
         templateUrl: `${moduleUrl}/partials/editRecipes.html`,
         controller: editRecipesController,
         requireInput: ['items', 'material', 'makeTemperRecipes'],
-        validateInput: function({items, material, makeTemperRecipes}) {
-            if (!Array.isArray(items)) return false;
-            if (typeof(material) !== 'string') return false;
-            if (typeof(makeTemperRecipes) !== 'boolean') return false;
-            return true;
-        },
         process: function(input, model) {
             if (!Array.isArray(model.recipes)) {
                 return;

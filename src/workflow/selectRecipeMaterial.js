@@ -1,9 +1,5 @@
 ngapp.run(function(workflowService) {
     let selectRecipeMaterialController = function($scope) {
-        $scope.selectItemGroup = function() {
-            $scope.validateStage();
-        };
-
         $scope.itemGroups = $scope.input.items.reduce((itemGroups, item) => {
             let itemGroup = itemGroups.find(({material}) => item.material === material);
             if (!itemGroup) {

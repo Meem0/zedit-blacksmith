@@ -2,7 +2,7 @@
 
 <div ng-repeat="itemGroup in itemGroups">
     <label>
-        <input type="radio" ng-model="model.material" ng-value="itemGroup.material" ng-change="selectItemGroup()"/>
+        <input type="radio" ng-model="model.material" ng-value="itemGroup.material"/>
         <span>{{::itemGroup.material}}</span>
     </label>
     <expandable-section>
