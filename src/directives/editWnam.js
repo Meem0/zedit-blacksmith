@@ -16,7 +16,7 @@ ngapp.directive('editWnam', function(elementSchemaService) {
             model: '=',
             editorIdBasedOn: '<'
         },
-        templateUrl: `${modulePath}/partials/editWnam.html`,
+        templateUrl: `${modulePath}/partials/directives/editWnam.html`,
         link: editWnamLink
     }
 });

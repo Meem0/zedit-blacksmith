@@ -13,7 +13,7 @@ ngapp.directive('editEditorId', function() {
             model: '=',
             basedOn: '<?'
         },
-        templateUrl: `${modulePath}/partials/editEditorId.html`,
+        templateUrl: `${modulePath}/partials/directives/editEditorId.html`,
         link: editEditorIdLink
     }
 });

@@ -45,7 +45,7 @@ ngapp.directive('editPath', function() {
             model: '=',
             type: '@'
         },
-        templateUrl: `${modulePath}/partials/editPath.html`,
+        templateUrl: `${modulePath}/partials/directives/editPath.html`,
         link: editPathLink
     }
 });

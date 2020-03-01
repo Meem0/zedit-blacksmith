@@ -22,7 +22,7 @@ ngapp.run(function(workflowService) {
     };
 
     workflowService.addView('setWeaponAttributes', {
-        templateUrl: `${moduleUrl}/partials/setWeaponAttributes.html`,
+        templateUrl: `${moduleUrl}/partials/views/setWeaponAttributes.html`,
         controller: setWeaponAttributesController,
         requireInput: ['weaponType'],
         process: function(input, model) {

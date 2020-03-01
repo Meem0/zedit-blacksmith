@@ -15,7 +15,7 @@ ngapp.run(function(workflowService) {
     };
 
     workflowService.addView('selectRecipeMaterial', {
-        templateUrl: `${moduleUrl}/partials/selectRecipeMaterial.html`,
+        templateUrl: `${moduleUrl}/partials/views/selectRecipeMaterial.html`,
         controller: selectRecipeMaterialController,
         requireInput: ['items'],
         process: function(input, model) {

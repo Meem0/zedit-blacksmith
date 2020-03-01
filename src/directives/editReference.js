@@ -19,7 +19,7 @@ ngapp.directive('editReference', function() {
             model: '=',
             signature: '@'
         },
-        templateUrl: `${modulePath}/partials/editReference.html`,
+        templateUrl: `${modulePath}/partials/directives/editReference.html`,
         transclude: true
     }
 });

@@ -11,7 +11,7 @@ ngapp.directive('editMaterial', function(skyrimMaterialService) {
         scope: {
             model: '='
         },
-        templateUrl: `${modulePath}/partials/editMaterial.html`,
+        templateUrl: `${modulePath}/partials/directives/editMaterial.html`,
         link: editMaterialLink
     }
 });

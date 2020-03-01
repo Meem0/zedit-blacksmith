@@ -191,7 +191,7 @@ ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialServ
     };
 
     workflowService.addView('editRecipes', {
-        templateUrl: `${moduleUrl}/partials/editRecipes.html`,
+        templateUrl: `${moduleUrl}/partials/views/editRecipes.html`,
         controller: editRecipesController,
         requireInput: ['items', 'material', 'makeTemperRecipes'],
         process: function(input, model) {
