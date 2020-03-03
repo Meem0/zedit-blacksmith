@@ -5,7 +5,10 @@ ngapp.run(function(workflowService) {
         image: `${modulePath}/resources/images/Blacksmith.png`,
         games: [xelib.gmTES5, xelib.gmSSE],
         workflows: [
-            'makeWeapon', 'makeArmor', 'makeRecipes', 'makeTemperRecipes'
-        ]
+            'makeWeapons', 'makeArmor', 'makeRecipes', 'makeTemperRecipes', 'makeWeapon'
+        ],
+        getTheme: function(theme) {
+            return `${modulePath}\\css\\${theme}`;
+        }
     });
 });

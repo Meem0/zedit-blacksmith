@@ -3,6 +3,7 @@ const del = require('del');
 const gulp = require('gulp');
 const include = require('gulp-include');
 const rename = require('gulp-rename');
+const sass = require('gulp-sass');
 const zip = require('gulp-zip');
 const merge = require('merge-stream');
 
@@ -22,13 +23,17 @@ function build() {
     let resources = gulp.src('resources/**/*')
         .pipe(gulp.dest('dist/resources'));
 
+    let css = gulp.src('stylesheets/themes/*.scss')
+        .pipe(sass().on('error', console.log))
+        .pipe(gulp.dest('dist/css'));
+
     let docs = gulp.src('docs/*.html')
         .pipe(gulp.dest('dist/docs'));
 
     let moduleJson = gulp.src('module.json')
         .pipe(gulp.dest('dist'));
     
-    return merge(scripts, partials, resources, docs, moduleJson);
+    return merge(scripts, partials, resources, css, docs, moduleJson);
 }
 
 function release() {

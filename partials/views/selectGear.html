@@ -1,0 +1,18 @@
+<button class="action-btn positive small" ng-click="addItem()">Add Item</button>
+<div ng-repeat="item in model.items">
+    <div class="gear-item">
+        <label>
+            <span class="input-label">Name</span>
+            <input type="text" ng-model="item.name" />
+        </label>
+        <label>
+            <span class="input-label">Type</span>
+            <select ng-model="item.type">
+                <option ng-repeat="itemType in itemTypes">{{::itemType}}</option>
+            </select>
+        </label>
+        <edit-material model="item.material"></edit-material>
+        <edit-path model="item.nif" type="mesh"></edit-path>
+        <div class="remove-item" ng-click="removeItem(item)"></div>
+    </div>
+</div>

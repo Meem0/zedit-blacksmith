@@ -2,6 +2,10 @@ ngapp.service('skyrimGearService', function(skyrimReferenceService) {
     let armorTypes = fh.loadJsonFile(`${modulePath}/resources/armorTypes.json`);
     let weaponTypes = fh.loadJsonFile(`${modulePath}/resources/weaponTypes.json`);
     let itemTypes = Object.assign({}, armorTypes, weaponTypes);
+    let gearCategories = {
+        armor: armorTypes,
+        weapon: weaponTypes
+    };
     let recipeItemTypes = fh.loadJsonFile(`${modulePath}/resources/recipeItemTypes.json`);
 
     this.getItemTypeKeywords = function() {
@@ -18,6 +22,10 @@ ngapp.service('skyrimGearService', function(skyrimReferenceService) {
 
     this.isWeapon = function(itemType) {
         return Object.keys(weaponTypes).includes(itemType);
+    };
+
+    this.getItemTypesForGearCategory = function(gearCategory) {
+        return gearCategories[gearCategory] ? Object.keys(gearCategories[gearCategory]) : [];
     };
 
     let getItemRecipeDefinition = function(itemType, componentClass) {

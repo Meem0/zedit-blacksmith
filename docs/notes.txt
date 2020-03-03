@@ -1,25 +1,3 @@
-$scope.selectModule = function(module) {
-	$scope.moduleName = module.name;
-	
-	const linkElementId = `workflow${module.name}Theme`;
-	let linkElement = document.getElementById(linkElementId);
-	if (!linkElement) {
-		let headElement = document.getElementsByTagName('head')[0];
-		if (headElement) {
-			let ngHeadElement = angular.element(headElement);
-			ngHeadElement.append(`<link id="${linkElementId}" rel="stylesheet" type="text/css">`);
-			linkElement = document.getElementById(linkElementId);
-		}
-	}
-	if (linkElement) {
-		let ngLinkElement = angular.element(linkElement);
-		ngLinkElement.attr('href', module.cssPath);
-	}
-};
-
-
-
-
 if we successfully processed N stages, we are able to determine what the N+1th stage is
 what about going back and changing something?
 e.g. 10 stages
