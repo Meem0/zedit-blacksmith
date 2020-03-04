@@ -1,3 +1,56 @@
+edit gear
+input: [{name, item type, material}, ...]
+
+entry for each piece of gear
+"Advanced" button that opens a page based on creation kit editor
+
+Q: set to defaults button?
+Q: can some properties be edited outside of the advanced editor?
+	- yes, important information is visible at a glance
+	- also conveys to the user that selecting a material and item type pre-filled some data
+Q: why not merge with the gear select view?
+	- simplifies the experience, don't have to worry about overwriting attributes when you change material or item type
+Q: table or list of boxes?
+	- could have a toggle at the top
+
+every property has a default value, optional override value
+	- generic class for attributes?
+		- name
+		- set default value
+		- set custom value
+		- get value (custom || default)
+		- validate (text, number)
+		- reset to default / clear custom value
+	- store attributes in an array, display as toggleable columns in grid
+	- property editors have a reset button
+
+item.attributes: {
+	damage
+	weight
+	value
+	critical damage
+	reach
+	...
+}
+attributes are anything in the spreadsheet in xedit?
+attributes are anything that can be reset to default?
+	- e.g. equip type, skill, audio
+
+
+how do we get default values?
+from item type
+	- e.g. skill, audio
+from item type * material
+	- e.g. damage, weight, value
+from material
+	- any?
+
+
+when creating custom item types / materials, need to specify a base
+
+
+
+
 if we successfully processed N stages, we are able to determine what the N+1th stage is
 what about going back and changing something?
 e.g. 10 stages
