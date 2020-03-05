@@ -25,6 +25,7 @@ ngapp.run(function(workflowService, skyrimGearService) {
     workflowService.addView('selectGear', {
         templateUrl: `${moduleUrl}/partials/views/selectGear.html`,
         controller: selectGearController,
+        requireInput: ['gearCategory'],
         process: function(input, model) {
             const itemTypes = getItemTypes(input.gearCategory);
             let gearSelections = [];
