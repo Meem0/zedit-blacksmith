@@ -1,24 +1,24 @@
 ngapp.run(function(workflowService) {
     let setAttribute = function(...keys) {
-        return function(recordObject, value) {
+        let setDeep = function(obj, val, keys) {
             if (keys.length > 1) {
                 const key = keys.shift();
-                if (!recordObject[key]) {
-                    recordObject[key] = {};
+                if (!obj[key]) {
+                    obj[key] = {};
                 }
-                setDeep(recordObject[key], value, ...keys);
+                setDeep(obj[key], val, keys);
             }
             else if (keys.length === 1) {
-                recordObject[keys[0]] = value;
+                obj[keys[0]] = val;
             }
+        };
+        return function(recordObject, value) {
+            setDeep(recordObject, value, keys);
         };
     };
 
     const attributes = {
-        nif: {
-            addToRecordObject: setAttribute('Model', 'MODL')
-        },
-        equipType: {
+        /*equipType: {
             addToRecordObject: setAttribute('ETYP')
         },
         blockBashImpactDataSet: {
@@ -44,16 +44,25 @@ ngapp.run(function(workflowService) {
         },
         unequipSound: {
             addToRecordObject: setAttribute('NAM8')
-        },
+        },*/
         goldValue: {
-            addToRecordObject: setAttribute('DATA', 'Value')
+            addToRecordObject: setAttribute('DATA', 'Value'),
+            getDefaultValue: function() {
+                return 0;
+            }
         },
         weight: {
-            addToRecordObject: setAttribute('DATA', 'Weight')
+            addToRecordObject: setAttribute('DATA', 'Weight'),
+            getDefaultValue: function() {
+                return 0;
+            }
         },
         damage: {
-            addToRecordObject: setAttribute('DATA', 'Damage')
-        },
+            addToRecordObject: setAttribute('DATA', 'Damage'),
+            getDefaultValue: function() {
+                return 0;
+            }
+        }/*,
         animationType: {
             addToRecordObject: setAttribute('DNAM', 'Animation Type')
         },
@@ -71,23 +80,40 @@ ngapp.run(function(workflowService) {
         },
         percentMultiplier: {
             addToRecordObject: setAttribute('CRDT', '% Mult')
-        }
+        }*/
+    };
+
+    let getAttributeValue = function(attributeName, modelAttributes) {
+        const modelValue = modelAttributes[attributeName];
+        return modelValue !== undefined ? modelValue : attributes[attributeName].getDefaultValue();
     };
 
     let setItemAttributesController = function($scope) {
+        if (!$scope.model.attributes) {
+            $scope.model.attributes = {};
+        }
 
+        $scope.attributes = Object.keys(attributes).reduce((attributes, attributeName) => {
+            Object.defineProperty(attributes, attributeName, {
+                get() {
+                    return getAttributeValue(attributeName, $scope.model.attributes);
+                },
+                set(value) {
+                    $scope.model.attributes[attributeName] = value;
+                }
+            });
+            return attributes;
+        }, {});
     };
 
     workflowService.addView('setItemAttributes', {
         templateUrl: `${moduleUrl}/partials/views/setItemAttributes.html`,
         controller: setItemAttributesController,
         process: function(input, model) {
-            let outputAttributes = {};
-
-            // add default attributes to output
-            // override with model
-
-            // Object.keys(model.attributes).forEach(attribute => outputAttributes[attribute]);
+            return Object.keys(attributes).reduce((attributes, attributeName) => {
+                attributes[attributeName] = getAttributeValue(attributeName, model.attributes);
+                return attributes;
+            }, {});
         }
     });
 });
