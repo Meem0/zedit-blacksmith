@@ -23,7 +23,7 @@ function build() {
     let resources = gulp.src('resources/**/*')
         .pipe(gulp.dest('dist/resources'));
 
-    let css = gulp.src('stylesheets/*.scss')
+    let css = gulp.src('stylesheets/themes/*.scss')
         .pipe(sass().on('error', console.log))
         .pipe(gulp.dest('dist/css'));
 

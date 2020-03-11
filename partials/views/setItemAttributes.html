@@ -1,14 +1,17 @@
-<label>
-    <span class="input-label">Gold Value</span>
-    <number-input model="attributes.goldValue" type="integer"></number-input>
-</label>
-
-<label>
-    <span class="input-label">Weight</span>
-    <number-input model="attributes.weight" type="decimal"></number-input>
-</label>
-
-<label>
-    <span class="input-label">Damage</span>
-    <number-input model="attributes.damage" type="integer"></number-input>
-</label>
+<div ng-repeat="itemAttributeValues in itemAttributeValuesArray">
+    <div class="gear-item">
+        <h3>{{::itemAttributeValues.name}} ({{::itemAttributeValues.editorId}})</h3>
+        <label>
+            <span class="input-label">Gold Value</span>
+            <number-input model="itemAttributeValues.attributeValues.goldValue" type="integer"></number-input>
+        </label>
+        <label>
+            <span class="input-label">Weight</span>
+            <number-input model="itemAttributeValues.attributeValues.weight" type="decimal"></number-input>
+        </label>
+        <label>
+            <span class="input-label">Damage</span>
+            <number-input model="itemAttributeValues.attributeValues.damage" type="integer"></number-input>
+        </label>
+    </div>
+</div>

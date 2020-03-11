@@ -1,119 +1,151 @@
 ngapp.run(function(workflowService) {
-    let setAttribute = function(...keys) {
-        let setDeep = function(obj, val, keys) {
-            if (keys.length > 1) {
-                const key = keys.shift();
-                if (!obj[key]) {
-                    obj[key] = {};
-                }
-                setDeep(obj[key], val, keys);
-            }
-            else if (keys.length === 1) {
-                obj[keys[0]] = val;
-            }
-        };
-        return function(recordObject, value) {
-            setDeep(recordObject, value, keys);
-        };
-    };
-
-    const attributes = {
+    const weaponAttributeDefinitions = {
         /*equipType: {
-            addToRecordObject: setAttribute('ETYP')
+            keyPath: ['ETYP']
         },
         blockBashImpactDataSet: {
-            addToRecordObject: setAttribute('BIDS')
+            keyPath: ['BIDS']
         },
         alternateBlockMaterial: {
-            addToRecordObject: setAttribute('BAMT')
+            keyPath: ['BAMT']
         },
         keywords: {
-            addToRecordObject: setAttribute('KWDA')
+            keyPath: ['KWDA']
         },
         impactDataSet: {
-            addToRecordObject: setAttribute('INAM')
+            keyPath: ['INAM']
         },
         nif1st: {
-            addToRecordObject: setAttribute('WNAM')
+            keyPath: ['WNAM']
         },
         attackFailSound: {
-            addToRecordObject: setAttribute('TNAM')
+            keyPath: ['TNAM']
         },
         equipSound: {
-            addToRecordObject: setAttribute('NAM9')
+            keyPath: ['NAM9']
         },
         unequipSound: {
-            addToRecordObject: setAttribute('NAM8')
+            keyPath: ['NAM8']
         },*/
         goldValue: {
-            addToRecordObject: setAttribute('DATA', 'Value'),
+            keyPath: ['DATA', 'Value'],
             getDefaultValue: function() {
                 return 0;
             }
         },
         weight: {
-            addToRecordObject: setAttribute('DATA', 'Weight'),
+            keyPath: ['DATA', 'Weight'],
             getDefaultValue: function() {
                 return 0;
             }
         },
         damage: {
-            addToRecordObject: setAttribute('DATA', 'Damage'),
+            keyPath: ['DATA', 'Damage'],
             getDefaultValue: function() {
                 return 0;
             }
         }/*,
         animationType: {
-            addToRecordObject: setAttribute('DNAM', 'Animation Type')
+            keyPath: ['DNAM', 'Animation Type']
         },
         speed: {
-            addToRecordObject: setAttribute('DNAM', 'Speed')
+            keyPath: ['DNAM', 'Speed']
         },
         reach: {
-            addToRecordObject: setAttribute('DNAM', 'Reach')
+            keyPath: ['DNAM', 'Reach']
         },
         stagger: {
-            addToRecordObject: setAttribute('DNAM', 'Stagger')
+            keyPath: ['DNAM', 'Stagger']
         },
         criticalDamage: {
-            addToRecordObject: setAttribute('CRDT', 'Damage')
+            keyPath: ['CRDT', 'Damage']
         },
         percentMultiplier: {
-            addToRecordObject: setAttribute('CRDT', '% Mult')
+            keyPath: ['CRDT', '% Mult']
         }*/
     };
 
-    let getAttributeValue = function(attributeName, modelAttributes) {
-        const modelValue = modelAttributes[attributeName];
-        return modelValue !== undefined ? modelValue : attributes[attributeName].getDefaultValue();
+    const gearAttributeDefinitionsMap = {
+        weapon: weaponAttributeDefinitions
+    };
+
+    let getAttributeDefaultValue = function(attributeName, gearCategory) {
+        const gearAttributeDefinitions = gearAttributeDefinitionsMap[gearCategory];
+        if (gearAttributeDefinitions) {
+            const attributeDefinition = gearAttributeDefinitions[attributeName];
+            if (attributeDefinition) {
+                return attributeDefinition.getDefaultValue();
+            }
+        }
+    };
+
+    // get the value for attributeName from attributeValues, or fall back to the attribute definition's default value
+    let getAttributeValue = function(attributeName, attributeValues, gearCategory) {
+        const attributeValue = attributeValues ? attributeValues[attributeName] : undefined;
+        return attributeValue !== undefined ? attributeValue : getAttributeDefaultValue(attributeName, gearCategory);
     };
 
     let setItemAttributesController = function($scope) {
-        if (!$scope.model.attributes) {
-            $scope.model.attributes = {};
+        debugger;
+
+        // const itemAttributeValues = $scope.model.itemAttributeValues;
+        // const attributeValues = itemAttributeValues[itemEditorId];
+        // const attributeValue = attributeValues[attributeName];
+        if (!$scope.model.itemAttributeValues) {
+            $scope.model.itemAttributeValues = {};
         }
 
-        $scope.attributes = Object.keys(attributes).reduce((attributes, attributeName) => {
-            Object.defineProperty(attributes, attributeName, {
-                get() {
-                    return getAttributeValue(attributeName, $scope.model.attributes);
-                },
-                set(value) {
-                    $scope.model.attributes[attributeName] = value;
-                }
-            });
-            return attributes;
-        }, {});
+        const gearAttributeDefinitions = gearAttributeDefinitionsMap[$scope.input.gearCategory];
+        if (gearAttributeDefinitions) {
+            // build a scope object that will write to the model.itemAttributeValues
+            // and read from model.itemAttributeValues or the attribute definition's default value
+            $scope.itemAttributeValuesArray = $scope.input.items.map(({name, editorId}) => ({
+                name,
+                editorId,
+                attributeValues: Object.keys(gearAttributeDefinitions).reduce((attributeValues, attributeName) => {
+                    Object.defineProperty(attributeValues, attributeName, {
+                        get() {
+                            return getAttributeValue(attributeName, $scope.model.itemAttributeValues[editorId], $scope.input.gearCategory);
+                        },
+                        set(value) {
+                            let modelAttributeValues = $scope.model.itemAttributeValues[editorId];
+                            if (!modelAttributeValues) {
+                                modelAttributeValues = {};
+                                $scope.model.itemAttributeValues[editorId] = modelAttributeValues;
+                            }
+                            modelAttributeValues[attributeName] = value;
+                        }
+                    });
+                    return attributeValues;
+                }, {})
+            }));
+        }
     };
 
     workflowService.addView('setItemAttributes', {
         templateUrl: `${moduleUrl}/partials/views/setItemAttributes.html`,
         controller: setItemAttributesController,
+        requireInput: ['gearCategory', 'items'],
         process: function(input, model) {
-            return Object.keys(attributes).reduce((attributes, attributeName) => {
-                attributes[attributeName] = getAttributeValue(attributeName, model.attributes);
-                return attributes;
-            }, {});
+            const gearAttributeDefinitions = gearAttributeDefinitionsMap[input.gearCategory];
+            if (gearAttributeDefinitions) {
+                return {
+                    items: input.items.map(item => ({
+                        ...item,
+                        attributes: Object.keys(gearAttributeDefinitions).reduce((attributes, attributeName) => {
+                            const attributeDefinition = gearAttributeDefinitions[attributeName];
+                            if (attributeDefinition && attributeDefinition.keyPath) {
+                                const attributeValues = model.itemAttributeValues ? model.itemAttributeValues[item.editorId] : undefined;
+                                attributes[attributeName] = {
+                                    keyPath: attributeDefinition.keyPath,
+                                    value: getAttributeValue(attributeName, attributeValues, input.gearCategory)
+                                };
+                            }
+                            return attributes;
+                        }, {})
+                    }))
+                };
+            }
         }
     });
 });

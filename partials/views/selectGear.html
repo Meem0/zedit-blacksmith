@@ -3,7 +3,11 @@
     <div class="gear-item">
         <label>
             <span class="input-label">Name</span>
-            <input type="text" ng-model="item.name" />
+            <input type="text" ng-model="item.name" ng-change="itemNameChanged(item, '{{item.name}}')" />
+        </label>
+        <label>
+            <span class="input-label">Editor ID</span>
+            <input type="text" ng-model="item.editorId" />
         </label>
         <label>
             <span class="input-label">Type</span>

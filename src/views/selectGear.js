@@ -3,7 +3,21 @@ ngapp.run(function(workflowService, skyrimGearService) {
         return skyrimGearService.getItemTypesForGearCategory(gearCategory);
     };
 
+    let getDefaultEditorId = function(name, gearCategory) {
+        if (!name) {
+            return '';
+        }
+        return (gearCategory + name.toPascalCase()).toPascalCase();
+    };
+
     let selectGearController = function($scope) {
+        $scope.itemNameChanged = function(item, previousName) {
+            const previousDefaultEditorId = getDefaultEditorId(previousName, $scope.input.gearCategory);
+            if (!item.editorId || previousDefaultEditorId === item.editorId) {
+                item.editorId = getDefaultEditorId(item.name, $scope.input.gearCategory);
+            }
+        };
+
         $scope.addItem = function() {
             $scope.model.items.push({});
         };
@@ -32,6 +46,8 @@ ngapp.run(function(workflowService, skyrimGearService) {
             if (model.items) {
                 model.items.forEach(item => {
                     if (item.name
+                        && item.editorId
+                        && gearSelections.every(({editorId}) => editorId !== item.editorId)
                         && itemTypes.includes(item.type)
                         && item.material
                         && item.nif) {
