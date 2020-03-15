@@ -1,0 +1,22 @@
+{
+    "name": "Dragonbone",
+    "components": [{
+        "type": "Primary",
+        "name": "Dragon Bone"
+    }, {
+        "type": "Major",
+        "name": "Dragon Bone"
+    }, {
+        "type": "Major",
+        "name": "Ebony Ingot"
+    }, {
+        "type": "Binding",
+        "name": "Leather Strips"
+    }],
+    "keywords": [
+        "DLC1WeapMaterialDragonboneDG",
+        "ArmorMaterialDragonplate"
+    ],
+    "class": "Heavy",
+    "perk": "Dragon Armor"
+}

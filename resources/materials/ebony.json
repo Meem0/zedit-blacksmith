@@ -1,0 +1,19 @@
+{
+    "name": "Ebony",
+    "components": [{
+        "type": "Primary",
+        "name": "Ebony Ingot"
+    }, {
+        "type": "Major",
+        "name": "Ebony Ingot"
+    }, {
+        "type": "Binding",
+        "name": "Leather Strips"
+    }],
+    "keywords": [
+        "ArmorMaterialEbony",
+        "WeapMaterialEbony"
+    ],
+    "class": "Heavy",
+    "perk": "Ebony Smithing"
+}

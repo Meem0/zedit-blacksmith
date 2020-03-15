@@ -1,0 +1,21 @@
+{
+    "name": "Dragonscale",
+    "components": [{
+        "type": "Primary",
+        "name": "Dragon Scale"
+    }, {
+        "type": "Major",
+        "name": "Dragon Scale"
+    }, {
+        "type": "Major",
+        "name": "Ebony Ingot"
+    }, {
+        "type": "Binding",
+        "name": "Leather Strips"
+    }],
+    "keywords": [
+        "ArmorMaterialDragonscale"
+    ],
+    "class": "Light",
+    "perk": "Dragon Armor"
+}

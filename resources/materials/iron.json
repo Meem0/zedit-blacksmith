@@ -1,0 +1,19 @@
+{
+    "name": "Iron",
+    "components": [{
+        "type": "Primary",
+        "name": "Iron Ingot"
+    }, {
+        "type": "Major",
+        "name": "Iron Ingot"
+    }, {
+        "type": "Binding",
+        "name": "Leather Strips"
+    }],
+    "keywords": [
+        "ArmorMaterialIron",
+        "ArmorMaterialIronBanded",
+        "WeapMaterialIron"
+    ],
+    "class": "Heavy"
+}

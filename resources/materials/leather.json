@@ -1,0 +1,18 @@
+{
+    "name": "Leather",
+    "components": [{
+        "type": "Primary",
+        "name": "Leather"
+    }, {
+        "type": "Major",
+        "name": "Leather"
+    }, {
+        "type": "Binding",
+        "name": "Leather Strips"
+    }],
+    "keywords": [
+        "ArmorMaterialHide",
+        "ArmorMaterialLeather"
+    ],
+    "class": "Light"
+}

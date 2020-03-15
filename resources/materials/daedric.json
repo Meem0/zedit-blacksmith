@@ -1,0 +1,22 @@
+{
+    "name": "Daedric",
+    "components": [{
+        "type": "Primary",
+        "name": "Ebony Ingot"
+    }, {
+        "type": "Major",
+        "name": "Ebony Ingot"
+    }, {
+        "type": "Minor",
+        "name": "Daedra Heart"
+    }, {
+        "type": "Binding",
+        "name": "Leather Strips"
+    }],
+    "keywords": [
+        "ArmorMaterialDaedric",
+        "WeapMaterialDaedric"
+    ],
+    "class": "Heavy",
+    "perk": "Daedric Smithing"
+}

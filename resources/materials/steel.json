@@ -1,0 +1,23 @@
+{
+    "name": "Steel",
+    "components": [{
+        "type": "Primary",
+        "name": "Steel Ingot"
+    }, {
+        "type": "Major",
+        "name": "Steel Ingot"
+    }, {
+        "type": "Minor",
+        "name": "Iron Ingot"
+    }, {
+        "type": "Binding",
+        "name": "Leather Strips"
+    }],
+    "keywords": [
+        "ArmorMaterialSteel",
+        "ArmorMaterialSteelPlate",
+        "WeapMaterialSteel"
+    ],
+    "class": "Heavy",
+    "perk": "Steel Smithing"
+}

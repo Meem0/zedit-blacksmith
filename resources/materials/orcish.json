@@ -1,0 +1,22 @@
+{
+    "name": "Orcish",
+    "components": [{
+        "type": "Primary",
+        "name": "Orichalcum Ingot"
+    }, {
+        "type": "Major",
+        "name": "Orichalcum Ingot"
+    }, {
+        "type": "Minor",
+        "name": "Iron Ingot"
+    }, {
+        "type": "Binding",
+        "name": "Leather Strips"
+    }],
+    "keywords": [
+        "ArmorMaterialOrcish",
+        "WeapMaterialOrcish"
+    ],
+    "class": "Heavy",
+    "perk": "Orcish Smithing"
+}

@@ -1,0 +1,20 @@
+{
+    "name": "Warhammer",
+    "gearCategory": "weapon",
+    "componentSpecs": [{
+        "type": "Major",
+        "count": 4
+    }, {
+        "type": "TwoHandExtra",
+        "count": 1
+    }, {
+        "type": "Binding",
+        "count": 3
+    }, {
+        "type": "Minor",
+        "count": 1
+    }],
+    "keywords": [
+        "WeapTypeWarhammer"
+    ]
+}

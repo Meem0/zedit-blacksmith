@@ -1,0 +1,17 @@
+{
+    "name": "Sword",
+    "gearCategory": "weapon",
+    "componentSpecs": [{
+        "type": "Major",
+        "count": 2
+    }, {
+        "type": "Binding",
+        "count": 1
+    }, {
+        "type": "Minor",
+        "count": 1
+    }],
+    "keywords": [
+        "WeapTypeSword"
+    ]
+}

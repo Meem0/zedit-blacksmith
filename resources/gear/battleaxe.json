@@ -1,0 +1,20 @@
+{
+    "name": "Battleaxe",
+    "gearCategory": "weapon",
+    "componentSpecs": [{
+        "type": "Major",
+        "count": 4
+    }, {
+        "type": "TwoHandExtra",
+        "count": 1
+    }, {
+        "type": "Binding",
+        "count": 2
+    }, {
+        "type": "Minor",
+        "count": 1
+    }],
+    "keywords": [
+        "WeapTypeBattleaxe"
+    ]
+}

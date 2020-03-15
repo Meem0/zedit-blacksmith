@@ -1,0 +1,34 @@
+{
+    "name": "Helmet",
+    "gearCategory": "armor",
+    "classes": {
+        "Heavy": {
+            "componentSpecs": [{
+                "type": "Major",
+                "count": 3
+            }, {
+                "type": "Binding",
+                "count": 2
+            }, {
+                "type": "Minor",
+                "count": 1
+            }]
+        },
+        "Light": {
+            "componentSpecs": [{
+                "type": "Major",
+                "count": 3
+            }, {
+                "type": "Binding",
+                "count": 1
+            }],
+            "additionalComponents": [{
+                "name": "Leather",
+                "count": 1
+            }]
+        }
+    },
+    "keywords": [
+        "ArmorHelmet"
+    ]
+}

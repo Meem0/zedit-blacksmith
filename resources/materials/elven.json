@@ -1,0 +1,26 @@
+{
+    "name": "Elven",
+    "components": [{
+        "type": "Primary",
+        "name": "Refined Moonstone"
+    }, {
+        "type": "Major",
+        "name": "Refined Moonstone"
+    }, {
+        "type": "Major",
+        "name": "Iron Ingot"
+    }, {
+        "type": "Minor",
+        "name": "Quicksilver Ingot"
+    }, {
+        "type": "Binding",
+        "name": "Leather Strips"
+    }],
+    "keywords": [
+        "ArmorMaterialElven",
+        "ArmorMaterialElvenGilded",
+        "WeapMaterialElven"
+    ],
+    "class": "Light",
+    "perk": "Elven Smithing"
+}

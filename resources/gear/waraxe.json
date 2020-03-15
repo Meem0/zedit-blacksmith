@@ -1,0 +1,17 @@
+{
+    "name": "War Axe",
+    "gearCategory": "weapon",
+    "componentSpecs": [{
+        "type": "Major",
+        "count": 2
+    }, {
+        "type": "Binding",
+        "count": 2
+    }, {
+        "type": "Minor",
+        "count": 1
+    }],
+    "keywords": [
+        "WeapTypeWarAxe"
+    ]
+}

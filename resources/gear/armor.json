@@ -1,0 +1,43 @@
+{
+    "name": "Armor",
+    "gearCategory": "armor",
+    "classes": {
+        "Heavy": {
+            "componentSpecs": [{
+                "type": "Primary",
+                "count": 2
+            }, {
+                "type": "Major",
+                "count": 2
+            }, {
+                "type": "Binding",
+                "count": 3
+            }, {
+                "type": "Minor",
+                "count": 1
+            }]
+        },
+        "Light": {
+            "componentSpecs": [{
+                "type": "Primary",
+                "count": 2
+            }, {
+                "type": "Major",
+                "count": 3
+            }, {
+                "type": "Binding",
+                "count": 3
+            }, {
+                "type": "Minor",
+                "count": 1
+            }],
+            "additionalComponents": [{
+                "name": "Leather",
+                "count": 1
+            }]
+        }
+    },
+    "keywords": [
+        "ArmorCuirass"
+    ]
+}

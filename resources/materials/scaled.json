@@ -1,0 +1,24 @@
+{
+    "name": "Scaled",
+    "components": [{
+        "type": "Primary",
+        "name": "Steel Ingot"
+    }, {
+        "type": "Major",
+        "name": "Corundum Ingot"
+    }, {
+        "type": "Major",
+        "name": "Steel Ingot"
+    }, {
+        "type": "Binding",
+        "name": "Leather Strips"
+    }, {
+        "type": "Minor",
+        "name": "Leather"
+    }],
+    "keywords": [
+        "ArmorMaterialScaled"
+    ],
+    "class": "Light",
+    "perk": "Advanced Armors"
+}

@@ -1,0 +1,17 @@
+{
+    "name": "Mace",
+    "gearCategory": "weapon",
+    "componentSpecs": [{
+        "type": "Major",
+        "count": 3
+    }, {
+        "type": "Binding",
+        "count": 1
+    }, {
+        "type": "Minor",
+        "count": 1
+    }],
+    "keywords": [
+        "WeapTypeMace"
+    ]
+}

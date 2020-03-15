@@ -1,0 +1,22 @@
+{
+    "name": "Glass",
+    "components": [{
+        "type": "Primary",
+        "name": "Refined Malachite"
+    }, {
+        "type": "Major",
+        "name": "Refined Malachite"
+    }, {
+        "type": "Major",
+        "name": "Refined Moonstone"
+    }, {
+        "type": "Binding",
+        "name": "Leather Strips"
+    }],
+    "keywords": [
+        "ArmorMaterialGlass",
+        "WeapMaterialGlass"
+    ],
+    "class": "Light",
+    "perk": "Glass Smithing"
+}

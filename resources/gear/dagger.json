@@ -1,0 +1,17 @@
+{
+    "name": "Dagger",
+    "gearCategory": "weapon",
+    "componentSpecs": [{
+        "type": "Major",
+        "count": 1
+    }, {
+        "type": "Binding",
+        "count": 1
+    }, {
+        "type": "Minor",
+        "count": 1
+    }],
+    "keywords": [
+        "WeapTypeDagger"
+    ]
+}

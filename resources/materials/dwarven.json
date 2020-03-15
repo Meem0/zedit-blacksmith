@@ -1,0 +1,25 @@
+{
+    "name": "Dwarven",
+    "components": [{
+        "type": "Primary",
+        "name": "Dwarven Metal Ingot"
+    }, {
+        "type": "Major",
+        "name": "Dwarven Metal Ingot"
+    }, {
+        "type": "Major",
+        "name": "Steel Ingot"
+    }, {
+        "type": "Minor",
+        "name": "Iron Ingot"
+    }, {
+        "type": "Binding",
+        "name": "Leather Strips"
+    }],
+    "keywords": [
+        "ArmorMaterialDwarven",
+        "WeapMaterialDwarven"
+    ],
+    "class": "Heavy",
+    "perk": "Dwarven Smithing"
+}
