@@ -103,8 +103,7 @@ ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialServ
     let startWorkflow = function(input, scope, makeTemperRecipes) {
         let items = input.items;
         if (!items) {
-            const selectedNodes = scope.modalOptions && Array.isArray(scope.modalOptions.selectedNodes) ? scope.modalOptions.selectedNodes : [];
-            items = getItemsFromSelectedNodes(selectedNodes);
+            items = getItemsFromSelectedNodes(scope.selectedNodes);
         }
         return {
             makeTemperRecipes: makeTemperRecipes,
