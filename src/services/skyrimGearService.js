@@ -1,43 +1,44 @@
 ngapp.service('skyrimGearService', function(skyrimReferenceService) {
-    let armorTypes = fh.loadJsonFile(`${modulePath}/resources/armorTypes.json`);
-    let weaponTypes = fh.loadJsonFile(`${modulePath}/resources/weaponTypes.json`);
-    let itemTypes = Object.assign({}, armorTypes, weaponTypes);
-    let gearCategories = {
-        armor: armorTypes,
-        weapon: weaponTypes
-    };
-    let recipeItemTypes = fh.loadJsonFile(`${modulePath}/resources/recipeItemTypes.json`);
+    let itemTypeDefinitions = fh.jetpack.find(`${modulePath}/resources/gear`, {matching: ['*.json']}).map(path => fh.loadJsonFile(path));
 
     this.getItemTypeKeywords = function() {
-        return Object.values(itemTypes).reduce((itemTypeKeywords, {keywords}) => itemTypeKeywords.concat(keywords), []);
+        return itemTypeDefinitions.reduce((itemTypeKeywords, {keywords}) => itemTypeKeywords.concat(keywords), []);
     };
 
     this.getItemTypeForKeyword = function(keyword) {
-        return Object.keys(itemTypes).find(key => itemTypes[key].keywords.includes(keyword));
+        const itemTypeDefinition = itemTypeDefinitions.find(({keywords}) => keywords.includes(keyword));
+        return itemTypeDefinition ? itemTypeDefinition.name : '';
     };
 
     this.isArmor = function(itemType) {
-        return Object.keys(armorTypes).includes(itemType);
+        const itemTypeDefinition = itemTypeDefinitions.find(({name}) => name === itemType);
+        return itemTypeDefinition && itemTypeDefinition.gearCategory === 'armor';
     };
 
     this.isWeapon = function(itemType) {
-        return Object.keys(weaponTypes).includes(itemType);
+        const itemTypeDefinition = itemTypeDefinitions.find(({name}) => name === itemType);
+        return itemTypeDefinition && itemTypeDefinition.gearCategory === 'weapon';
     };
 
     this.getItemTypesForGearCategory = function(gearCategory) {
-        return gearCategories[gearCategory] ? Object.keys(gearCategories[gearCategory]) : [];
+        return itemTypeDefinitions.reduce((matchingItemTypes, itemTypeDefinition) => {
+            if (itemTypeDefinition.gearCategory === gearCategory) {
+                matchingItemTypes.push(itemTypeDefinition.name);
+            }
+            return matchingItemTypes;
+        }, []);
     };
 
     let getItemRecipeDefinition = function(itemType, componentClass) {
-        let recipeDefinition = recipeItemTypes[itemType];
-        let itemRecipeDefinition = recipeDefinition && recipeDefinition.classes ? recipeDefinition.classes[componentClass] : recipeDefinition;
-        if (itemRecipeDefinition.additionalComponents) {
-            itemRecipeDefinition.additionalComponents = itemRecipeDefinition.additionalComponents.map(({name, ...rest}) => ({
+        const itemTypeDefinition = itemTypeDefinitions.find(({name}) => name === itemType);
+        const recipeDefinition = itemTypeDefinition && itemTypeDefinition.classes ? itemTypeDefinition.classes[componentClass] : itemTypeDefinition;
+        if (recipeDefinition && recipeDefinition.additionalComponents) {
+            recipeDefinition.additionalComponents = recipeDefinition.additionalComponents.map(({name, ...rest}) => ({
                 itemReference: skyrimReferenceService.getReferenceFromName(name),
                 ...rest
             }));
         }
-        return itemRecipeDefinition;
+        return recipeDefinition;
     };
 
     this.getRecipeComponentQuantity = function(itemType, componentType, componentClass) {
