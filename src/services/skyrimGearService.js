@@ -29,6 +29,11 @@ ngapp.service('skyrimGearService', function(skyrimReferenceService) {
         }, []);
     };
 
+    this.getAttributeProperties = function(itemType, attributeName) {
+        const itemTypeDefinition = itemTypeDefinitions.find(({name}) => name === itemType);
+        return itemTypeDefinition && itemTypeDefinition[attributeName];
+    };
+
     let getItemRecipeDefinition = function(itemType, componentClass) {
         const itemTypeDefinition = itemTypeDefinitions.find(({name}) => name === itemType);
         const recipeDefinition = itemTypeDefinition && itemTypeDefinition.classes ? itemTypeDefinition.classes[componentClass] : itemTypeDefinition;

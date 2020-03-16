@@ -16,5 +16,20 @@
     }],
     "keywords": [
         "WeapTypeWarhammer"
-    ]
+    ],
+    "damage": {
+        "base": 17.8,
+        "tierMult": 1.15
+    },
+    "goldValue": {
+        "tierMult": 2.4
+    },
+    "weight": {
+        "base": 23,
+        "tierMult": 1
+    },
+    "critDamage": {
+        "base": 8,
+        "tierMult": 1
+    }
 }

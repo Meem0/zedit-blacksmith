@@ -15,5 +15,17 @@
         "ArmorMaterialIronBanded",
         "WeapMaterialIron"
     ],
-    "class": "Heavy"
+    "class": "Heavy",
+    "damage": {
+        "tierValue": 1
+    },
+    "goldValue": {
+        "tierValue": 25
+    },
+    "weight": {
+        "tierValue": 1
+    },
+    "critDamage": {
+        "tierValue": 1
+    }
 }

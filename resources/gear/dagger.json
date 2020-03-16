@@ -13,5 +13,20 @@
     }],
     "keywords": [
         "WeapTypeDagger"
-    ]
+    ],
+    "damage": {
+        "base": 3,
+        "tierMult": 1
+    },
+    "goldValue": {
+        "tierMult": 2
+    },
+    "weight": {
+        "base": 1.5,
+        "tierMult": 0.5
+    },
+    "critDamage": {
+        "base": 0.9,
+        "tierMult": 0.9
+    }
 }

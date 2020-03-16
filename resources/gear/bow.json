@@ -16,5 +16,20 @@
     }],
     "keywords": [
         "WeapTypeBow"
-    ]
+    ],
+    "damage": {
+        "base": 6.2,
+        "tierMult": 1.55
+    },
+    "goldValue": {
+        "tierMult": 2
+    },
+    "weight": {
+        "base": 2,
+        "tierMult": 2
+    },
+    "critDamage": {
+        "base": 2,
+        "tierMult": 1.3
+    }
 }

@@ -18,5 +18,17 @@
         "WeapMaterialDaedric"
     ],
     "class": "Heavy",
-    "perk": "Daedric Smithing"
+    "perk": "Daedric Smithing",
+    "damage": {
+        "tierValue": 8
+    },
+    "goldValue": {
+        "tierValue": 1250
+    },
+    "weight": {
+        "tierValue": 8
+    },
+    "critDamage": {
+        "tierValue": 5
+    }
 }

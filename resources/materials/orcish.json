@@ -18,5 +18,17 @@
         "WeapMaterialOrcish"
     ],
     "class": "Heavy",
-    "perk": "Orcish Smithing"
+    "perk": "Orcish Smithing",
+    "damage": {
+        "tierValue": 3
+    },
+    "goldValue": {
+        "tierValue": 75
+    },
+    "weight": {
+        "tierValue": 3
+    },
+    "critDamage": {
+        "tierValue": 2
+    }
 }

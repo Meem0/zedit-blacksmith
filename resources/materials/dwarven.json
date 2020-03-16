@@ -21,5 +21,17 @@
         "WeapMaterialDwarven"
     ],
     "class": "Heavy",
-    "perk": "Dwarven Smithing"
+    "perk": "Dwarven Smithing",
+    "damage": {
+        "tierValue": 4
+    },
+    "goldValue": {
+        "tierValue": 135
+    },
+    "weight": {
+        "tierValue": 4
+    },
+    "critDamage": {
+        "tierValue": 3
+    }
 }

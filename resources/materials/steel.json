@@ -19,5 +19,17 @@
         "WeapMaterialSteel"
     ],
     "class": "Heavy",
-    "perk": "Steel Smithing"
+    "perk": "Steel Smithing",
+    "damage": {
+        "tierValue": 2
+    },
+    "goldValue": {
+        "tierValue": 45
+    },
+    "weight": {
+        "tierValue": 2
+    },
+    "critDamage": {
+        "tierValue": 2
+    }
 }

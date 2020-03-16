@@ -15,5 +15,17 @@
         "WeapMaterialEbony"
     ],
     "class": "Heavy",
-    "perk": "Ebony Smithing"
+    "perk": "Ebony Smithing",
+    "damage": {
+        "tierValue": 7
+    },
+    "goldValue": {
+        "tierValue": 720
+    },
+    "weight": {
+        "tierValue": 7
+    },
+    "critDamage": {
+        "tierValue": 4
+    }
 }

@@ -1,4 +1,4 @@
-ngapp.run(function(workflowService, writeObjectToElementService) {
+ngapp.run(function(workflowService, writeObjectToElementService, skyrimAttributeService) {
     let setDeep = function(obj, val, keys) {
         if (keys.length > 1) {
             const key = keys.shift();
@@ -12,7 +12,7 @@ ngapp.run(function(workflowService, writeObjectToElementService) {
         }
     };
 
-    let createWeaponRecord = function(weapon, pluginId) {
+    let createWeaponRecord = function(weapon) {
         let weaponObject = {
             "Record Header": {
                 "Signature": "WEAP"
@@ -20,7 +20,10 @@ ngapp.run(function(workflowService, writeObjectToElementService) {
             "EDID": weapon.editorId,
             "FULL": weapon.name
         };
-        Object.values(weapon.attributes).forEach(({value, keyPath}) => setDeep(weaponObject, value, keyPath));
+        Object.entries(weapon.attributes).forEach(([attributeName, {value}]) => {
+            const keyPath = skyrimAttributeService.getAttributeKeyPath('weapon', attributeName);
+            setDeep(weaponObject, value, keyPath);
+        });
         return weaponObject;
     };
 
@@ -54,7 +57,7 @@ ngapp.run(function(workflowService, writeObjectToElementService) {
 
                 xelib.AddAllMasters(pluginId);
                 model.items.forEach(item => {
-                    const recordObject = createGearRecord(item, pluginId);
+                    const recordObject = createGearRecord(item);
                     writeObjectToElementService.writeObjectToRecord(pluginId, recordObject);
                 });
                 xelib.CleanMasters(pluginId);

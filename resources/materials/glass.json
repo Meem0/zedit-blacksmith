@@ -18,5 +18,17 @@
         "WeapMaterialGlass"
     ],
     "class": "Light",
-    "perk": "Glass Smithing"
+    "perk": "Glass Smithing",
+    "damage": {
+        "tierValue": 6
+    },
+    "goldValue": {
+        "tierValue": 410
+    },
+    "weight": {
+        "tierValue": 6
+    },
+    "critDamage": {
+        "tierValue": 4
+    }
 }

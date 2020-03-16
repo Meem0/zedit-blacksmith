@@ -22,5 +22,17 @@
         "WeapMaterialElven"
     ],
     "class": "Light",
-    "perk": "Elven Smithing"
+    "perk": "Elven Smithing",
+    "damage": {
+        "tierValue": 5
+    },
+    "goldValue": {
+        "tierValue": 235
+    },
+    "weight": {
+        "tierValue": 5
+    },
+    "critDamage": {
+        "tierValue": 3
+    }
 }

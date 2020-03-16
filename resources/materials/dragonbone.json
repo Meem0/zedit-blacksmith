@@ -18,5 +18,17 @@
         "ArmorMaterialDragonplate"
     ],
     "class": "Heavy",
-    "perk": "Dragon Armor"
+    "perk": "Dragon Armor",
+    "damage": {
+        "tierValue": 9
+    },
+    "goldValue": {
+        "tierValue": 1500
+    },
+    "weight": {
+        "tierValue": 11
+    },
+    "critDamage": {
+        "tierValue": 5
+    }
 }

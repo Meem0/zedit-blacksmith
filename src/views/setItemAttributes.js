@@ -1,4 +1,4 @@
-ngapp.run(function(workflowService) {
+ngapp.run(function(workflowService, skyrimAttributeService) {
     const weaponAttributeDefinitions = {
         /*equipType: {
             keyPath: ['ETYP']
@@ -26,25 +26,7 @@ ngapp.run(function(workflowService) {
         },
         unequipSound: {
             keyPath: ['NAM8']
-        },*/
-        goldValue: {
-            keyPath: ['DATA', 'Value'],
-            getDefaultValue: function() {
-                return 0;
-            }
-        },
-        weight: {
-            keyPath: ['DATA', 'Weight'],
-            getDefaultValue: function() {
-                return 0;
-            }
-        },
-        damage: {
-            keyPath: ['DATA', 'Damage'],
-            getDefaultValue: function() {
-                return 0;
-            }
-        }/*,
+        },*//*,
         animationType: {
             keyPath: ['DNAM', 'Animation Type']
         },
@@ -56,10 +38,7 @@ ngapp.run(function(workflowService) {
         },
         stagger: {
             keyPath: ['DNAM', 'Stagger']
-        },
-        criticalDamage: {
-            keyPath: ['CRDT', 'Damage']
-        },
+        }
         percentMultiplier: {
             keyPath: ['CRDT', '% Mult']
         }*/
@@ -69,20 +48,10 @@ ngapp.run(function(workflowService) {
         weapon: weaponAttributeDefinitions
     };
 
-    let getAttributeDefaultValue = function(attributeName, gearCategory) {
-        const gearAttributeDefinitions = gearAttributeDefinitionsMap[gearCategory];
-        if (gearAttributeDefinitions) {
-            const attributeDefinition = gearAttributeDefinitions[attributeName];
-            if (attributeDefinition) {
-                return attributeDefinition.getDefaultValue();
-            }
-        }
-    };
-
     // get the value for attributeName from attributeValues, or fall back to the attribute definition's default value
-    let getAttributeValue = function(attributeName, attributeValues, gearCategory) {
+    let getAttributeValue = function(gearCategory, attributeName, itemType, material, attributeValues) {
         const attributeValue = attributeValues ? attributeValues[attributeName] : undefined;
-        return attributeValue !== undefined ? attributeValue : getAttributeDefaultValue(attributeName, gearCategory);
+        return attributeValue !== undefined ? attributeValue : skyrimAttributeService.getAttributeValue(gearCategory, attributeName, itemType, material);
     };
 
     let setItemAttributesController = function($scope) {
@@ -95,17 +64,23 @@ ngapp.run(function(workflowService) {
             $scope.model.itemAttributeValues = {};
         }
 
-        const gearAttributeDefinitions = gearAttributeDefinitionsMap[$scope.input.gearCategory];
-        if (gearAttributeDefinitions) {
+        const attributeNames = skyrimAttributeService.getAttributeNames($scope.input.gearCategory);
+        if (attributeNames) {
             // build a scope object that will write to the model.itemAttributeValues
             // and read from model.itemAttributeValues or the attribute definition's default value
-            $scope.itemAttributeValuesArray = $scope.input.items.map(({name, editorId}) => ({
+            $scope.itemAttributeValuesArray = $scope.input.items.map(({name, editorId, type, material}) => ({
                 name,
                 editorId,
-                attributeValues: Object.keys(gearAttributeDefinitions).reduce((attributeValues, attributeName) => {
+                attributeValues: attributeNames.reduce((attributeValues, attributeName) => {
                     Object.defineProperty(attributeValues, attributeName, {
                         get() {
-                            return getAttributeValue(attributeName, $scope.model.itemAttributeValues[editorId], $scope.input.gearCategory);
+                            return getAttributeValue(
+                                $scope.input.gearCategory,
+                                attributeName,
+                                type,
+                                material,
+                                $scope.model.itemAttributeValues[editorId]
+                            );
                         },
                         set(value) {
                             let modelAttributeValues = $scope.model.itemAttributeValues[editorId];
@@ -127,20 +102,17 @@ ngapp.run(function(workflowService) {
         controller: setItemAttributesController,
         requireInput: ['gearCategory', 'items'],
         process: function(input, model) {
-            const gearAttributeDefinitions = gearAttributeDefinitionsMap[input.gearCategory];
-            if (gearAttributeDefinitions) {
+            const attributeNames = skyrimAttributeService.getAttributeNames(input.gearCategory);
+            if (attributeNames) {
                 return {
                     items: input.items.map(item => ({
                         ...item,
-                        attributes: Object.keys(gearAttributeDefinitions).reduce((attributes, attributeName) => {
-                            const attributeDefinition = gearAttributeDefinitions[attributeName];
-                            if (attributeDefinition && attributeDefinition.keyPath) {
-                                const attributeValues = model.itemAttributeValues ? model.itemAttributeValues[item.editorId] : undefined;
-                                attributes[attributeName] = {
-                                    keyPath: attributeDefinition.keyPath,
-                                    value: getAttributeValue(attributeName, attributeValues, input.gearCategory)
-                                };
-                            }
+                        attributes: attributeNames.reduce((attributes, attributeName) => {
+                            const attributeValues = model.itemAttributeValues ? model.itemAttributeValues[item.editorId] : undefined;
+                            attributes[attributeName] = {
+                                keyPath: skyrimAttributeService.getAttributeKeyPath(input.gearCategory, attributeName),
+                                value: getAttributeValue(input.gearCategory, attributeName, item.type, item.material, attributeValues)
+                            };
                             return attributes;
                         }, {})
                     }))

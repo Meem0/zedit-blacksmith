@@ -13,5 +13,20 @@
     }],
     "keywords": [
         "WeapTypeWarAxe"
-    ]
+    ],
+    "damage": {
+        "base": 7,
+        "tierMult": 1
+    },
+    "goldValue": {
+        "tierMult": 1.2
+    },
+    "weight": {
+        "base": 10,
+        "tierMult": 1
+    },
+    "critDamage": {
+        "base": 3,
+        "tierMult": 1
+    }
 }

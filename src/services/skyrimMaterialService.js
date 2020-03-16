@@ -78,4 +78,9 @@ ngapp.service('skyrimMaterialService', function(skyrimReferenceService) {
         const materialDefinition = materialDefinitions.find(({name}) => name === material);
         return materialDefinition ? materialDefinition.class : '';
     };
+
+    this.getAttributeProperties = function(material, attributeName) {
+        const materialDefinition = materialDefinitions.find(({name}) => name === material);
+        return materialDefinition && materialDefinition[attributeName];
+    };
 });

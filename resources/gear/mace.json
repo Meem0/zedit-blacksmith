@@ -13,5 +13,20 @@
     }],
     "keywords": [
         "WeapTypeMace"
-    ]
+    ],
+    "damage": {
+        "base": 8,
+        "tierMult": 1
+    },
+    "goldValue": {
+        "tierMult": 1.4
+    },
+    "weight": {
+        "base": 12,
+        "tierMult": 1
+    },
+    "critDamage": {
+        "base": 3,
+        "tierMult": 1
+    }
 }
