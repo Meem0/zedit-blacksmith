@@ -50,19 +50,5 @@ function release() {
         .pipe(gulp.dest('.'));
 }
 
-function cleanRemote() {
-    return del('../zedit/modules/blacksmith', { force: true });
-}
-
-function copyRemote() {
-    return gulp.src('dist/**/*', { base: 'dist/' })
-        .pipe(gulp.dest('../zedit/modules/blacksmith'));
-}
-
 exports.release = release;
 exports.build = gulp.series(clean, build);
-exports.default = gulp.series(
-    gulp.parallel(clean, cleanRemote),
-    build,
-    copyRemote
-);
