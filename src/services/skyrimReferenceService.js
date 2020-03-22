@@ -1,5 +1,5 @@
-ngapp.service('skyrimReferenceService', function() {
-    let referenceAliases = fh.loadJsonFile(`${modulePath}/resources/referenceAliases.json`);
+ngapp.service('skyrimReferenceService', function(jsonService) {
+    let referenceAliases = jsonService.loadJsonFile('referenceAliases');
 
     this.getReferenceFromName = function(inName) {
         if (!inName) {

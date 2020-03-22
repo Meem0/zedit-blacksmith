@@ -1,5 +1,5 @@
-ngapp.service('skyrimGearService', function(skyrimReferenceService) {
-    let itemTypeDefinitions = fh.jetpack.find(`${modulePath}/resources/gear`, {matching: ['*.json']}).map(path => fh.loadJsonFile(path));
+ngapp.service('skyrimGearService', function(skyrimReferenceService, jsonService) {
+    let itemTypeDefinitions = jsonService.loadJsonFilesInFolder('gear');
 
     this.getItemTypeKeywords = function() {
         return itemTypeDefinitions.reduce((itemTypeKeywords, {keywords}) => itemTypeKeywords.concat(keywords), []);

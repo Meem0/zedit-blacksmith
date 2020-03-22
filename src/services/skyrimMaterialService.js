@@ -1,16 +1,13 @@
-ngapp.service('skyrimMaterialService', function(skyrimReferenceService) {
-    let materialDefinitions = (fh.jetpack.find(`${modulePath}/resources/materials`, {matching: ['*.json']})
-        .map(path => {
-            const {name, components, ...rest} = fh.loadJsonFile(path);
-            return {
-                name,
-                components: components.map(({type, name}) => ({
-                    type,
-                    itemReference: skyrimReferenceService.getReferenceFromName(name)
-                })),
-                ...rest
-            };
-        }));
+ngapp.service('skyrimMaterialService', function(skyrimReferenceService, jsonService) {
+    let materialDefinitions = (jsonService.loadJsonFilesInFolder('materials')
+        .map(({name, components, ...rest}) => ({
+            name,
+            components: components.map(({type, name}) => ({
+                type,
+                itemReference: skyrimReferenceService.getReferenceFromName(name)
+            })),
+            ...rest
+        })));
 
     this.getMaterials = function() {
         return materialDefinitions.map(({name}) => name);

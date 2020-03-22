@@ -1,4 +1,7 @@
 /* global ngapp, xelib, modulePath */
+
+let blacksmithHelpers = require(`${modulePath}/lib/blacksmithHelpers`);
+
 //=require src/**/*.js
 
 ngapp.run(function(
@@ -7,7 +10,6 @@ ngapp.run(function(
     pluginTransformService,
     recordDependencyService,
     transformBuilderService,
-    blacksmithHelpersService,
     editModalFactory,
     workflowService
     ) {
@@ -32,8 +34,8 @@ ngapp.run(function(
                         if (scope.selectedNodes.length > 1) {
                             let records = [];
                             for (const {handle} of scope.selectedNodes) {
-                                if (blacksmithHelpersService.isMainRecord(handle)) {
-                                    records.push(blacksmithHelpersService.elementToObject(handle));
+                                if (blacksmithHelpers.isMainRecord(handle)) {
+                                    records.push(blacksmithHelpers.elementToObject(handle));
                                 }
                             }
                             debugger;
@@ -47,12 +49,12 @@ ngapp.run(function(
                                 transformBuilderService.buildTransformsFromModifiedElements();
                             }
                             else if (controlFlag === 2) {
-                                if (blacksmithHelpersService.isValidElement(selectedNode.handle)) {
+                                if (blacksmithHelpers.isValidElement(selectedNode.handle)) {
                                     debugger;
                                 }
                             }
                             else if (controlFlag === 3) {
-                                const customObject = blacksmithHelpersService.elementToObject(selectedNode.handle);
+                                const customObject = blacksmithHelpers.elementToObject(selectedNode.handle);
                                 const xelibObject = xelib.ElementToObject(selectedNode.handle);
                                 console.log(customObject);
                                 console.log(xelibObject);
@@ -104,7 +106,7 @@ ngapp.run(function(
                     }
                     const transforms = fh.loadJsonFile(selectedFile);
                     if (!transforms) {
-                        blacksmithHelpersService.logWarn(`Could not find file ${selectedFile}`);
+                        blacksmithHelpers.logWarn(`Could not find file ${selectedFile}`);
                         return;
                     }
                     editModalFactory.addFile(scope, addedFilename => {
@@ -169,7 +171,7 @@ ngapp.run(function(
             blacksmithChildren.push(blacksmithOpenWorkflow);
             blacksmithChildren.push(blacksmithCreateTransforms);
             blacksmithChildren.push(blacksmithLoadTransforms);
-            if (scope.selectedNodes.length === 1 && blacksmithHelpersService.isMainRecord(scope.selectedNodes[0].handle)) {
+            if (scope.selectedNodes.length === 1 && blacksmithHelpers.isMainRecord(scope.selectedNodes[0].handle)) {
                 blacksmithChildren.push(blacksmithAddToTransform);
             }
 

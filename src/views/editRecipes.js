@@ -1,10 +1,10 @@
-ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialService, skyrimGearService) {
+ngapp.run(function(workflowService, skyrimMaterialService, skyrimGearService) {
     const ingredientSignatures = ['ALCH', 'AMMO', 'ARMO', 'BOOK', 'INGR', 'MISC', 'SCRL', 'SLGM', 'WEAP'];
 
     let getReferenceFromLongName = function(longName) {
         return xelib.WithHandle(
-            blacksmithHelpersService.getRecordFromLongName(longName),
-            id => blacksmithHelpersService.getReferenceFromRecord(id)
+            blacksmithHelpers.getRecordFromLongName(longName),
+            id => blacksmithHelpers.getReferenceFromRecord(id)
         );
     };
     
@@ -12,12 +12,12 @@ ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialServ
         return {
             itemReference: itemReference,
             count: count,
-            signature: blacksmithHelpersService.runOnReferenceRecord(this.itemReference, xelib.Signature) || 'MISC',
+            signature: blacksmithHelpers.runOnReferenceRecord(this.itemReference, xelib.Signature) || 'MISC',
             get name() {
-                return blacksmithHelpersService.runOnReferenceRecord(this.itemReference, xelib.FullName) || '';
+                return blacksmithHelpers.runOnReferenceRecord(this.itemReference, xelib.FullName) || '';
             },
             get longName() {
-                return blacksmithHelpersService.runOnReferenceRecord(this.itemReference, xelib.LongName) || '';
+                return blacksmithHelpers.runOnReferenceRecord(this.itemReference, xelib.LongName) || '';
             },
             set longName(value) {
                 this.itemReference = getReferenceFromLongName(value);
@@ -28,9 +28,9 @@ ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialServ
     let getComponentsForMaterial = function(material) {
         return skyrimMaterialService.getComponentsForMaterial(material, /*includePlaceholders*/ true).map(component => ({
             ...component,
-            signature: blacksmithHelpersService.runOnReferenceRecord(this.itemReference, xelib.Signature) || 'MISC',
+            signature: blacksmithHelpers.runOnReferenceRecord(this.itemReference, xelib.Signature) || 'MISC',
             get longName() {
-                return blacksmithHelpersService.runOnReferenceRecord(this.itemReference, xelib.LongName) || '';
+                return blacksmithHelpers.runOnReferenceRecord(this.itemReference, xelib.LongName) || '';
             },
             set longName(value) {
                 this.itemReference = getReferenceFromLongName(value);

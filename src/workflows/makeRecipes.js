@@ -1,4 +1,4 @@
-ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialService, skyrimGearService, writeObjectToElementService) {
+ngapp.run(function(workflowService, skyrimMaterialService, skyrimGearService, writeObjectToElementService) {
     let createRecipeObject = function({
         editorId,
         ingredients,
@@ -78,7 +78,7 @@ ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialServ
         }
 
         return selectedNodes.reduce((items, {handle}) => {
-            if (!blacksmithHelpersService.isMainRecord(handle)) {
+            if (!blacksmithHelpers.isMainRecord(handle)) {
                 return items;
             }
             if (!constructibleItemSignatures.includes(xelib.Signature(handle))) {
@@ -86,14 +86,14 @@ ngapp.run(function(workflowService, blacksmithHelpersService, skyrimMaterialServ
             }
 
             items.push({
-                reference: blacksmithHelpersService.getReferenceFromRecord(handle),
+                reference: blacksmithHelpers.getReferenceFromRecord(handle),
                 type: getItemType(handle),
                 material: getItemMaterial(handle),
                 get name() {
-                    return blacksmithHelpersService.runOnReferenceRecord(this.reference, xelib.FullName) || '';
+                    return blacksmithHelpers.runOnReferenceRecord(this.reference, xelib.FullName) || '';
                 },
                 get editorId() {
-                    return blacksmithHelpersService.runOnReferenceRecord(this.reference, xelib.EditorID) || '';
+                    return blacksmithHelpers.runOnReferenceRecord(this.reference, xelib.EditorID) || '';
                 }
             });
             return items;

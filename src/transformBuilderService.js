@@ -1,4 +1,4 @@
-ngapp.service('transformBuilderService', function(blacksmithHelpersService) {
+ngapp.service('transformBuilderService', function() {
     // e.g. [{a: 1, b: 2}, {c: 3, d: 4}] -> {a: 1, b: 2, c: 3, d: 4}
     let arrayOfObjectsToObject = function(array) {
         return Object.assign({}, ...array);
@@ -9,7 +9,7 @@ ngapp.service('transformBuilderService', function(blacksmithHelpersService) {
             return;
         }
         
-        const containerTypeInfo = blacksmithHelpersService.getTypeInfo(containerId);
+        const containerTypeInfo = blacksmithHelpers.getTypeInfo(containerId);
         if (containerId === 0 || containerTypeInfo.isFile || containerTypeInfo.isGroup) {
             /*
                 for root, files, and groups, we want to transfrom our input from
@@ -35,7 +35,7 @@ ngapp.service('transformBuilderService', function(blacksmithHelpersService) {
         }
         else {
             const key = containerTypeInfo.isMainRecord
-                ? blacksmithHelpersService.getReferenceFromRecord(containerId)
+                ? blacksmithHelpers.getReferenceFromRecord(containerId)
                 : xelib.Name(containerId);
             const value = containerTypeInfo.isArray ? children : arrayOfObjectsToObject(children);
             return { [key]: value };
@@ -43,22 +43,22 @@ ngapp.service('transformBuilderService', function(blacksmithHelpersService) {
     }
 
     let getElementValue = function(id) {
-        if (!xelib.GetIsModified(id) || blacksmithHelpersService.isHeader(id)) {
+        if (!xelib.GetIsModified(id) || blacksmithHelpers.isHeader(id)) {
             return undefined;
         }
-        return blacksmithHelpersService.elementToObject(id);
+        return blacksmithHelpers.elementToObject(id);
     }
 
     let shouldRecurseOnContainer = function(containerId) {
         return (
-            !blacksmithHelpersService.isHeader(containerId)
-            && !blacksmithHelpersService.isArray(containerId)
+            !blacksmithHelpers.isHeader(containerId)
+            && !blacksmithHelpers.isArray(containerId)
             && (containerId === 0 || xelib.GetIsModified(containerId))
         );
     }
     
     let getRecordsFromModifiedElements = function() {
-        return blacksmithHelpersService.forEachElement(
+        return blacksmithHelpers.forEachElement(
             0,
             getElementValue,
             {

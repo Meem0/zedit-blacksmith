@@ -1,4 +1,4 @@
-ngapp.service('recordDependencyService', function(blacksmithHelpersService, gameService) {
+ngapp.service('recordDependencyService', function(gameService) {
     let forEachValue = function(obj, func) {
         if (Array.isArray(obj)) {
             for (elem of obj) {
@@ -38,7 +38,7 @@ ngapp.service('recordDependencyService', function(blacksmithHelpersService, game
                 return;
             }
 
-            const { filename } = blacksmithHelpersService.getFileNameAndFormIdFromReference(value);
+            const { filename } = blacksmithHelpers.getFileNameAndFormIdFromReference(value);
             if (filename && !gameService.isBethesdaPlugin(filename)) {
                 references.push(value);
             }
@@ -66,10 +66,10 @@ ngapp.service('recordDependencyService', function(blacksmithHelpersService, game
                 dependencyRecordObject = inputRecordObject;
             }
             else {
-                const externalRecordPath = blacksmithHelpersService.getPathFromReference(externalReference);
+                const externalRecordPath = blacksmithHelpers.getPathFromReference(externalReference);
                 dependencyRecordObject = xelib.WithHandle(
                     xelib.GetElement(0, externalRecordPath),
-                    id => blacksmithHelpersService.elementToObject(id)
+                    id => blacksmithHelpers.elementToObject(id)
                 );
             }
             buildDependencies(dependencyRecordObject, dependencies, inputRecordObjects);

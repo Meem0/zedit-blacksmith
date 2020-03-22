@@ -29,7 +29,7 @@ ngapp.service('pluginTransformService', function(
         else {
             baseObject = xelib.WithHandle(
                 xelib.GetElement(0, basePath),
-                id => id === 0 ? undefined : blacksmithHelpersService.elementToObject(id)
+                id => id === 0 ? undefined : blacksmithHelpers.elementToObject(id)
             );
         }
 
@@ -59,7 +59,7 @@ ngapp.service('pluginTransformService', function(
             xelib.WithHandle(
                 writeObjectToElementService.writeObjectToRecord(pluginId, recordObjectSubstituted),
                 recordId => {
-                    const newRecordFormId = blacksmithHelpersService.getReferenceFromRecord(recordId);
+                    const newRecordFormId = blacksmithHelpers.getReferenceFromRecord(recordId);
                     if (newRecordFormId) {
                         referenceSubstitutions.push({
                             from: recordObject['Record Header']['FormID'],
@@ -67,7 +67,7 @@ ngapp.service('pluginTransformService', function(
                         });
                     }
                     else {
-                        blacksmithHelpersService.logWarn('Failed to write record: ' + recordObject['Record Header']['FormID']);
+                        blacksmithHelpers.logWarn('Failed to write record: ' + recordObject['Record Header']['FormID']);
                     }
                 }
             );
@@ -83,7 +83,7 @@ ngapp.service('pluginTransformService', function(
                 transform.basePath = '';
                 continue;
             }
-            const recordPath = blacksmithHelpersService.getPathFromReference(transform.base);
+            const recordPath = blacksmithHelpers.getPathFromReference(transform.base);
             if (recordPath) {
                 transform.basePath = recordPath;
             }
@@ -97,7 +97,7 @@ ngapp.service('pluginTransformService', function(
                 || (basePath !== undefined
                     && xelib.WithHandle(
                         xelib.GetElement(0, basePath),
-                        id => blacksmithHelpersService.isMainRecord(id)
+                        id => blacksmithHelpers.isMainRecord(id)
                     )
                 );
             if (!validBase) {
@@ -117,7 +117,7 @@ ngapp.service('pluginTransformService', function(
     // filters for only transforms that reference valid records
     let processTransformsForWriting = function(transforms) {
         if (!Array.isArray(transforms)) {
-            blacksmithHelpersService.logWarn('processTransforms failed: transforms is not an array');
+            blacksmithHelpers.logWarn('processTransforms failed: transforms is not an array');
             return [];
         }
         addBasePathsToTransforms(transforms);
@@ -132,7 +132,7 @@ ngapp.service('pluginTransformService', function(
             writeRecordObjects(pluginId, allRecordObjects);
         }
         catch (ex) {
-            blacksmithHelpersService.logWarn('writeTransforms failed: ' + ex, { id: pluginId });
+            blacksmithHelpers.logWarn('writeTransforms failed: ' + ex, { id: pluginId });
         }
     }
 });

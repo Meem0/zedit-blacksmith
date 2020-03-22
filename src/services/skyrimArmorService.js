@@ -1,5 +1,5 @@
-ngapp.service('skyrimArmorService', function(blacksmithHelpersService, elementSchemaService) {
-    let armorTypes = fh.loadJsonFile(`${modulePath}/resources/armorTypes.json`);
+ngapp.service('skyrimArmorService', function(elementSchemaService, jsonService) {
+    let armorTypes = jsonService.loadJsonFile('armorTypes');
 
     let getEditorId = function(armorType, material) {
         let prefix = 'Armor';
@@ -20,7 +20,7 @@ ngapp.service('skyrimArmorService', function(blacksmithHelpersService, elementSc
     let findItem = function(signature, armorType, material) {
         const edid = getEditorId(armorType, material);
         const path = signature + '\\' + edid;
-        return blacksmithHelpersService.findElementInFiles(path);
+        return blacksmithHelpers.findElementInFiles(path);
     };
 
     this.getArmorTypes = function() {
@@ -30,7 +30,7 @@ ngapp.service('skyrimArmorService', function(blacksmithHelpersService, elementSc
     this.getArmorAttributes = function(armorType, material) {
         const armorRecordObject = xelib.WithHandle(
             findItem('ARMO', armorType, material),
-            itemId => blacksmithHelpersService.elementToObject(itemId)
+            itemId => blacksmithHelpers.elementToObject(itemId)
         );
         return elementSchemaService.process(armorRecordObject, 'armorTemplateSchema');
     };

@@ -1,4 +1,4 @@
-ngapp.run(function(workflowService, writeObjectToElementService, skyrimAttributeService) {
+ngapp.service('createGearRecordService', function(skyrimAttributeService) {
     let setDeep = function(obj, val, keys) {
         if (keys.length > 1) {
             const key = keys.shift();
@@ -31,6 +31,14 @@ ngapp.run(function(workflowService, writeObjectToElementService, skyrimAttribute
         weapon: createWeaponRecord
     };
 
+    this.createGearRecord = function(gearCategory, item) {
+        if (createGearRecordFunctionMap[gearCategory]) {
+            return createGearRecordFunctionMap[gearCategory](item);
+        }
+    };
+});
+
+ngapp.run(function(workflowService, writeObjectToElementService, createGearRecordService) {
     let getOrAddFile = function(filename) {
         let fileId = xelib.FileByName(filename);
         if (!fileId) {
@@ -40,14 +48,6 @@ ngapp.run(function(workflowService, writeObjectToElementService, skyrimAttribute
     };
 
     let finishWorkflow = function(model) {
-        console.log(model);
-
-        let createGearRecord = createGearRecordFunctionMap[model.gearCategory];
-
-        if (!createGearRecord) {
-            return;
-        }
-
         xelib.WithHandle(
             getOrAddFile(model.plugin),
             pluginId => {
@@ -57,7 +57,7 @@ ngapp.run(function(workflowService, writeObjectToElementService, skyrimAttribute
 
                 xelib.AddAllMasters(pluginId);
                 model.items.forEach(item => {
-                    const recordObject = createGearRecord(item);
+                    const recordObject = createGearRecordService.createGearRecord(model.gearCategory, item);
                     writeObjectToElementService.writeObjectToRecord(pluginId, recordObject);
                 });
                 xelib.CleanMasters(pluginId);

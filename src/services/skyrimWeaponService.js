@@ -1,5 +1,5 @@
-ngapp.service('skyrimWeaponService', function(blacksmithHelpersService, elementSchemaService) {
-    let weaponTypes = fh.loadJsonFile(`${modulePath}/resources/weaponTypes.json`);
+ngapp.service('skyrimWeaponService', function(elementSchemaService, jsonService) {
+    let weaponTypes = jsonService.loadJsonFile('weaponTypes');
 
     let getEditorId = function(fileId, weaponType, material) {
         let prefix = '';
@@ -30,7 +30,7 @@ ngapp.service('skyrimWeaponService', function(blacksmithHelpersService, elementS
     this.getWeaponAttributes = function(weaponType, material) {
         const weaponRecordObject = xelib.WithHandle(
             findItem('WEAP', weaponType, material),
-            itemId => blacksmithHelpersService.elementToObject(itemId)
+            itemId => blacksmithHelpers.elementToObject(itemId)
         );
         return elementSchemaService.process(weaponRecordObject, 'weaponTemplateSchema');
     };
