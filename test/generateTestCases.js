@@ -1,4 +1,4 @@
-let blacksmithHelpers = require('../lib/blacksmithHelpers');
+let blacksmithHelpers = require('../lib/blacksmithHelpers')(zeditGlobals);
 let generateTestCases = function() {
     let gearCategorySignatures = {
         'armor': 'ARMO',
@@ -82,6 +82,11 @@ let generateTestCases = function() {
     }));
     return testCases;
 };
+
+afterAll(function() {
+    console.log('afterAll - teardown xelib');
+    xelib.Finalize();
+});
 
 const testCases = generateTestCases();
 fh.jetpack.write('test/testCases.json', testCases);

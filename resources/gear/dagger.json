@@ -28,5 +28,18 @@
     "critDamage": {
         "base": 0.9,
         "tierMult": 0.9
-    }
+    },
+    "equipType": "Skyrim.esm:013F42",
+    "blockBashImpactDataSet": "Skyrim.esm:0183FF",
+    "alternateBlockMaterial": "Skyrim.esm:018401",
+    "impactDataSet": "Skyrim.esm:013CAC",
+    "attackFailSound": "Skyrim.esm:03C730",
+    "equipSound": "Skyrim.esm:03C72E",
+    "unequipSound": "Skyrim.esm:03C72F",
+    "animationType": 2,
+    "speed": 1.3,
+    "reach": 0.7,
+    "skill": 6,
+    "stagger": 0,
+    "detectionSoundLevel": 2
 }

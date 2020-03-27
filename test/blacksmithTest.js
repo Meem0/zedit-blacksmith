@@ -3,7 +3,7 @@ let getShortKey = function (fullKey) {
     return (matchResult && matchResult[1]) || fullKey;
 };
 
-const excludedKeys = ['Record Header', 'EDID', 'OBND', 'FULL', 'Model', 'KSIZ'];
+const excludedKeys = ['Record Header', 'EDID', 'OBND', 'FULL', 'Model', 'KSIZ', 'WNAM'];
 
 let transformRecordObject = function(recordObject, transformedObject = {}, parentKey = '') {
     Object.entries(recordObject).forEach(([key, value]) => {
@@ -41,7 +41,7 @@ afterAll(function() {
     xelib.Finalize();
 });
 
-let blacksmithHelpers = require('../lib/blacksmithHelpers');
+let blacksmithHelpers = require('../lib/blacksmithHelpers')(zeditGlobals);
 let testCases = fh.jetpack.read('test/testCases.json', 'json');
 testCases.forEach(({itemType, material, gearCategory, reference}) => {
     if (gearCategory !== 'weapon' || !reference || reference === 'ERROR') {

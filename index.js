@@ -1,6 +1,7 @@
 /* global ngapp, xelib, modulePath */
 
-let blacksmithHelpers = require(`${modulePath}/lib/blacksmithHelpers`);
+let zeditGlobals = {xelib, logger};
+let blacksmithHelpers = require(`${modulePath}/lib/blacksmithHelpers`)(zeditGlobals);
 
 //=require src/**/*.js
 
@@ -11,6 +12,7 @@ ngapp.run(function(
     recordDependencyService,
     transformBuilderService,
     editModalFactory,
+    writeObjectToElementService,
     workflowService
     ) {
     contextMenuFactory.treeViewItems.push({
@@ -58,6 +60,24 @@ ngapp.run(function(
                                 const xelibObject = xelib.ElementToObject(selectedNode.handle);
                                 console.log(customObject);
                                 console.log(xelibObject);
+                            }
+                            else if (controlFlag === 4) {
+                                const customObject = blacksmithHelpers.elementToObject(selectedNode.handle);
+                                let filename = 'NewFile77.esp';
+                                xelib.WithHandle(
+                                    xelib.AddFile(filename),
+                                    fileHandle => {
+                                        try {
+                                            writeObjectToElementService.writeObjectToRecord(fileHandle, customObject);
+                                        }
+                                        catch (ex) {
+                                            debugger;
+                                        }
+                                        finally {
+                                            scope.$root.$broadcast('reloadGUI');
+                                        }
+                                    }
+                                );
                             }
                         }
                     }

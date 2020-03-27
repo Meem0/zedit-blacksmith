@@ -27,7 +27,9 @@ xelib.LoadPlugins('Skyrim.esm\nUpdate.esm\nDawnguard.esm');
 console.log('Waiting for xelib...');
 while (xelib.GetLoaderStatus() < 2) {
 }
-console.log('Xelib done loading');
+console.log('xelib done loading');
 
 modulePath = fh.jetpack.cwd();
 moduleUrl = `file:///${modulePath}`;
+
+zeditGlobals = {xelib, logger};
