@@ -13,10 +13,10 @@
         "type": "Binding",
         "name": "Leather Strips"
     }],
-    "keywords": [
-        "ArmorMaterialOrcish",
-        "WeapMaterialOrcish"
-    ],
+    "keywords": {
+        "armor": "ArmorMaterialOrcish",
+        "weapon": "WeapMaterialOrcish"
+    },
     "class": "Heavy",
     "perk": "Orcish Smithing",
     "damage": {

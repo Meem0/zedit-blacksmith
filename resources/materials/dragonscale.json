@@ -13,9 +13,9 @@
         "type": "Binding",
         "name": "Leather Strips"
     }],
-    "keywords": [
-        "ArmorMaterialDragonscale"
-    ],
+    "keywords": {
+        "armor": "ArmorMaterialDragonscale"
+    },
     "class": "Light",
     "perk": "Dragon Armor"
 }

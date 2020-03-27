@@ -14,9 +14,7 @@
         "type": "Minor",
         "count": 1
     }],
-    "keywords": [
-        "WeapTypeWarhammer"
-    ],
+    "keyword": "WeapTypeWarhammer",
     "damage": {
         "base": 17.8,
         "tierMult": 1.15

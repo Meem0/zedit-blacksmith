@@ -1,4 +1,4 @@
-ngapp.service('createGearRecordService', function(skyrimAttributeService) {
+ngapp.service('createGearRecordService', function(skyrimAttributeService, skyrimGearService, skyrimMaterialService) {
     let setDeep = function(obj, val, keys) {
         if (keys.length > 1) {
             const key = keys.shift();
@@ -12,13 +12,38 @@ ngapp.service('createGearRecordService', function(skyrimAttributeService) {
         }
     };
 
+    const vendorKeywords = {
+        armor: 'Skyrim.esm:08F959',
+        weapon: 'Skyrim.esm:08F958'
+    };
+
+    let getKeywords = function(gearCategory, itemType, material) {
+        const itemTypeKeyword = skyrimGearService.getKeywordForItemType(itemType);
+        const materialKeyword = skyrimMaterialService.getPrimaryKeywordForMaterial(material, gearCategory);
+        const vendorKeyword = vendorKeywords[gearCategory];
+
+        let keywords = [];
+        if (itemTypeKeyword) {
+            keywords.push(itemTypeKeyword);
+        }
+        if (materialKeyword) {
+            keywords.push(materialKeyword);
+        }
+        if (vendorKeyword) {
+            keywords.push(vendorKeyword);
+        }
+
+        return keywords;
+    };
+
     let createWeaponRecord = function(weapon) {
         let weaponObject = {
             "Record Header": {
                 "Signature": "WEAP"
             },
             "EDID": weapon.editorId,
-            "FULL": weapon.name
+            "FULL": weapon.name,
+            "KWDA": getKeywords('weapon', weapon.type, weapon.material)
         };
         Object.entries(weapon.attributes).forEach(([attributeName, {value}]) => {
             const keyPath = skyrimAttributeService.getAttributeKeyPath('weapon', attributeName);

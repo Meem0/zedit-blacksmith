@@ -11,9 +11,7 @@
         "type": "Minor",
         "count": 1
     }],
-    "keywords": [
-        "WeapTypeMace"
-    ],
+    "keyword": "WeapTypeMace",
     "damage": {
         "base": 8,
         "tierMult": 1

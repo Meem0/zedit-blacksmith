@@ -2,12 +2,14 @@ ngapp.service('skyrimGearService', function(skyrimReferenceService, jsonService)
     let itemTypeDefinitions = jsonService.loadJsonFilesInFolder('gear');
 
     this.getItemTypeKeywords = function() {
-        return itemTypeDefinitions.reduce((itemTypeKeywords, {keywords}) => itemTypeKeywords.concat(keywords), []);
+        return itemTypeDefinitions.map(({name, keyword}) => ({itemType: name, keyword}));
     };
 
-    this.getItemTypeForKeyword = function(keyword) {
-        const itemTypeDefinition = itemTypeDefinitions.find(({keywords}) => keywords.includes(keyword));
-        return itemTypeDefinition ? itemTypeDefinition.name : '';
+    this.getKeywordForItemType = function(itemType) {
+        const itemTypeDefinition = itemTypeDefinitions.find(({name}) => name === itemType);
+        if (itemTypeDefinition) {
+            return skyrimReferenceService.getReferenceFromName(itemTypeDefinition.keyword);
+        }
     };
 
     this.isArmor = function(itemType) {

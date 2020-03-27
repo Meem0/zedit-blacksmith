@@ -60,14 +60,14 @@ ngapp.run(function(workflowService, skyrimMaterialService, skyrimGearService, wr
 
     let getItemMaterial = function(handle) {
         const materialKeywords = skyrimMaterialService.getMaterialKeywords();
-        const materialKeyword = materialKeywords.find(keyword => xelib.HasKeyword(handle, keyword));
-        return skyrimMaterialService.getMaterialForKeyword(materialKeyword);
+        const materialKeyword = materialKeywords.find(({keywords}) => keywords.some(keyword => xelib.HasKeyword(handle, keyword)));
+        return materialKeyword ? materialKeyword.material : '';
     };
 
     let getItemType = function(handle) {
         const itemTypeKeywords = skyrimGearService.getItemTypeKeywords();
-        const itemTypeKeyword = itemTypeKeywords.find(keyword => xelib.HasKeyword(handle, keyword));
-        return skyrimGearService.getItemTypeForKeyword(itemTypeKeyword);
+        const itemTypeKeyword = itemTypeKeywords.find(({keyword}) => xelib.HasKeyword(handle, keyword));
+        return itemTypeKeyword ? itemTypeKeyword.itemType : '';
     };
 
     const constructibleItemSignatures = ['AMMO', 'ARMO', 'WEAP'];

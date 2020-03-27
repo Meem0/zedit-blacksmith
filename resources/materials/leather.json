@@ -10,9 +10,8 @@
         "type": "Binding",
         "name": "Leather Strips"
     }],
-    "keywords": [
-        "ArmorMaterialHide",
-        "ArmorMaterialLeather"
-    ],
+    "keywords": {
+        "armor": ["ArmorMaterialHide", "ArmorMaterialLeather"]
+    },
     "class": "Light"
 }

@@ -13,11 +13,10 @@
         "type": "Binding",
         "name": "Leather Strips"
     }],
-    "keywords": [
-        "ArmorMaterialSteel",
-        "ArmorMaterialSteelPlate",
-        "WeapMaterialSteel"
-    ],
+    "keywords": {
+        "armor": ["ArmorMaterialSteel", "ArmorMaterialSteelPlate"],
+        "weapon": "WeapMaterialSteel"
+    },
     "class": "Heavy",
     "perk": "Steel Smithing",
     "damage": {

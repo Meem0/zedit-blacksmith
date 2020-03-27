@@ -11,9 +11,7 @@
         "type": "Minor",
         "count": 1
     }],
-    "keywords": [
-        "WeapTypeDagger"
-    ],
+    "keyword": "WeapTypeDagger",
     "damage": {
         "base": 3,
         "tierMult": 1

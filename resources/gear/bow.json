@@ -14,9 +14,7 @@
         "type": "Binding",
         "count": 1
     }],
-    "keywords": [
-        "WeapTypeBow"
-    ],
+    "keyword": "WeapTypeBow",
     "damage": {
         "base": 6.2,
         "tierMult": 1.55

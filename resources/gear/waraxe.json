@@ -11,9 +11,7 @@
         "type": "Minor",
         "count": 1
     }],
-    "keywords": [
-        "WeapTypeWarAxe"
-    ],
+    "keyword": "WeapTypeWarAxe",
     "damage": {
         "base": 7,
         "tierMult": 1

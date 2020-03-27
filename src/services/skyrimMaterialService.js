@@ -14,14 +14,23 @@ ngapp.service('skyrimMaterialService', function(skyrimReferenceService, jsonServ
     };
 
     this.getMaterialKeywords = function() {
-        return materialDefinitions.reduce((materialKeywords, {keywords}) => materialKeywords.concat(keywords), []);
+        return materialDefinitions.map(({name, keywords}) => ({
+            material: name,
+            keywords: Object.values(keywords).reduce((keywords, value) => keywords.concat(value), [])
+        }));
     };
 
-    this.getMaterialForKeyword = function(keyword) {
-        const materialDefinition = materialDefinitions.find(({keywords}) => keywords.includes(keyword));
-        return materialDefinition && materialDefinition.name;
+    this.getPrimaryKeywordForMaterial = function(material, gearCategory) {
+        const materialDefinition = materialDefinitions.find(({name}) => name === material);
+        if (materialDefinition) {
+            const gearCategoryKeywords = materialDefinition.keywords[gearCategory];
+            let gearCategoryKeyword = Array.isArray(gearCategoryKeywords) ? gearCategoryKeywords[0] : gearCategoryKeywords;
+            if (gearCategoryKeyword) {
+                return skyrimReferenceService.getReferenceFromName(gearCategoryKeyword);
+            }
+        }
     };
-    
+
     // get an array with the maximum set of component types across all materials, including duplicate component types
     // e.g. ["Primary", "Major", "Major", "Binding", "Minor"]
     let getComponentTypes = function() {

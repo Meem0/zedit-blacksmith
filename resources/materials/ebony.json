@@ -10,10 +10,10 @@
         "type": "Binding",
         "name": "Leather Strips"
     }],
-    "keywords": [
-        "ArmorMaterialEbony",
-        "WeapMaterialEbony"
-    ],
+    "keywords": {
+        "armor": "ArmorMaterialEbony",
+        "weapon": "WeapMaterialEbony"
+    },
     "class": "Heavy",
     "perk": "Ebony Smithing",
     "damage": {

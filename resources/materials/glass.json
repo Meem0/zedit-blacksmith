@@ -13,10 +13,10 @@
         "type": "Binding",
         "name": "Leather Strips"
     }],
-    "keywords": [
-        "ArmorMaterialGlass",
-        "WeapMaterialGlass"
-    ],
+    "keywords": {
+        "armor": "ArmorMaterialGlass",
+        "weapon": "WeapMaterialGlass"
+    },
     "class": "Light",
     "perk": "Glass Smithing",
     "damage": {

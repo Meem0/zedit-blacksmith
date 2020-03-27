@@ -16,9 +16,9 @@
         "type": "Minor",
         "name": "Leather"
     }],
-    "keywords": [
-        "ArmorMaterialScaled"
-    ],
+    "keywords": {
+        "armor": "ArmorMaterialScaled"
+    },
     "class": "Light",
     "perk": "Advanced Armors"
 }

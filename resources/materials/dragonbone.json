@@ -13,10 +13,10 @@
         "type": "Binding",
         "name": "Leather Strips"
     }],
-    "keywords": [
-        "DLC1WeapMaterialDragonboneDG",
-        "ArmorMaterialDragonplate"
-    ],
+    "keywords": {
+        "armor": "ArmorMaterialDragonplate",
+        "weapon": "DLC1WeapMaterialDragonboneDG"
+    },
     "class": "Heavy",
     "perk": "Dragon Armor",
     "damage": {

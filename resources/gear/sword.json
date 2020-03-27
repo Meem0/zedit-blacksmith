@@ -11,9 +11,7 @@
         "type": "Minor",
         "count": 1
     }],
-    "keywords": [
-        "WeapTypeSword"
-    ],
+    "keyword": "WeapTypeSword",
     "damage": {
         "base": 6,
         "tierMult": 1

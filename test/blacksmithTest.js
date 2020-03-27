@@ -103,7 +103,15 @@ testCases.forEach(({itemType, material, gearCategory, reference}) => {
 
         Object.keys(gameTestObject).forEach(key => {
             test(key, function() {
-                expect(workflowObject[key]).toEqual(gameTestObject[key]);
+                const workflowValue = workflowObject[key];
+                const gameValue = gameTestObject[key];
+                if (Array.isArray(workflowValue) && Array.isArray(gameValue)) {
+                    expect(workflowValue.length).toEqual(gameValue.length);
+                    gameValue.forEach(gameValueItem => expect(workflowValue).toContain(gameValueItem));
+                }
+                else {
+                    expect(workflowValue).toEqual(gameValue);
+                }
             });
         });
     });

@@ -13,10 +13,10 @@
         "type": "Binding",
         "name": "Leather Strips"
     }],
-    "keywords": [
-        "ArmorMaterialDaedric",
-        "WeapMaterialDaedric"
-    ],
+    "keywords": {
+        "armor": "ArmorMaterialDaedric",
+        "weapon": "WeapMaterialDaedric"
+    },
     "class": "Heavy",
     "perk": "Daedric Smithing",
     "damage": {

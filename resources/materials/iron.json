@@ -10,11 +10,10 @@
         "type": "Binding",
         "name": "Leather Strips"
     }],
-    "keywords": [
-        "ArmorMaterialIron",
-        "ArmorMaterialIronBanded",
-        "WeapMaterialIron"
-    ],
+    "keywords": {
+        "armor": ["ArmorMaterialIron", "ArmorMaterialIronBanded"],
+        "weapon": "WeapMaterialIron"
+    },
     "class": "Heavy",
     "damage": {
         "tierValue": 1

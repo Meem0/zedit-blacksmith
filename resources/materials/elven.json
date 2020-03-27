@@ -16,11 +16,10 @@
         "type": "Binding",
         "name": "Leather Strips"
     }],
-    "keywords": [
-        "ArmorMaterialElven",
-        "ArmorMaterialElvenGilded",
-        "WeapMaterialElven"
-    ],
+    "keywords": {
+        "armor": ["ArmorMaterialElven", "ArmorMaterialElvenGilded"],
+        "weapon": "WeapMaterialElven"
+    },
     "class": "Light",
     "perk": "Elven Smithing",
     "damage": {

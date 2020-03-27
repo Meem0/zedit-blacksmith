@@ -16,10 +16,10 @@
         "type": "Binding",
         "name": "Leather Strips"
     }],
-    "keywords": [
-        "ArmorMaterialDwarven",
-        "WeapMaterialDwarven"
-    ],
+    "keywords": {
+        "armor": "ArmorMaterialDwarven",
+        "weapon": "WeapMaterialDwarven"
+    },
     "class": "Heavy",
     "perk": "Dwarven Smithing",
     "damage": {

@@ -90,5 +90,157 @@
     {
         "name": "Steel Smithing",
         "reference": "Skyrim.esm:0CB40D"
+    },
+    {
+        "name": "ArmorMaterialDaedric",
+        "reference": "Skyrim.esm:06BBD4"
+    },
+    {
+        "name": "ArmorMaterialDragonplate",
+        "reference": "Skyrim.esm:06BBD5"
+    },
+    {
+        "name": "ArmorMaterialDragonscale",
+        "reference": "Skyrim.esm:06BBD6"
+    },
+    {
+        "name": "ArmorMaterialDwarven",
+        "reference": "Skyrim.esm:06BBD7"
+    },
+    {
+        "name": "ArmorMaterialEbony",
+        "reference": "Skyrim.esm:06BBD8"
+    },
+    {
+        "name": "ArmorMaterialElven",
+        "reference": "Skyrim.esm:06BBD9"
+    },
+    {
+        "name": "ArmorMaterialElvenGilded",
+        "reference": "Skyrim.esm:06BBDA"
+    },
+    {
+        "name": "ArmorMaterialGlass",
+        "reference": "Skyrim.esm:06BBDC"
+    },
+    {
+        "name": "ArmorMaterialHide",
+        "reference": "Skyrim.esm:06BBDD"
+    },
+    {
+        "name": "ArmorMaterialIron",
+        "reference": "Skyrim.esm:06BBE3"
+    },
+    {
+        "name": "ArmorMaterialIronBanded",
+        "reference": "Skyrim.esm:06BBE4"
+    },
+    {
+        "name": "ArmorMaterialLeather",
+        "reference": "Skyrim.esm:06BBDB"
+    },
+    {
+        "name": "ArmorMaterialOrcish",
+        "reference": "Skyrim.esm:06BBE5"
+    },
+    {
+        "name": "ArmorMaterialScaled",
+        "reference": "Skyrim.esm:06BBDE"
+    },
+    {
+        "name": "ArmorMaterialSteel",
+        "reference": "Skyrim.esm:06BBE6"
+    },
+    {
+        "name": "ArmorMaterialSteelPlate",
+        "reference": "Skyrim.esm:06BBE7"
+    },
+    {
+        "name": "DLC1WeapMaterialDragonboneDG",
+        "reference": "Dawnguard.esm:019822"
+    },
+    {
+        "name": "WeapMaterialDaedric",
+        "reference": "Skyrim.esm:01E71F"
+    },
+    {
+        "name": "WeapMaterialDwarven",
+        "reference": "Skyrim.esm:01E71A"
+    },
+    {
+        "name": "WeapMaterialEbony",
+        "reference": "Skyrim.esm:01E71E"
+    },
+    {
+        "name": "WeapMaterialElven",
+        "reference": "Skyrim.esm:01E71B"
+    },
+    {
+        "name": "WeapMaterialGlass",
+        "reference": "Skyrim.esm:01E71D"
+    },
+    {
+        "name": "WeapMaterialIron",
+        "reference": "Skyrim.esm:01E718"
+    },
+    {
+        "name": "WeapMaterialOrcish",
+        "reference": "Skyrim.esm:01E71C"
+    },
+    {
+        "name": "WeapMaterialSteel",
+        "reference": "Skyrim.esm:01E719"
+    },
+    {
+        "name": "ArmorCuirass",
+        "reference": "Skyrim.esm:06C0EC"
+    },
+    {
+        "name": "WeapTypeBattleaxe",
+        "reference": "Skyrim.esm:06D932"
+    },
+    {
+        "name": "ArmorBoots",
+        "reference": "Skyrim.esm:06C0ED"
+    },
+    {
+        "name": "WeapTypeBow",
+        "reference": "Skyrim.esm:01E715"
+    },
+    {
+        "name": "WeapTypeDagger",
+        "reference": "Skyrim.esm:01E713"
+    },
+    {
+        "name": "ArmorGauntlets",
+        "reference": "Skyrim.esm:06C0EF"
+    },
+    {
+        "name": "WeapTypeGreatsword",
+        "reference": "Skyrim.esm:06D931"
+    },
+    {
+        "name": "ArmorHelmet",
+        "reference": "Skyrim.esm:06C0EE"
+    },
+    {
+        "name": "WeapTypeMace",
+        "reference": "Skyrim.esm:01E714"
+    },
+    {
+        "name": "ArmorShield",
+        "reference": "Skyrim.esm:0965B2"
+    },
+    {
+        "name": "WeapTypeSword",
+        "reference": "Skyrim.esm:01E711"
+    },
+    {
+        "name": "WeapTypeWarAxe",
+        "reference": "Skyrim.esm:01E712"
+    },
+    {
+        "name": "WeapTypeWarhammer",
+        "reference": "Skyrim.esm:06D930"
     }
 ]
