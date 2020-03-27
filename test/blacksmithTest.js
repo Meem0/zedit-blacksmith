@@ -27,6 +27,20 @@ let transformRecordObject = function(recordObject, transformedObject = {}, paren
     return transformedObject;
 };
 
+const overrideTestValues = [{
+    keyPath: 'BIDS',
+    itemType: 'Greatsword',
+    material: 'Elven',
+    value: 'Skyrim.esm:0183FF'
+}];
+
+let getOverrideTestValue = function(inKeyPath, inItemType, inMaterial) {
+    const overrideTestValue = overrideTestValues.find(({keyPath, itemType, material}) => keyPath === inKeyPath && itemType == inItemType && material === inMaterial);
+    if (overrideTestValue) {
+        return overrideTestValue.value;
+    }
+};
+
 beforeAll(function() {
     console.log('beforeAll - include files');
 
@@ -107,7 +121,7 @@ testCases.forEach(({itemType, material, gearCategory, reference}) => {
         Object.keys(gameTestObject).forEach(key => {
             test(key, function() {
                 const workflowValue = workflowObject[key];
-                const gameValue = gameTestObject[key];
+                const gameValue = getOverrideTestValue(key, itemType, material) || gameTestObject[key];
                 if (Array.isArray(workflowValue) && Array.isArray(gameValue)) {
                     expect(workflowValue.length).toEqual(gameValue.length);
                     gameValue.forEach(gameValueItem => expect(workflowValue).toContain(gameValueItem));
