@@ -3,7 +3,7 @@ let getShortKey = function (fullKey) {
     return (matchResult && matchResult[1]) || fullKey;
 };
 
-const excludedKeys = ['Record Header', 'EDID', 'OBND', 'FULL', 'Model', 'KSIZ', 'WNAM'];
+const excludedKeys = ['Record Header', 'EDID', 'OBND', 'FULL', 'Model', 'KSIZ', 'WNAM', 'Unused', 'Unknown'];
 
 let transformRecordObject = function(recordObject, transformedObject = {}, parentKey = '') {
     Object.entries(recordObject).forEach(([key, value]) => {
@@ -14,7 +14,7 @@ let transformRecordObject = function(recordObject, transformedObject = {}, paren
                 keyPath = `${parentKey}\\${shortKey}`;
             }
             if (typeof(value) === 'number') {
-                transformedObject[keyPath] = Math.round(value * 1000) / 1000;
+                transformedObject[keyPath] = Math.round(value * 100000) / 100000;
             }
             else if (Array.isArray(value) || typeof(value) !== 'object') {
                 transformedObject[keyPath] = value;
@@ -50,7 +50,10 @@ testCases.forEach(({itemType, material, gearCategory, reference}) => {
 
     const gameRecordObject = xelib.WithHandle(
         blacksmithHelpers.getRecordFromReference(reference),
-        id => blacksmithHelpers.elementToObject(id)
+        id => xelib.WithHandle(
+            xelib.GetWinningOverride(id),
+            overrideId => blacksmithHelpers.elementToObject(overrideId)
+        )
     );
     let gameTestObject = transformRecordObject(gameRecordObject);
 

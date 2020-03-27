@@ -1,4 +1,25 @@
-ngapp.service('skyrimAttributeService', function(skyrimGearService, skyrimMaterialService) {
+ngapp.service('skyrimAttributeService', function(skyrimGearService, skyrimMaterialService, jsonService) {
+    let attributeOverrides = jsonService.loadJsonFile('attributeOverrides')
+        .reduce((attributeOverrides, {attribute, itemType, material, value}) => {
+            let attributeOverrideList = attributeOverrides[attribute];
+            if (!attributeOverrideList) {
+                attributeOverrideList = [];
+                attributeOverrides[attribute] = attributeOverrideList;
+            }
+            attributeOverrideList.push({itemType, material, value});
+            return attributeOverrides;
+        }, {});
+    
+    let getAttributeOverride = function(inAttributeName, inItemType, inMaterial) {
+        const attributeOverrideList = attributeOverrides[inAttributeName];
+        if (attributeOverrideList) {
+            const attributeOverride = attributeOverrideList.find(({itemType, material}) => inItemType === itemType && inMaterial === material);
+            if (attributeOverride) {
+                return attributeOverride.value;
+            }
+        }
+    };
+
     let roundToN = function(num, n) {
         return Math.round(num / n) * n;
     };
@@ -28,6 +49,12 @@ ngapp.service('skyrimAttributeService', function(skyrimGearService, skyrimMateri
             },
             keyPath: ['CRDT', 'Damage']
         },
+        speed: {
+            getValue: function({base, tierMult}, {tierValue}) {
+                return Math.max(base + tierMult * tierValue, 0.5);
+            },
+            keyPath: ['DNAM', 'Speed']
+        },
         equipType: {
             keyPath: ['ETYP']
         },
@@ -56,9 +83,6 @@ ngapp.service('skyrimAttributeService', function(skyrimGearService, skyrimMateri
         animationType: {
             keyPath: ['DNAM', 'Animation Type']
         },
-        speed: {
-            keyPath: ['DNAM', 'Speed']
-        },
         reach: {
             keyPath: ['DNAM', 'Reach']
         },
@@ -68,17 +92,9 @@ ngapp.service('skyrimAttributeService', function(skyrimGearService, skyrimMateri
         stagger: {
             keyPath: ['DNAM', 'Stagger']
         },
-        dataUnused: {
-            value: '00 00',
-            keyPath: ['DNAM', 'Unused']
-        },
         sightFOV: {
             value: 0,
             keyPath: ['DNAM', 'Sight FOV']
-        },
-        dataUnknown: {
-            value: '00 00 00 00',
-            keyPath: ['DNAM', 'Unknown']
         },
         baseVATSChance: {
             value: 0,
@@ -128,10 +144,6 @@ ngapp.service('skyrimAttributeService', function(skyrimGearService, skyrimMateri
             value: -1,
             keyPath: ['DNAM', 'Resist']
         },
-        critUnknown: {
-            value: '00 00 00 00',
-            keyPath: ['CRDT', 'Unknown']
-        },
         critMult: {
             value: 1,
             keyPath: ['CRDT', '% Mult']
@@ -139,10 +151,6 @@ ngapp.service('skyrimAttributeService', function(skyrimGearService, skyrimMateri
         critFlags: {
             value: {'On Death': true},
             keyPath: ['CRDT', 'Flags']
-        },
-        critUnused: {
-            value: '00 00 00',
-            keyPath: ['CRDT', 'Unused']
         },
         detectionSoundLevel: {
             keyPath: ['VNAM']
@@ -175,6 +183,11 @@ ngapp.service('skyrimAttributeService', function(skyrimGearService, skyrimMateri
     this.getAttributeValue = function(gearCategory, attributeName, itemType, material) {
         const attribute = getAttribute(gearCategory, attributeName);
         if (attribute) {
+            const attributeOverrideValue = getAttributeOverride(attributeName, itemType, material);
+            if (attributeOverrideValue !== undefined) {
+                return attributeOverrideValue;
+            }
+
             const itemAttributeProperties = skyrimGearService.getAttributeProperties(itemType, attributeName);
             const materialAttributeProperties = skyrimMaterialService.getAttributeProperties(material, attributeName);
             if (attribute.getValue && itemAttributeProperties && materialAttributeProperties) {

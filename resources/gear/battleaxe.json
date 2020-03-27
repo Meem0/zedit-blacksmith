@@ -16,7 +16,7 @@
     }],
     "keyword": "WeapTypeBattleaxe",
     "damage": {
-        "base": 17.8,
+        "base": 15.8,
         "tierMult": 1.15
     },
     "goldValue": {
@@ -28,7 +28,11 @@
     },
     "critDamage": {
         "base": 6,
-        "tierMult": 1.2
+        "tierMult": 1.3
+    },
+    "speed": {
+        "base": 0.7,
+        "tierMult": 0
     },
     "equipType": "Skyrim.esm:013F45",
     "blockBashImpactDataSet": "Skyrim.esm:0193C7",
@@ -38,9 +42,8 @@
     "equipSound": "Skyrim.esm:06036A",
     "unequipSound": "Skyrim.esm:0605D3",
     "animationType": 6,
-    "speed": 0.7,
     "reach": 1.3,
     "skill": 7,
     "stagger": 1.15,
-    "detectionSoundLevel": 1
+    "detectionSoundLevel": 0
 }

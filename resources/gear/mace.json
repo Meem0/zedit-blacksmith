@@ -27,6 +27,10 @@
         "base": 3,
         "tierMult": 1
     },
+    "speed": {
+        "base": 0.8,
+        "tierMult": 0
+    },
     "equipType": "Skyrim.esm:013F42",
     "blockBashImpactDataSet": "Skyrim.esm:0193C7",
     "alternateBlockMaterial": "Skyrim.esm:0774C1",
@@ -35,7 +39,6 @@
     "equipSound": "Skyrim.esm:03DE2A",
     "unequipSound": "Skyrim.esm:03DE2B",
     "animationType": 4,
-    "speed": 0.8,
     "reach": 1,
     "skill": 6,
     "stagger": 1,

@@ -26,5 +26,8 @@
     },
     "critDamage": {
         "tierValue": 1
+    },
+    "speed": {
+        "tierValue": 1
     }
 }

@@ -1,0 +1,201 @@
+[{
+    "attribute": "damage",
+    "itemType": "Bow",
+    "material": "Daedric",
+    "value": 19
+}, {
+    "attribute": "goldValue",
+    "itemType": "War Axe",
+    "material": "Dwarven",
+    "value": 165
+}, {
+    "attribute": "goldValue",
+    "itemType": "War Axe",
+    "material": "Dragonbone",
+    "value": 1700
+}, {
+    "attribute": "goldValue",
+    "itemType": "Mace",
+    "material": "Ebony",
+    "value": 1000
+}, {
+    "attribute": "goldValue",
+    "itemType": "Mace",
+    "material": "Dragonbone",
+    "value": 2000
+}, {
+    "attribute": "goldValue",
+    "itemType": "Dagger",
+    "material": "Steel",
+    "value": 18
+}, {
+    "attribute": "goldValue",
+    "itemType": "Greatsword",
+    "material": "Dragonbone",
+    "value": 2725
+}, {
+    "attribute": "goldValue",
+    "itemType": "Battleaxe",
+    "material": "Dwarven",
+    "value": 300
+}, {
+    "attribute": "goldValue",
+    "itemType": "Battleaxe",
+    "material": "Elven",
+    "value": 520
+}, {
+    "attribute": "goldValue",
+    "itemType": "Battleaxe",
+    "material": "Dragonbone",
+    "value": 3000
+}, {
+    "attribute": "goldValue",
+    "itemType": "Warhammer",
+    "material": "Ebony",
+    "value": 1725
+}, {
+    "attribute": "goldValue",
+    "itemType": "Warhammer",
+    "material": "Daedric",
+    "value": 4000
+}, {
+    "attribute": "goldValue",
+    "itemType": "Warhammer",
+    "material": "Dragonbone",
+    "value": 4275
+}, {
+    "attribute": "goldValue",
+    "itemType": "Bow",
+    "material": "Dragonbone",
+    "value": 2725
+}, {
+    "attribute": "weight",
+    "itemType": "Mace",
+    "material": "Dragonbone",
+    "value": 22
+}, {
+    "attribute": "weight",
+    "itemType": "Dagger",
+    "material": "Daedric",
+    "value": 6
+}, {
+    "attribute": "weight",
+    "itemType": "Dagger",
+    "material": "Dragonbone",
+    "value": 6.5
+}, {
+    "attribute": "weight",
+    "itemType": "Greatsword",
+    "material": "Glass",
+    "value": 22
+}, {
+    "attribute": "weight",
+    "itemType": "Greatsword",
+    "material": "Dragonbone",
+    "value": 27
+}, {
+    "attribute": "weight",
+    "itemType": "Battleaxe",
+    "material": "Orcish",
+    "value": 25
+}, {
+    "attribute": "weight",
+    "itemType": "Warhammer",
+    "material": "Dragonbone",
+    "value": 33
+}, {
+    "attribute": "weight",
+    "itemType": "Bow",
+    "material": "Orcish",
+    "value": 9
+}, {
+    "attribute": "weight",
+    "itemType": "Bow",
+    "material": "Dragonbone",
+    "value": 20
+}, {
+    "attribute": "critDamage",
+    "itemType": "War Axe",
+    "material": "Steel",
+    "value": 4
+}, {
+    "attribute": "critDamage",
+    "itemType": "War Axe",
+    "material": "Dwarven",
+    "value": 5
+}, {
+    "attribute": "critDamage",
+    "itemType": "War Axe",
+    "material": "Glass",
+    "value": 6
+}, {
+    "attribute": "critDamage",
+    "itemType": "War Axe",
+    "material": "Daedric",
+    "value": 7
+}, {
+    "attribute": "critDamage",
+    "itemType": "Dagger",
+    "material": "Steel",
+    "value": 2
+}, {
+    "attribute": "critDamage",
+    "itemType": "Dagger",
+    "material": "Dwarven",
+    "value": 3
+}, {
+    "attribute": "critDamage",
+    "itemType": "Dagger",
+    "material": "Glass",
+    "value": 4
+}, {
+    "attribute": "critDamage",
+    "itemType": "Dagger",
+    "material": "Dragonbone",
+    "value": 6
+}, {
+    "attribute": "critDamage",
+    "itemType": "Greatsword",
+    "material": "Orcish",
+    "value": 9
+}, {
+    "attribute": "critDamage",
+    "itemType": "Greatsword",
+    "material": "Elven",
+    "value": 10
+}, {
+    "attribute": "critDamage",
+    "itemType": "Greatsword",
+    "material": "Ebony",
+    "value": 11
+}, {
+    "attribute": "critDamage",
+    "itemType": "Battleaxe",
+    "material": "Iron",
+    "value": 8
+}, {
+    "attribute": "critDamage",
+    "itemType": "Battleaxe",
+    "material": "Daedric",
+    "value": 12
+}, {
+    "attribute": "critDamage",
+    "itemType": "Warhammer",
+    "material": "Dragonbone",
+    "value": 14
+}, {
+    "attribute": "critDamage",
+    "itemType": "Bow",
+    "material": "Ebony",
+    "value": 8
+}, {
+    "attribute": "critDamage",
+    "itemType": "Bow",
+    "material": "Dragonbone",
+    "value": 10
+}, {
+    "attribute": "speed",
+    "itemType": "Bow",
+    "material": "Orcish",
+    "value": 0.8126
+}]

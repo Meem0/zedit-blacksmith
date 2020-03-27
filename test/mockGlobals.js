@@ -23,7 +23,7 @@ fh = {
 xelib = require('xelib').wrapper;
 xelib.Initialize('node_modules\\xelib\\XEditLib.dll');
 xelib.SetGameMode(xelib.gmSSE);
-xelib.LoadPlugins('Skyrim.esm\nUpdate.esm\nDawnguard.esm');
+xelib.LoadPlugins('Skyrim.esm\nUpdate.esm\nDawnguard.esm\nUnofficial Skyrim Special Edition Patch.esp');
 console.log('Waiting for xelib...');
 while (xelib.GetLoaderStatus() < 2) {
 }
