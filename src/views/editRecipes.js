@@ -1,6 +1,4 @@
 ngapp.run(function(workflowService, skyrimMaterialService, skyrimGearService) {
-    const ingredientSignatures = ['ALCH', 'AMMO', 'ARMO', 'BOOK', 'INGR', 'MISC', 'SCRL', 'SLGM', 'WEAP'];
-
     let getReferenceFromLongName = function(longName) {
         return xelib.WithHandle(
             blacksmithHelpers.getRecordFromLongName(longName),
@@ -8,40 +6,12 @@ ngapp.run(function(workflowService, skyrimMaterialService, skyrimGearService) {
         );
     };
     
-    let createIngredient = function(itemReference = '', count = 0) {
-        return {
-            itemReference: itemReference,
-            count: count,
-            signature: blacksmithHelpers.runOnReferenceRecord(this.itemReference, xelib.Signature) || 'MISC',
-            get name() {
-                return blacksmithHelpers.runOnReferenceRecord(this.itemReference, xelib.FullName) || '';
-            },
-            get longName() {
-                return blacksmithHelpers.runOnReferenceRecord(this.itemReference, xelib.LongName) || '';
-            },
-            set longName(value) {
-                this.itemReference = getReferenceFromLongName(value);
-            }
-        };
-    };
-
     let getComponentsForMaterial = function(material) {
-        return skyrimMaterialService.getComponentsForMaterial(material, /*includePlaceholders*/ true).map(component => ({
-            ...component,
-            signature: blacksmithHelpers.runOnReferenceRecord(this.itemReference, xelib.Signature) || 'MISC',
-            get longName() {
-                return blacksmithHelpers.runOnReferenceRecord(this.itemReference, xelib.LongName) || '';
-            },
-            set longName(value) {
-                this.itemReference = getReferenceFromLongName(value);
-            }
-        }));
+        return skyrimMaterialService.getComponentsForMaterial(material, /*includePlaceholders*/ true);
     };
 
-    let buildIngredientsList = function(components, itemType, componentClass) {
-        let ingredients = skyrimGearService.getRecipeAdditionalComponents(itemType, componentClass).map(
-            ({itemReference, count}) => createIngredient(itemReference, count)
-        );
+    let buildIngredientsFromComponents = function(components, itemType, componentClass) {
+        let ingredients = skyrimGearService.getRecipeAdditionalComponents(itemType, componentClass);
         const groupedComponents = components.reduce((groupedComponents, component) => {
             if (component.itemReference) {
                 groupedComponents[component.type] = (groupedComponents[component.type] || []).concat(component.itemReference);
@@ -60,151 +30,247 @@ ngapp.run(function(workflowService, skyrimMaterialService, skyrimGearService) {
                 if (myQuantity <= 0) {
                     return;
                 }
-                let ingredient = ingredients.find(({itemReference}) => itemReference === componentItemReference);
-                if (!ingredient) {
-                    ingredients.push(createIngredient(componentItemReference, myQuantity));
+                let ingredientIndex = ingredients.findIndex(({itemReference}) => itemReference === componentItemReference);
+                if (ingredientIndex === -1) {
+                    ingredients.push({
+                        itemReference: componentItemReference,
+                        count: myQuantity
+                    });
                 }
                 else {
-                    ingredient.count += myQuantity;
+                    ingredients[ingredientIndex] = {
+                        itemReference: componentItemReference,
+                        count: ingredients[ingredientIndex].count + myQuantity
+                    };
                 }
             });
         });
         return ingredients;
     };
-    
-    let generateRecipes = function(items, material, isTemper, existingRecipes) {
-        return items.reduce((recipes, item) => {
-            if (item.material === material) {
-                const existingRecipe = existingRecipes.find(existingRecipe => existingRecipe.item.reference === item.reference);
-                
-                recipes.push({
-                    item: item,
-                    ingredients: existingRecipe ? existingRecipe.ingredients : [],
-                    editManually: existingRecipe ? existingRecipe.editManually : false,
-                    isTemper: isTemper,
-                    get editorId() {
-                        return (this.isTemper ? 'Temper' : 'Recipe') + this.item.editorId;
+
+    let createViewModel = function(recipes, input, model) {
+        let viewModel = {};
+
+        viewModel.recipes = recipes.map(recipe => {
+            let getModelRecipe = function() {
+                if (!model.recipes) {
+                    model.recipes = [];
+                }
+                return model.recipes.find(({itemReference}) => itemReference === recipe.itemReference);
+            };
+            let getOrAddModelRecipe = function() {
+                let modelRecipe = getModelRecipe();
+                if (modelRecipe) {
+                    return modelRecipe;
+                }
+                modelRecipe = {
+                    itemReference: recipe.itemReference,
+                    useCustomIngredients: false,
+                    customIngredients: recipe.ingredients.map(({itemReference, count}) => ({
+                        itemReference,
+                        count,
+                        signature: blacksmithHelpers.runOnReferenceRecord(itemReference, xelib.Signature) || 'MISC'
+                    }))
+                };
+                model.recipes.push(modelRecipe);
+                return modelRecipe;
+            };
+
+            const modelRecipe = getModelRecipe();
+            const useCustomIngredients = modelRecipe ? modelRecipe.useCustomIngredients : false;
+
+            const item = input.items.find(({itemReference}) => itemReference === recipe.itemReference);
+            return {
+                itemReference: recipe.itemReference,
+                itemName: blacksmithHelpers.runOnReferenceRecord(recipe.itemReference, xelib.FullName) || '',
+                itemType: item ? item.type : '',
+                addIngredient: function() {
+                    let modelRecipe = getOrAddModelRecipe();
+                    modelRecipe.customIngredients.push({
+                        itemReference: '',
+                        count: 0,
+                        signature: 'MISC'
+                    });
+                },
+                removeIngredient: function(ingredient) {
+                    let modelRecipe = getOrAddModelRecipe();
+                    const index = modelRecipe.customIngredients.indexOf(ingredient.modelIngredient);
+                    if (index >= 0) {
+                        modelRecipe.customIngredients.splice(index, 1);
                     }
-                });
+                },
+                ingredients: (useCustomIngredients
+                    ? (getOrAddModelRecipe().customIngredients.map(ingredient => ({
+                        modelIngredient: ingredient, // for removeIngredient
+                        get name() {
+                            return blacksmithHelpers.runOnReferenceRecord(ingredient.itemReference, xelib.FullName) || '';
+                        },
+                        get count() {
+                            return ingredient.count;
+                        },
+                        set count(value) {
+                            ingredient.count = value;
+                        },
+                        get longName() {
+                            return blacksmithHelpers.runOnReferenceRecord(ingredient.itemReference, xelib.LongName) || '';
+                        },
+                        set longName(value) {
+                            let reference = getReferenceFromLongName(value);
+                            ingredient.itemReference = reference;
+                        },
+                        get signature() {
+                            return ingredient.signature;
+                        },
+                        set signature(value) {
+                            ingredient.signature = value;
+                        }
+                    })))
+                    : (recipe.ingredients.map(ingredient => ({
+                        get name() {
+                            return blacksmithHelpers.runOnReferenceRecord(ingredient.itemReference, xelib.FullName) || '';
+                        },
+                        count: ingredient.count
+                    })))
+                ),
+                get editManually() {
+                    return useCustomIngredients;
+                },
+                set editManually(value) {
+                    let modelRecipe = getOrAddModelRecipe();
+                    modelRecipe.useCustomIngredients = value;
+                }
+            };
+        });
+
+        const defaultComponents = getComponentsForMaterial(input.material);
+        viewModel.components = defaultComponents.map((defaultComponent, index) => {
+            let getModelComponent = function() {
+                if (!model.components) {
+                    model.components = [];
+                }
+                return model.components[index];
+            };
+            let getOrAddModelComponent = function() {
+                let modelComponent = getModelComponent();
+                if (modelComponent) {
+                    return modelComponent;
+                }
+                modelComponent = {
+                    type: defaultComponent.type,
+                    itemReference: defaultComponent.itemReference
+                };
+                model.components[index] = modelComponent;
+            };
+            return {
+                type: defaultComponent.type,
+                get longName() {
+                    let modelComponent = getModelComponent();
+                    let componentItemReference = modelComponent ? modelComponent.itemReference : defaultComponent.itemReference;
+                    return blacksmithHelpers.runOnReferenceRecord(componentItemReference, xelib.LongName) || '';
+                },
+                set longName(value) {
+                    let modelComponent = getOrAddModelComponent();
+                    let itemReference = getReferenceFromLongName(value);
+                    modelComponent.itemReference = itemReference;
+                },
+                get signature() {
+                    let modelComponent = getModelComponent();
+                    if (modelComponent) {
+                        return modelComponent.signature;
+                    }
+                    return blacksmithHelpers.runOnReferenceRecord(defaultComponent.itemReference, xelib.Signature) || '';
+                },
+                set signature(value) {
+                    let modelComponent = getOrAddModelComponent();
+                    modelComponent.signature = value;
+                }
+            };
+        });
+
+        const defaultTemperIngredient = skyrimMaterialService.getTemperIngredientForMaterial(input.material);
+        let getOrAddModelTemperIngredient = function() {
+            if (model.temperIngredient) {
+                return model.temperIngredient;
             }
-            return recipes;
-        }, []);
+            model.temperIngredient = {
+                itemReference: defaultTemperIngredient.itemReference,
+                signature: blacksmithHelpers.runOnReferenceRecord(defaultTemperIngredient.itemReference, xelib.Signature) || 'MISC'
+            };
+            return model.temperIngredient;
+        };
+        viewModel.temperIngredient = {
+            get longName() {
+                const itemReference = model.temperIngredient ? model.temperIngredient.itemReference : defaultTemperIngredient.itemReference;
+                return blacksmithHelpers.runOnReferenceRecord(itemReference, xelib.LongName) || '';
+            },
+            set longName(value) {
+                let modelTemperIngredient = getOrAddModelTemperIngredient();
+                let itemReference = getReferenceFromLongName(value);
+                modelTemperIngredient.itemReference = itemReference;
+            },
+            get signature() {
+                return model.temperIngredient ? model.temperIngredient.signature : defaultTemperIngredient.signature;
+            },
+            set signature(value) {
+                let modelTemperIngredient = getOrAddModelTemperIngredient();
+                modelTemperIngredient.signature = value;
+            }
+        };
+
+        return viewModel;
     };
 
-    /*
-    $scope: {
-        input: {
-            material: (e.g. "Iron"),
-            items: [{
-                reference: (e.g. "Skyrim.esm:012E49"),
-                name: (e.g. "Iron Sword") (get from reference),
-                editorId: (e.g. "WeaponIronSword") (get from reference)
-                type: (e.g. "Sword")
-            }]
-        }
-        model: {
-            recipes: [
-                item: { (same as input.items) },
-                ingredients: [
-                    {
-                        itemReference: (e.g. "Skyrim.esm:05ACE4"),
-                        name: (e.g. "Iron Ingot") (get from itemReference),
-                        longName: (e.g. "IngotIron "Iron Ingot" [MISC:Skyrim.esm:05ACE4]") (get / set from itemReference),
-                        count: (e.g. 2),
-                        signature: (e.g. "MISC")
-                    }
-                ],
-                editManually: (true / false),
-                isTemper: (true / false),
-                editorId: (e.g. "RecipeIronSword") (get from item.editorId and isTemper)
-            ],
-            components: [
-                {
-                    type: (e.g. "Major"),
-                    itemReference: (e.g. "Skyrim.esm:05ACE4"),
-                    longName: (e.g. "IngotIron "Iron Ingot" [MISC:Skyrim.esm:05ACE4]") (get / set from itemReference)
-                    signature: (e.g. "MISC")
+    let buildRecipes = function(input, model) {
+        const items = input.items || [];
+        const recipes = items.map(item => {
+            let recipe = {
+                itemReference: item.reference
+            };
+            if (model.recipes) {
+                const modelRecipe = model.recipes.find(({itemReference}) => itemReference === item.reference);
+                if (modelRecipe && modelRecipe.useCustomIngredients && Array.isArray(modelRecipe.customIngredients)) {
+                    recipe.ingredients = modelRecipe.customIngredients;
                 }
-            ],
-            temperItem: {
-                itemReference: (e.g. "Skyrim.esm:05ACE4"),
-                name: (e.g. "Iron Ingot") (get from itemReference),
-                longName: (e.g. "IngotIron "Iron Ingot" [MISC:Skyrim.esm:05ACE4]") (get / set from itemReference),
-                count: (e.g. 2),
-                signature: (e.g. "MISC")
             }
-        }
-    }
-    */
-    let editRecipesController = function($scope) {
-        $scope.model.recipes = generateRecipes(
-            $scope.input.items,
-            $scope.input.material,
-            $scope.input.makeTemperRecipes,
-            $scope.model.recipes || []
-        );
-
-        const inputMaterialChanged = $scope.model.cachedInputMaterial !== $scope.input.material;
-        if ($scope.input.makeTemperRecipes && (inputMaterialChanged || !$scope.model.temperIngredient)) {
-            $scope.model.temperIngredient = createIngredient(
-                skyrimMaterialService.getTemperIngredientForMaterial($scope.input.material),
-                1
-            );
-        }
-        else if (!$scope.input.makeTemperRecipes && (inputMaterialChanged || !$scope.model.components)) {
-            $scope.model.components = getComponentsForMaterial($scope.input.material);
-        }
-        $scope.model.cachedInputMaterial = $scope.input.material;
-
-        $scope.ingredientSignatures = ingredientSignatures;
-        const componentClass = skyrimMaterialService.getMaterialClass($scope.input.material);
-
-        let rebuildRecipe = function(recipe) {
-            if (recipe && !recipe.editManually) {
-                if ($scope.input.makeTemperRecipes) {
-                    recipe.ingredients = [createIngredient($scope.model.temperIngredient.itemReference, $scope.model.temperIngredient.count)];
+            if (!recipe.ingredients) {
+                if (input.makeTemperRecipes) {
+                    const temperIngredient = (model.temperIngredient
+                        ? model.temperIngredient.itemReference
+                        : skyrimMaterialService.getTemperIngredientForMaterial(input.material));
+                    recipe.ingredients = [{
+                        itemReference: temperIngredient,
+                        count: 1
+                    }];
                 }
                 else {
-                    recipe.ingredients = buildIngredientsList($scope.model.components, recipe.item.type, componentClass);
+                    const defaultComponents = getComponentsForMaterial(input.material);
+                    const components = defaultComponents.map((defaultComponent, index) => {
+                        return model.components && model.components[index] ? model.components[index] : defaultComponent;
+                    });
+                    const componentClass = skyrimMaterialService.getMaterialClass(input.material);
+                    recipe.ingredients = buildIngredientsFromComponents(components, item.type, componentClass);
                 }
             }
-        };
+            return recipe;
+        });
+        return {recipes};
+    };
 
-        $scope.$watch($scope.input.makeTemperRecipes ? 'model.temperIngredient' : 'model.components', function() {
-            $scope.model.recipes.forEach(rebuildRecipe);
-        }, true);
-        
-        $scope.toggleEditManually = function(recipe) {
-            rebuildRecipe(recipe);
-        };
-        
-        $scope.addIngredient = function(recipe) {
-            recipe.ingredients.push(createIngredient());
-        };
-        
-        $scope.removeIngredient = function(recipe, ingredient) {
-            const index = recipe.ingredients.indexOf(ingredient);
-            if (index >= 0) {
-                recipe.ingredients.splice(index, 1);
-            }
-        };
+    let editRecipesController = function($scope) {
+        $scope.ingredientSignatures = ['ALCH', 'AMMO', 'ARMO', 'BOOK', 'INGR', 'MISC', 'SCRL', 'SLGM', 'WEAP'];
+
+        let {recipes} = buildRecipes($scope.input, $scope.model);
+        $scope.viewModel = createViewModel(recipes, $scope.input, $scope.model);
+
+        $scope.$on('workflowProcessed', function(e, workflowModel) {
+            $scope.viewModel = createViewModel(workflowModel.recipes, $scope.input, $scope.model);
+        });
     };
 
     workflowService.addView('editRecipes', {
         templateUrl: `${moduleUrl}/partials/views/editRecipes.html`,
         controller: editRecipesController,
         requireInput: ['items', 'material', 'makeTemperRecipes'],
-        process: function(input, model) {
-            if (!Array.isArray(model.recipes)) {
-                return;
-            }
-            const outputRecipes = generateRecipes(
-                input.items,
-                input.material,
-                input.makeTemperRecipes,
-                model.recipes
-            );
-            return { recipes: outputRecipes };
-        }
+        process: buildRecipes
     });
 });

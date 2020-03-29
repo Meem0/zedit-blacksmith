@@ -3,9 +3,28 @@ let getShortKey = function (fullKey) {
     return (matchResult && matchResult[1]) || fullKey;
 };
 
-const excludedKeys = ['Record Header', 'EDID', 'OBND', 'FULL', 'Model', 'KSIZ', 'WNAM', 'Unused', 'Unknown'];
+let blacksmithHelpers = require('../lib/blacksmithHelpers')(zeditGlobals);
+global.blacksmithHelpers = blacksmithHelpers;
+const excludedKeys = ['Record Header', 'EDID', 'OBND', 'FULL', 'Model', 'KSIZ', 'COCT', 'WNAM', 'Unused', 'Unknown'];
 
 let transformRecordObject = function(recordObject, transformedObject = {}, parentKey = '') {
+    let transformRecordValue = function(value) {
+        if (typeof(value) === 'number') {
+            return Math.round(value * 100000) / 100000;
+        }
+        else if (typeof(value) === 'string') {
+            const longName = blacksmithHelpers.runOnReferenceRecord(value, xelib.LongName);
+            return longName || value;
+        }
+        else if (Array.isArray(value)) {
+            return value.map(transformRecordValue);
+        }
+        else if (typeof(value) === 'object') {
+            return transformRecordObject(value);
+        }
+        return value;
+    };
+
     Object.entries(recordObject).forEach(([key, value]) => {
         const shortKey = getShortKey(key);
         if (!excludedKeys.includes(shortKey)) {
@@ -13,11 +32,8 @@ let transformRecordObject = function(recordObject, transformedObject = {}, paren
             if (parentKey) {
                 keyPath = `${parentKey}\\${shortKey}`;
             }
-            if (typeof(value) === 'number') {
-                transformedObject[keyPath] = Math.round(value * 100000) / 100000;
-            }
-            else if (Array.isArray(value) || typeof(value) !== 'object') {
-                transformedObject[keyPath] = value;
+            if (typeof(value) !== 'object' || Array.isArray(value)) {
+                transformedObject[keyPath] = transformRecordValue(value);
             }
             else {
                 transformRecordObject(value, transformedObject, keyPath);
@@ -31,7 +47,7 @@ const overrideTestValues = [{
     keyPath: 'BIDS',
     itemType: 'Greatsword',
     material: 'Elven',
-    value: 'Skyrim.esm:0183FF'
+    value: blacksmithHelpers.runOnReferenceRecord('Skyrim.esm:0183FF', xelib.LongName)
 }];
 
 let getOverrideTestValue = function(inKeyPath, inItemType, inMaterial) {
@@ -39,6 +55,18 @@ let getOverrideTestValue = function(inKeyPath, inItemType, inMaterial) {
     if (overrideTestValue) {
         return overrideTestValue.value;
     }
+};
+
+let setupMockModule = function() {
+    angular.mock.module('blacksmithTest');
+    angular.mock.module('blacksmithTest', function($provide) {
+        let mockSettingsService = {
+            registerSettings: () => {},
+            settings: {blacksmith: {debugMode: true}}
+        };
+    
+        $provide.value('settingsService', mockSettingsService);
+    });
 };
 
 beforeAll(function() {
@@ -55,40 +83,32 @@ afterAll(function() {
     xelib.Finalize();
 });
 
-let blacksmithHelpers = require('../lib/blacksmithHelpers')(zeditGlobals);
-let testCases = fh.jetpack.read('test/testCases.json', 'json');
-testCases.forEach(({itemType, material, gearCategory, reference}) => {
+let testCasesData = fh.jetpack.read('test/testCases.json', 'json');
+let testCases = testCasesData;//.slice(0, 3);
+testCases.forEach(({itemType, material, gearCategory, reference, recipeReference, temperReference}) => {
     if (gearCategory !== 'weapon' || !reference || reference === 'ERROR') {
         return;
     }
 
-    const gameRecordObject = xelib.WithHandle(
-        blacksmithHelpers.getRecordFromReference(reference),
-        id => xelib.WithHandle(
-            xelib.GetWinningOverride(id),
-            overrideId => blacksmithHelpers.elementToObject(overrideId)
-        )
-    );
-    let gameTestObject = transformRecordObject(gameRecordObject);
+    describe(`makeGear ${gearCategory} ${material} ${itemType}`, function() {
+        const gameRecordObject = xelib.WithHandle(
+            blacksmithHelpers.getRecordFromReference(reference),
+            id => xelib.WithHandle(
+                xelib.GetWinningOverride(id),
+                overrideId => blacksmithHelpers.elementToObject(overrideId)
+            )
+        );
+        let gameTestObject = transformRecordObject(gameRecordObject);
 
-    describe(`${material} ${itemType}`, function() {
-        let createGearRecordService;
         let stageRoadmap;
         let workflowObject;
 
         angular.mock.module.sharedInjector();
 
         beforeAll(function() {
-            angular.mock.module('blacksmithTest');
-            angular.mock.module('blacksmithTest', function($provide) {
-                let mockSettingsService = {
-                    registerSettings: () => {},
-                    settings: {blacksmith: {debugMode: true}}
-                };
-            
-                $provide.value('settingsService', mockSettingsService);
-            });
+            setupMockModule();
 
+            let createGearRecordService;
             let workflowModel;
             inject(function(_createGearRecordService_, workflowService) {
                 createGearRecordService = _createGearRecordService_;
@@ -123,8 +143,86 @@ testCases.forEach(({itemType, material, gearCategory, reference}) => {
                 const workflowValue = workflowObject[key];
                 const gameValue = getOverrideTestValue(key, itemType, material) || gameTestObject[key];
                 if (Array.isArray(workflowValue) && Array.isArray(gameValue)) {
-                    expect(workflowValue.length).toEqual(gameValue.length);
-                    gameValue.forEach(gameValueItem => expect(workflowValue).toContain(gameValueItem));
+                    expect(workflowValue).toEqual(gameValue);
+                }
+                else {
+                    expect(workflowValue).toEqual(gameValue);
+                }
+            });
+        });
+    });
+
+    if (recipeReference === 'ERROR' || temperReference === 'ERROR') {
+        return;
+    }
+
+    describe(`makeRecipes ${gearCategory} ${material} ${itemType}`, function() {
+        const gameRecipeRecordObject = xelib.WithHandle(
+            blacksmithHelpers.getRecordFromReference(recipeReference),
+            id => xelib.WithHandle(
+                xelib.GetWinningOverride(id),
+                overrideId => blacksmithHelpers.elementToObject(overrideId)
+            )
+        );
+        let gameRecipeTestObject = transformRecordObject(gameRecipeRecordObject);
+
+        let stageRoadmap;
+        let workflowTestObject;
+
+        angular.mock.module.sharedInjector();
+
+        beforeAll(function() {
+            setupMockModule();
+
+            let createRecipeRecordService;
+            let workflowModel;
+            inject(function(_createRecipeRecordService_, workflowService) {
+                createRecipeRecordService = _createRecipeRecordService_;
+
+                ({stageRoadmap, workflowModel} = workflowService.processWorkflow('makeRecipes', {
+                    items: [{
+                        reference,
+                        type: itemType,
+                        material,
+                        get name() {
+                            return blacksmithHelpers.runOnReferenceRecord(this.reference, xelib.FullName) || '';
+                        },
+                        get editorId() {
+                            return blacksmithHelpers.runOnReferenceRecord(this.reference, xelib.EditorID) || '';
+                        }
+                    }]
+                }, {
+                    'Select Material': {
+                        material
+                    },
+                    'Edit Recipes': {},
+                    'Select Plugin': {
+                        plugin: 'MockPlugin.esp'
+                    }
+                }));
+            });
+
+            const workflowRecordObject = createRecipeRecordService.createRecipeRecord(
+                workflowModel.material,
+                workflowModel.items[0],
+                workflowModel.recipes[0],
+                false // isTemper
+            );
+            workflowTestObject = transformRecordObject(workflowRecordObject);
+        });
+
+        test('Workflow completed successfully', function() {
+            expect(stageRoadmap.every(stage => stage.isComplete())).toBeTruthy();
+        });
+
+        Object.keys(gameRecipeTestObject).forEach(key => {
+            test(key, function() {
+                const workflowValue = workflowTestObject[key];
+                const gameValue = getOverrideTestValue(key, itemType, material) || gameRecipeTestObject[key];
+                if (Array.isArray(workflowValue) && Array.isArray(gameValue)) {
+                    expect(workflowValue).toEqual(gameValue);
+
+                    //gameValue.forEach(gameValueItem => expect(workflowValue).toContainEqual(gameValueItem));
                 }
                 else {
                     expect(workflowValue).toEqual(gameValue);

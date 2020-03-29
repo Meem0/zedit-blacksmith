@@ -19,7 +19,7 @@
 Material: {{input.material}}
 
 <section ng-if="!input.makeTemperRecipes">
-    <div ng-repeat="component in model.components">
+    <div ng-repeat="component in viewModel.components">
         <label>
             <span class="input-label">{{component.type}}</span>
             <reference-select
@@ -35,20 +35,20 @@ Material: {{input.material}}
     <label>
         <span class="input-label">Temper Ingredient</span>
         <reference-select
-            model="model.temperIngredient.longName"
-            signature="model.temperIngredient.signature"
+            model="viewModel.temperIngredient.longName"
+            signature="viewModel.temperIngredient.signature"
             signatures="ingredientSignatures">
         </reference-select>
     </label>
 </section>
 
 <section>
-    <div ng-repeat="recipe in model.recipes">
+    <div ng-repeat="recipe in viewModel.recipes">
         <expandable-section class="recipe-container">
-            <title>{{recipe.item.name}} - {{recipe.item.type}}</title>
+            <title>{{recipe.itemName}} - {{recipe.itemType}}</title>
             <content>
                 <label>
-                    <input type="checkbox" ng-model="recipe.editManually" ng-change="toggleEditManually(recipe)"/>
+                    <input type="checkbox" ng-model="recipe.editManually"/>
                     <span class="input-label">Edit manually</span>
                 </label>
                 <button class="action-btn positive small" ng-show="recipe.editManually" ng-click="addIngredient(recipe)">Add Ingredient</button>

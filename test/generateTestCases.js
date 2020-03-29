@@ -11,11 +11,23 @@ let generateTestCases = function() {
         filename: 'Dawnguard.esm',
         formatEditorId: editorId => `DLC1${editorId}`
     }];
-    Object.values(gearCategorySignatures).forEach(signature => {
+    const signaturesToSort = Object.values(gearCategorySignatures).concat('COBJ');
+    signaturesToSort.forEach(signature => {
         searchFiles.forEach(({filename}) => xelib.SortEditorIDs(filename, signature));
     });
 
-    let getItemRecord = function(material, itemType, gearCategory) {
+    let findRecordForEditorId = function(editorId, signature) {
+        for ({filename, formatEditorId} of searchFiles) {
+            const formattedEditorId = formatEditorId(editorId);
+            const itemPath = `${filename}\\${signature}\\${formattedEditorId}`;
+            const id = xelib.GetElement(0, itemPath);
+            if (id) {
+                return id;
+            }
+        }
+    };
+
+    let buildItemEditorId = function(material, itemType, gearCategory) {
         let prefix = '';
         let suffix = '';
         if (gearCategory === 'armor') {
@@ -28,15 +40,18 @@ let generateTestCases = function() {
             }
         }
         itemType = itemType === 'Armor' ? 'Cuirass' : itemType.replace(/\s/g, '');
-        const baseEditorId = prefix + material + itemType + suffix;
-        for ({filename, formatEditorId} of searchFiles) {
-            const editorId = formatEditorId(baseEditorId);
-            const itemPath = `${filename}\\${gearCategorySignatures[gearCategory]}\\${editorId}`;
-            const id = xelib.GetElement(0, itemPath);
-            if (id) {
-                return id;
-            }
-        }
+        return prefix + material + itemType + suffix;
+    };
+
+    let buildRecipeEditorId = function(material, itemType, gearCategory, isTemper) {
+        const recipeTypePrefix = isTemper ? 'Temper': 'Recipe';
+        const recipePrefix = gearCategory === 'weapon' ? 'Weapon' : '';
+        return recipeTypePrefix + recipePrefix + buildItemEditorId(material, itemType, gearCategory);
+    };
+
+    let getItemRecord = function(material, itemType, gearCategory) {
+        const editorId = buildItemEditorId(material, itemType, gearCategory);
+        return findRecordForEditorId(editorId, gearCategorySignatures[gearCategory]);
     };
 
     let getResources = function(folderPath) {
@@ -49,17 +64,30 @@ let generateTestCases = function() {
     }));
     let materials = getResources('resources/materials').map(({name, keywords}) => {
         const gearCategories = [];
-        if (keywords.some(keyword => keyword.includes('Armor'))) {
-            gearCategories.push('armor');
-        }
-        if (keywords.some(keyword => keyword.includes('Weap'))) {
-            gearCategories.push('weapon');
-        }
+        Object.keys(gearCategorySignatures).forEach(gearCategory => {
+            if (keywords[gearCategory]) {
+                gearCategories.push(gearCategory);
+            }
+        });
         return {
             materialName: name,
             gearCategories
         };
     });
+
+    let invalidCombinations = [{
+        material: 'Leather',
+        itemType: 'Shield',
+    }, {
+        material: 'Scaled',
+        itemType: 'Shield',
+    }, {
+        material: 'Iron',
+        itemType: 'Bow'
+    }, {
+        material: 'Steel',
+        itemType: 'Bow'
+    }];
 
     let testCases = [];
     materials.forEach(({materialName, gearCategories}) => gearTypes.forEach(({gearName, gearCategory}) => {
@@ -67,17 +95,36 @@ let generateTestCases = function() {
             return;
         }
 
+        if (invalidCombinations.some(({material, itemType}) => material === materialName && itemType === gearName)) {
+            return;
+        }
+
         let reference;
+        let recipeReference;
+        let temperReference;
         xelib.WithHandle(getItemRecord(materialName, gearName, gearCategory), id => {
             if (id) {
                 reference = blacksmithHelpers.getReferenceFromRecord(id);
+                
+                const recipeEditorId = buildRecipeEditorId(materialName, gearName, gearCategory, false);
+                const temperEditorId = buildRecipeEditorId(materialName, gearName, gearCategory, true);
+                recipeReference = xelib.WithHandle(
+                    findRecordForEditorId(recipeEditorId, 'COBJ'),
+                    id => blacksmithHelpers.getReferenceFromRecord(id)
+                );
+                temperReference = xelib.WithHandle(
+                    findRecordForEditorId(temperEditorId, 'COBJ'),
+                    id => blacksmithHelpers.getReferenceFromRecord(id)
+                );
             }
         });
         testCases.push({
             material: materialName,
             itemType: gearName,
             gearCategory,
-            reference: reference || 'ERROR'
+            reference: reference || 'ERROR',
+            recipeReference: recipeReference || 'ERROR',
+            temperReference: temperReference || 'ERROR'
         });
     }));
     return testCases;
@@ -92,8 +139,16 @@ const testCases = generateTestCases();
 fh.jetpack.write('test/testCases.json', testCases);
 
 testCases.forEach(testCase => {
-    test(`${testCase.material} ${testCase.itemType}`, function() {
+    test(`item_reference ${testCase.material} ${testCase.itemType}`, function() {
         expect(testCase.reference).toBeTruthy();
         expect(testCase.reference).not.toEqual('ERROR');
+    });
+    test(`recipe_reference ${testCase.material} ${testCase.itemType}`, function() {
+        expect(testCase.recipeReference).toBeTruthy();
+        expect(testCase.recipeReference).not.toEqual('ERROR');
+    });
+    test(`recipe_reference ${testCase.material} ${testCase.itemType}`, function() {
+        expect(testCase.temperReference).toBeTruthy();
+        expect(testCase.temperReference).not.toEqual('ERROR');
     });
 });

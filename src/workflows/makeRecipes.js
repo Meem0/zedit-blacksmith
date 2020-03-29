@@ -1,4 +1,27 @@
-ngapp.run(function(workflowService, skyrimMaterialService, skyrimGearService, writeObjectToElementService) {
+ngapp.service('createRecipeRecordService', function(skyrimMaterialService, skyrimGearService) {
+    let createCondition = function({
+        type = 0,
+        comparisonValue = 1,
+        func = 0,
+        parameter1 = 0,
+        parameter2 = 0,
+        runOn = 0,
+        reference = 0,
+        parameter3 = -1}) {
+        return {
+            "CTDA": {
+                "Type": type,
+                "Comparison Value": comparisonValue,
+                "Function": func,
+                "Parameter #1": parameter1,
+                "Parameter #2": parameter2,
+                "Run On": runOn,
+                "Reference": reference,
+                "Parameter #3": parameter3
+            }
+        };
+    };
+
     let createRecipeObject = function({
         editorId,
         ingredients,
@@ -8,12 +31,16 @@ ngapp.run(function(workflowService, skyrimMaterialService, skyrimGearService, wr
         isTemper,
         perkReference
     }) {
+        let sortedIngredients = ingredients.map(ingredient => ({
+            editorId: blacksmithHelpers.runOnReferenceRecord(ingredient.itemReference, xelib.EditorID),
+            ...ingredient
+        })).sort((a, b) => a.editorId.localeCompare(b.editorId));
         let recipeObject = {
             "Record Header": {
                 "Signature": "COBJ"
             },
             "EDID": editorId,
-            "Items": ingredients.map(ingredient => ({
+            "Items": sortedIngredients.map(ingredient => ({
                 "CNTO": {
                     "Item": ingredient.itemReference,
                     "Count": ingredient.count
@@ -24,32 +51,55 @@ ngapp.run(function(workflowService, skyrimMaterialService, skyrimGearService, wr
             "NAM1": createdObjectCount
         };
         if (isTemper) {
-            recipeObject["Conditions"] = [{
-                "CTDA": {
-                    "Type": 33, // OR
-                    "Comparison Value": 1,
-                    "Function": 659, // EPTemperingItemIsEnchanted
-                }
-            }, {
-                "CTDA": {
-                    "Comparison Value": 1,
-                    "Function": 448, // HasPerk
-                    "Parameter #1": 'Skyrim.esm:05218E' // ArcaneBlacksmith
-                }
-            }];
+            recipeObject["Conditions"] = [
+                createCondition({
+                    type: 33, // OR
+                    comparisonValue: 1,
+                    func: 659 // EPTemperingItemIsEnchanted
+                }),
+                createCondition({
+                    comparisonValue: 1,
+                    func: 448, // HasPerk
+                    parameter1: 'Skyrim.esm:05218E' // ArcaneBlacksmith
+                }),
+            ];
         }
         else if (perkReference) {
-            recipeObject["Conditions"] = [{
-                "CTDA": {
-                    "Comparison Value": 1,
-                    "Function": 448, // HasPerk
-                    "Parameter #1": perkReference
-                }
-            }];
+            recipeObject["Conditions"] = [
+                createCondition({
+                    comparisonValue: 1,
+                    func: 448, // HasPerk
+                    parameter1: perkReference
+                })
+            ];
         }
         return recipeObject;
     };
 
+    let getWorkbenchReference = function(isTemper, itemType) {
+        if (!isTemper) {
+            return 'Skyrim.esm:088105';
+        }
+        return skyrimGearService.isWeapon(itemType) ? 'Skyrim.esm:088108' : 'Skyrim.esm:0ADB78';
+    };
+
+    this.createRecipeRecord = function(material, item, {editorId, ingredients}, isTemper) {
+        let recipeProperties = {
+            editorId,
+            ingredients,
+            createdObjectReference: item.reference,
+            workbenchReference: getWorkbenchReference(isTemper, item.type),
+            createdObjectCount: 1,
+            isTemper
+        };
+        if (!isTemper) {
+            recipeProperties.perkReference = skyrimMaterialService.getMaterialSmithingPerk(material);
+        }
+        return createRecipeObject(recipeProperties);
+    };
+});
+
+ngapp.run(function(workflowService, createRecipeRecordService, skyrimMaterialService, skyrimGearService, writeObjectToElementService) {
     let getOrAddFile = function(filename) {
         let fileId = xelib.FileByName(filename);
         if (!fileId) {
@@ -111,13 +161,6 @@ ngapp.run(function(workflowService, skyrimMaterialService, skyrimGearService, wr
         };
     };
 
-    let getWorkbenchReference = function(isTemper, itemType) {
-        if (!isTemper) {
-            return 'Skyrim.esm:088105';
-        }
-        return skyrimGearService.isWeapon(itemType) ? 'Skyrim.esm:088108' : 'Skyrim.esm:0ADB78';
-    };
-
     let finishWorkflow = function(model) {
         if (model && model.recipes) {
             xelib.WithHandle(
@@ -125,18 +168,13 @@ ngapp.run(function(workflowService, skyrimMaterialService, skyrimGearService, wr
                 pluginId => {
                     xelib.AddAllMasters(pluginId);
                     model.recipes.forEach(recipe => {
-                        let recipeProperties = {
-                            editorId: recipe.editorId,
-                            ingredients: recipe.ingredients,
-                            createdObjectReference: recipe.item.reference,
-                            workbenchReference: getWorkbenchReference(recipe.isTemper, recipe.item.type),
-                            createdObjectCount: 1,
-                            isTemper: recipe.isTemper
-                        };
-                        if (!recipe.isTemper) {
-                            recipeProperties.perkReference = skyrimMaterialService.getMaterialSmithingPerk(model.material);
-                        }
-                        const recipeObject = createRecipeObject(recipeProperties);
+                        const item = model.items.find(({reference}) => reference === recipe.itemReference);
+                        const recipeObject = createRecipeRecordService.createRecipeRecord(
+                            model.material,
+                            item,
+                            recipe,
+                            model.makeTemperRecipes
+                        );
                         writeObjectToElementService.writeObjectToRecord(pluginId, recipeObject);
                     });
                     xelib.CleanMasters(pluginId);

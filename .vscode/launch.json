@@ -4,10 +4,10 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Jest All",
+            "name": "Generate test cases",
             "program": "${workspaceFolder}/node_modules/.bin/jest",
             "args": [
-                "--runInBand"
+                "generateTestCases"
             ],
             "console": "integratedTerminal",
             "internalConsoleOptions": "neverOpen",
@@ -19,12 +19,44 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Jest Current File",
+            "name": "Test all workflows",
             "program": "${workspaceFolder}/node_modules/.bin/jest",
             "args": [
-                "${fileBasenameNoExtension}",
-                "--config",
-                "jest.config.js"
+                "blacksmithTest"
+            ],
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "disableOptimisticBPs": true,
+            "windows": {
+                "program": "${workspaceFolder}/node_modules/jest/bin/jest",
+            }
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Test gear",
+            "program": "${workspaceFolder}/node_modules/.bin/jest",
+            "args": [
+                "blacksmithTest",
+                "-t",
+                "makeGear"
+            ],
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "disableOptimisticBPs": true,
+            "windows": {
+                "program": "${workspaceFolder}/node_modules/jest/bin/jest",
+            }
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Test recipes",
+            "program": "${workspaceFolder}/node_modules/.bin/jest",
+            "args": [
+                "blacksmithTest",
+                "-t",
+                "makeRecipes"
             ],
             "console": "integratedTerminal",
             "internalConsoleOptions": "neverOpen",

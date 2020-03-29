@@ -23,15 +23,21 @@ ngapp.service('createGearRecordService', function(skyrimAttributeService, skyrim
         const vendorKeyword = vendorKeywords[gearCategory];
 
         let keywords = [];
-        if (itemTypeKeyword) {
-            keywords.push(itemTypeKeyword);
-        }
         if (materialKeyword) {
             keywords.push(materialKeyword);
+        }
+        if (itemTypeKeyword) {
+            keywords.push(itemTypeKeyword);
         }
         if (vendorKeyword) {
             keywords.push(vendorKeyword);
         }
+
+        keywords.sort((a, b) => {
+            const formIdA = blacksmithHelpers.runOnReferenceRecord(a, xelib.GetHexFormID, true, false);
+            const formIdB = blacksmithHelpers.runOnReferenceRecord(b, xelib.GetHexFormID, true, false);
+            return formIdA.localeCompare(formIdB);
+        });
 
         return keywords;
     };
