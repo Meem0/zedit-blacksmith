@@ -1,0 +1,259 @@
+[{
+    "itemType": "Mace",
+    "material": "Iron",
+    "ingredients": [{
+        "name": "Iron Ingot",
+        "count": 3
+    }, {
+        "name": "Leather Strips",
+        "count": 2
+    }]
+}, {
+    "itemType": "Dagger",
+    "material": "Dwarven",
+    "ingredients": [{
+        "name": "Dwarven Metal Ingot",
+        "count": 1
+    }, {
+        "name": "Steel Ingot",
+        "count": 1
+    }, {
+        "name": "Iron Ingot",
+        "count": 1
+    }, {
+        "name": "Leather Strips",
+        "count": 1
+    }]
+}, {
+    "itemType": "Dagger",
+    "material": "Elven",
+    "ingredients": [{
+        "name": "Refined Moonstone",
+        "count": 1
+    }, {
+        "name": "Quicksilver Ingot",
+        "count": 1
+    }, {
+        "name": "Iron Ingot",
+        "count": 1
+    }, {
+        "name": "Leather Strips",
+        "count": 1
+    }]
+}, {
+    "itemType": "Dagger",
+    "material": "Glass",
+    "ingredients": [{
+        "name": "Refined Malachite",
+        "count": 1
+    }, {
+        "name": "Refined Moonstone",
+        "count": 1
+    }, {
+        "name": "Leather Strips",
+        "count": 1
+    }]
+}, {
+    "itemType": "Greatsword",
+    "material": "Daedric",
+    "ingredients": [{
+        "name": "Ebony Ingot",
+        "count": 5
+    }, {
+        "name": "Daedra Heart",
+        "count": 1
+    }, {
+        "name": "Leather Strips",
+        "count": 3
+    }]
+}, {
+    "itemType": "Greatsword",
+    "material": "Dragonbone",
+    "ingredients": [{
+        "name": "Dragon Bone",
+        "count": 4
+    }, {
+        "name": "Ebony Ingot",
+        "count": 1
+    }, {
+        "name": "Leather Strips",
+        "count": 3
+    }]
+}, {
+    "itemType": "Greatsword",
+    "material": "Dwarven",
+    "ingredients": [{
+        "name": "Dwarven Metal Ingot",
+        "count": 2
+    }, {
+        "name": "Steel Ingot",
+        "count": 2
+    }, {
+        "name": "Iron Ingot",
+        "count": 2
+    }, {
+        "name": "Leather Strips",
+        "count": 3
+    }]
+}, {
+    "itemType": "Greatsword",
+    "material": "Ebony",
+    "ingredients": [{
+        "name": "Ebony Ingot",
+        "count": 5
+    }, {
+        "name": "Leather Strips",
+        "count": 3
+    }]
+}, {
+    "itemType": "Greatsword",
+    "material": "Iron",
+    "ingredients": [{
+        "name": "Iron Ingot",
+        "count": 4
+    }, {
+        "name": "Leather Strips",
+        "count": 2
+    }]
+}, {
+    "itemType": "Greatsword",
+    "material": "Orcish",
+    "ingredients": [{
+        "name": "Orichalcum Ingot",
+        "count": 4
+    }, {
+        "name": "Iron Ingot",
+        "count": 2
+    }, {
+        "name": "Leather Strips",
+        "count": 3
+    }]
+}, {
+    "itemType": "Greatsword",
+    "material": "Steel",
+    "ingredients": [{
+        "name": "Steel Ingot",
+        "count": 4
+    }, {
+        "name": "Iron Ingot",
+        "count": 2
+    }, {
+        "name": "Leather Strips",
+        "count": 3
+    }]
+}, {
+    "itemType": "Battleaxe",
+    "material": "Daedric",
+    "ingredients": [{
+        "name": "Ebony Ingot",
+        "count": 5
+    }, {
+        "name": "Daedra Heart",
+        "count": 1
+    }, {
+        "name": "Leather Strips",
+        "count": 2
+    }]
+}, {
+    "itemType": "Battleaxe",
+    "material": "Dragonbone",
+    "ingredients": [{
+        "name": "Dragon Bone",
+        "count": 3
+    }, {
+        "name": "Ebony Ingot",
+        "count": 2
+    }, {
+        "name": "Leather Strips",
+        "count": 2
+    }]
+}, {
+    "itemType": "Battleaxe",
+    "material": "Ebony",
+    "ingredients": [{
+        "name": "Ebony Ingot",
+        "count": 5
+    }, {
+        "name": "Leather Strips",
+        "count": 2
+    }]
+}, {
+    "itemType": "Warhammer",
+    "material": "Daedric",
+    "ingredients": [{
+        "name": "Ebony Ingot",
+        "count": 5
+    }, {
+        "name": "Daedra Heart",
+        "count": 1
+    }, {
+        "name": "Leather Strips",
+        "count": 3
+    }]
+}, {
+    "itemType": "Warhammer",
+    "material": "Dragonbone",
+    "ingredients": [{
+        "name": "Dragon Bone",
+        "count": 3
+    }, {
+        "name": "Ebony Ingot",
+        "count": 2
+    }, {
+        "name": "Leather Strips",
+        "count": 3
+    }]
+}, {
+    "itemType": "Warhammer",
+    "material": "Ebony",
+    "ingredients": [{
+        "name": "Ebony Ingot",
+        "count": 5
+    }, {
+        "name": "Leather Strips",
+        "count": 3
+    }]
+}, {
+    "itemType": "Warhammer",
+    "material": "Glass",
+    "ingredients": [{
+        "name": "Refined Malachite",
+        "count": 3
+    }, {
+        "name": "Refined Moonstone",
+        "count": 2
+    }, {
+        "name": "Leather Strips",
+        "count": 3
+    }]
+}, {
+    "itemType": "Bow",
+    "material": "Dwarven",
+    "ingredients": [{
+        "name": "Dwarven Metal Ingot",
+        "count": 2
+    }, {
+        "name": "Iron Ingot",
+        "count": 1
+    }]
+}, {
+    "itemType": "Bow",
+    "material": "Elven",
+    "ingredients": [{
+        "name": "Refined Moonstone",
+        "count": 2
+    }, {
+        "name": "Quicksilver Ingot",
+        "count": 1
+    }]
+}, {
+    "itemType": "Bow",
+    "material": "Orcish",
+    "ingredients": [{
+        "name": "Orichalcum Ingot",
+        "count": 2
+    }, {
+        "name": "Iron Ingot",
+        "count": 1
+    }]
+}]

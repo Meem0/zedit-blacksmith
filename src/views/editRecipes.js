@@ -1,4 +1,19 @@
-ngapp.run(function(workflowService, skyrimMaterialService, skyrimGearService) {
+ngapp.run(function(workflowService, skyrimMaterialService, skyrimGearService, jsonService, skyrimReferenceService) {
+    let overrideRecipes = jsonService.loadJsonFile('recipeOverrides').reduce((overrideRecipes, {itemType, material, ingredients}) => {
+        let overrideRecipesForItem = overrideRecipes[itemType] = overrideRecipes[itemType] || {};
+        overrideRecipesForItem[material] = ingredients.map(({name, count}) => ({
+            itemReference: skyrimReferenceService.getReferenceFromName(name),
+            count
+        }));
+        return overrideRecipes;
+    }, {});
+    let getOverrideRecipe = function(itemType, material) {
+        let overrideRecipesForItem = overrideRecipes[itemType];
+        if (overrideRecipesForItem) {
+            return overrideRecipesForItem[material];
+        }
+    };
+
     let getReferenceFromLongName = function(longName) {
         return xelib.WithHandle(
             blacksmithHelpers.getRecordFromLongName(longName),
@@ -244,11 +259,20 @@ ngapp.run(function(workflowService, skyrimMaterialService, skyrimGearService) {
                 }
                 else {
                     const defaultComponents = getComponentsForMaterial(input.material);
-                    const components = defaultComponents.map((defaultComponent, index) => {
-                        return model.components && model.components[index] ? model.components[index] : defaultComponent;
-                    });
-                    const componentClass = skyrimMaterialService.getMaterialClass(input.material);
-                    recipe.ingredients = buildIngredientsFromComponents(components, item.type, componentClass);
+                    const hasCustomComponents = model.components && model.components.length > 0;
+                    const overrideRecipe = hasCustomComponents ? undefined : getOverrideRecipe(item.type, input.material);
+                    if (overrideRecipe) {
+                        recipe.ingredients = overrideRecipe;
+                    }
+                    else {
+                        const components = (hasCustomComponents
+                            ? defaultComponents.map((defaultComponent, index) => {
+                                return model.components[index] ? model.components[index] : defaultComponent;
+                            })
+                            : defaultComponents);
+                        const componentClass = skyrimMaterialService.getMaterialClass(input.material);
+                        recipe.ingredients = buildIngredientsFromComponents(components, item.type, componentClass);
+                    }
                 }
             }
             return recipe;

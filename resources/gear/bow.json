@@ -3,15 +3,12 @@
     "gearCategory": "weapon",
     "componentSpecs": [{
         "type": "Primary",
+        "count": 1
+    }, {
+        "type": "Major",
         "count": 2
     }, {
-        "type": "TwoHandExtra",
-        "count": 1
-    }, {
         "type": "Minor",
-        "count": 1
-    }, {
-        "type": "Binding",
         "count": 1
     }],
     "keyword": "WeapTypeBow",

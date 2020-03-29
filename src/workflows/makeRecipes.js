@@ -32,7 +32,7 @@ ngapp.service('createRecipeRecordService', function(skyrimMaterialService, skyri
         perkReference
     }) {
         let sortedIngredients = ingredients.map(ingredient => ({
-            editorId: blacksmithHelpers.runOnReferenceRecord(ingredient.itemReference, xelib.EditorID),
+            editorId: blacksmithHelpers.runOnReferenceRecord(ingredient.itemReference, xelib.GetHexFormID, true, false),
             ...ingredient
         })).sort((a, b) => a.editorId.localeCompare(b.editorId));
         let recipeObject = {
