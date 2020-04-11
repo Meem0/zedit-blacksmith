@@ -1,18 +1,34 @@
 ngapp.service('createRecipeRecordService', function(skyrimMaterialService, skyrimGearService) {
+    const conditionFunctions = {
+        EPTemperingItemIsEnchanted: {
+            id: 659,
+            usesBytesParams: true
+        },
+        HasPerk: {
+            id: 448,
+            usesBytesParams: false
+        }
+    };
+
     let createCondition = function({
         type = 0,
         comparisonValue = 1,
-        func = 0,
+        func = '',
         parameter1 = 0,
         parameter2 = 0,
         runOn = 0,
         reference = 0,
         parameter3 = -1}) {
+        ({id: funcId, usesBytesParams} = conditionFunctions[func]);
+        if (usesBytesParams) {
+            parameter1 = typeof(parameter1 === 'number') ? blacksmithHelpers.numberToBytes(parameter1) : parameter1;
+            parameter2 = typeof(parameter2 === 'number') ? blacksmithHelpers.numberToBytes(parameter2) : parameter2;
+        }
         return {
             "CTDA": {
                 "Type": type,
                 "Comparison Value": comparisonValue,
-                "Function": func,
+                "Function": funcId,
                 "Parameter #1": parameter1,
                 "Parameter #2": parameter2,
                 "Run On": runOn,
@@ -55,11 +71,11 @@ ngapp.service('createRecipeRecordService', function(skyrimMaterialService, skyri
                 createCondition({
                     type: 33, // OR
                     comparisonValue: 1,
-                    func: 659 // EPTemperingItemIsEnchanted
+                    func: 'EPTemperingItemIsEnchanted'
                 }),
                 createCondition({
                     comparisonValue: 1,
-                    func: 448, // HasPerk
+                    func: 'HasPerk',
                     parameter1: 'Skyrim.esm:05218E' // ArcaneBlacksmith
                 }),
             ];
@@ -68,7 +84,7 @@ ngapp.service('createRecipeRecordService', function(skyrimMaterialService, skyri
             recipeObject["Conditions"] = [
                 createCondition({
                     comparisonValue: 1,
-                    func: 448, // HasPerk
+                    func: 'HasPerk',
                     parameter1: perkReference
                 })
             ];
@@ -83,7 +99,7 @@ ngapp.service('createRecipeRecordService', function(skyrimMaterialService, skyri
         return skyrimGearService.isWeapon(itemType) ? 'Skyrim.esm:088108' : 'Skyrim.esm:0ADB78';
     };
 
-    this.createRecipeRecord = function(material, item, {editorId, ingredients}, isTemper) {
+    this.createRecipeRecord = function(material, item, ingredients, isTemper, editorId = '') {
         let recipeProperties = {
             editorId,
             ingredients,
@@ -118,6 +134,12 @@ ngapp.run(function(workflowService, createRecipeRecordService, skyrimMaterialSer
         const itemTypeKeywords = skyrimGearService.getItemTypeKeywords();
         const itemTypeKeyword = itemTypeKeywords.find(({keyword}) => xelib.HasKeyword(handle, keyword));
         return itemTypeKeyword ? itemTypeKeyword.itemType : '';
+    };
+
+    let getRecipeEditorId = function(itemReference, isTemper) {
+        const prefix = isTemper ? 'Temper' : 'Recipe';
+        const itemEditorId = blacksmithHelpers.runOnReferenceRecord(itemReference, xelib.EditorID);
+        return prefix + itemEditorId;
     };
 
     const constructibleItemSignatures = ['AMMO', 'ARMO', 'WEAP'];
@@ -167,13 +189,15 @@ ngapp.run(function(workflowService, createRecipeRecordService, skyrimMaterialSer
                 getOrAddFile(model.plugin),
                 pluginId => {
                     xelib.AddAllMasters(pluginId);
-                    model.recipes.forEach(recipe => {
-                        const item = model.items.find(({reference}) => reference === recipe.itemReference);
+                    model.recipes.forEach(({itemReference, ingredients}) => {
+                        const editorId = getRecipeEditorId(itemReference, model.makeTemperRecipes);
+                        const item = model.items.find(({reference}) => reference === itemReference);
                         const recipeObject = createRecipeRecordService.createRecipeRecord(
                             model.material,
                             item,
-                            recipe,
-                            model.makeTemperRecipes
+                            ingredients,
+                            model.makeTemperRecipes,
+                            editorId
                         );
                         writeObjectToElementService.writeObjectToRecord(pluginId, recipeObject);
                     });
@@ -207,7 +231,7 @@ ngapp.run(function(workflowService, createRecipeRecordService, skyrimMaterialSer
         label: 'Make Temper Recipes',
         image: `${modulePath}/resources/images/Recipe.png`,
         games: [xelib.gmTES5, xelib.gmSSE],
-        start: (scope) => startWorkflow(scope, /*makeTemperRecipes*/ true),
+        start: (input, scope) => startWorkflow(input, scope, /*makeTemperRecipes*/ true),
         finish: finishWorkflow,
         stages: [{
             name: 'Select Material',
@@ -220,4 +244,5 @@ ngapp.run(function(workflowService, createRecipeRecordService, skyrimMaterialSer
             view: 'pluginSelector'
         }]
     });
+
 });
