@@ -1,0 +1,21 @@
+{
+    "name": "Steel Plate",
+    "components": [{
+        "type": "Primary",
+        "name": "Steel Ingot"
+    }, {
+        "type": "Major",
+        "name": "Corundum Ingot"
+    }, {
+        "type": "Major",
+        "name": "Steel Ingot"
+    }, {
+        "type": "Binding",
+        "name": "Leather Strips"
+    }],
+    "keywords": {
+        "armor": "ArmorMaterialSteelPlate"
+    },
+    "class": "Heavy",
+    "perk": "Advanced Armors"
+}

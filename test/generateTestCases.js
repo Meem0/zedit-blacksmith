@@ -16,6 +16,10 @@ let generateTestCases = function() {
         searchFiles.forEach(({filename}) => xelib.SortEditorIDs(filename, signature));
     });
 
+    let removeWhitespace = function(str) {
+        return str.replace(/\s/g, '');
+    };
+
     let findRecordForEditorId = function(editorId, signature) {
         for ({filename, formatEditorId} of searchFiles) {
             const formattedEditorId = formatEditorId(editorId);
@@ -39,7 +43,7 @@ let generateTestCases = function() {
                 material = 'Dragonplate';
             }
         }
-        itemType = itemType === 'Armor' ? 'Cuirass' : itemType.replace(/\s/g, '');
+        itemType = itemType === 'Armor' ? 'Cuirass' : removeWhitespace(itemType);
         return prefix + material + itemType + suffix;
     };
 
@@ -70,7 +74,7 @@ let generateTestCases = function() {
             }
         });
         return {
-            materialName: name,
+            materialName: removeWhitespace(name),
             gearCategories
         };
     });
@@ -81,6 +85,9 @@ let generateTestCases = function() {
     }, {
         material: 'Scaled',
         itemType: 'Shield',
+    }, {
+        material: 'SteelPlate',
+        itemType: 'Shield'
     }, {
         material: 'Iron',
         itemType: 'Bow'

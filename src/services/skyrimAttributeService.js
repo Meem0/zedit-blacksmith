@@ -157,8 +157,45 @@ ngapp.service('skyrimAttributeService', function(skyrimGearService, skyrimMateri
         }
     };
 
+    let armorAttributes = {
+        /*armorRating: {
+            keyPath: ['DNAM']
+        },
+        goldValue: {
+            keyPath: ['DATA', 'Value']
+        },
+        weight: {
+            keyPath: ['DATA', 'Weight']
+        },
+        armorClass: {
+            keyPath: ['BOD2', 'Armor Type']
+        },
+        generalFlags: {
+            value: '',
+            keyPath: ['BOD2', 'General Flags']
+        },
+        equipType: {
+            keyPath: ['ETYP']
+        },
+        description: {
+            value: '',
+            keyPath: ['DESC']
+        },
+        blockBashImpactDataSet: {
+            keyPath: ['BIDS']
+        },
+        alternateBlockMaterial: {
+            keyPath: ['BAMT']
+        },*/
+        race: {
+            value: 'Skyrim.esm:000019',
+            keyPath: ['RNAM']
+        }
+    };
+
     let attributesMap = {
-        weapon: weaponAttributes
+        weapon: weaponAttributes,
+        armor: armorAttributes
     };
 
     let getAttribute = function(gearCategory, attributeName) {

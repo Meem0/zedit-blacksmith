@@ -114,4 +114,23 @@ ngapp.run(function(workflowService, writeObjectToElementService, createGearRecor
             view: 'pluginSelector'
         }]
     });
+
+    workflowService.addWorkflow({
+        name: 'makeArmor',
+        label: 'Make Armor',
+        image: `${modulePath}/resources/images/Armor.png`,
+        games: [xelib.gmTES5, xelib.gmSSE],
+        start: () => ({gearCategory: 'armor'}),
+        finish: finishWorkflow,
+        stages: [{
+            name: 'Select Armor',
+            view: 'selectGear'
+        }, {
+            name: 'Set Armor Attributes',
+            view: 'setItemAttributes'
+        }, {
+            name: 'Select Plugin',
+            view: 'pluginSelector'
+        }]
+    });
 });
