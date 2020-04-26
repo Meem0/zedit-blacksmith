@@ -1,0 +1,11 @@
+<p>Items will be distributed in the same manner as:</p>
+<div ng-repeat="leveledListTemplateItem in leveledListTemplateItems">
+    <label>
+        <span class="input-label">{{leveledListTemplateItem.itemName}}</span>
+        <reference-select
+            model="leveledListTemplateItem.templateItemLongName"
+            signature="leveledListTemplateItem.templateItemSignature"
+            signatures="leveledListTemplateItemSignatures">
+        </reference-select>
+    </label>
+</div>
