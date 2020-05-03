@@ -131,8 +131,8 @@ ngapp.run(function(workflowService) {
 
     workflowService.addWorkflow({
         name: 'addToLeveledLists',
-        label: 'Distribute as Random Loot',
-        image: `${modulePath}/resources/images/Recipe.png`,
+        label: 'Distribute Random Loot',
+        image: `${modulePath}/resources/images/Random.png`,
         games: [xelib.gmTES5, xelib.gmSSE],
         start: startWorkflow,
         finish: finishWorkflow,

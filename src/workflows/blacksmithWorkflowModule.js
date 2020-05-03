@@ -5,7 +5,7 @@ ngapp.run(function(workflowService) {
         image: `${modulePath}/resources/images/Blacksmith.png`,
         games: [xelib.gmTES5, xelib.gmSSE],
         workflows: [
-            'makeWeapons', 'makeArmor', 'addToLeveledLists', 'makeRecipes', 'makeTemperRecipes'
+            'makeWeapons', 'makeArmor', 'makeRecipes', 'makeTemperRecipes', 'addToLeveledLists', 'distributeUniques'
         ],
         getTheme: function(theme) {
             return `${modulePath}\\css\\${theme}`;

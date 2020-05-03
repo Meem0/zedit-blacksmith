@@ -1,0 +1,9 @@
+<p>Choose REFR pointing to a CONT:</p>
+<div ng-repeat="item in input.items">
+    <div ng-controller="distributeUniqueItemController">
+        <label>
+            <span class="input-label">{{item.name}} ({{container.longName}})</span>
+            <input type=text ng-model="container.formId" />
+        </label>
+    </div>
+</div>
