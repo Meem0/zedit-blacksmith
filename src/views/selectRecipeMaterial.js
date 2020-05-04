@@ -1,3 +1,4 @@
+module.exports = ({ngapp, moduleUrl}) =>
 ngapp.run(function(workflowService) {
     let selectRecipeMaterialController = function($scope) {
         $scope.itemGroups = $scope.input.items.reduce((itemGroups, item) => {

@@ -17,8 +17,8 @@ function build() {
         .on('error', console.log)
         .pipe(gulp.dest('dist'));
 
-	let lib = gulp.src('lib/**/*.js')
-        .pipe(gulp.dest('dist/lib'));
+	let lib = gulp.src('src/**/*.js')
+        .pipe(gulp.dest('dist/src'));
 
     let partials = gulp.src('partials/**/*.html')
         .pipe(gulp.dest('dist/partials'));

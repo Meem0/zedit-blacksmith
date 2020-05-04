@@ -1,3 +1,4 @@
+module.exports = ({ngapp, xelib}, blacksmithHelpers) =>
 ngapp.run(function(settingsService, contextMenuFactory, writeObjectToElementService) {
     let blacksmithDebug = function() {
         try {

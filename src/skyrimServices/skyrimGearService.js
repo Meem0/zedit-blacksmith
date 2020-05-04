@@ -1,3 +1,4 @@
+module.exports = ({ngapp}) =>
 ngapp.service('skyrimGearService', function(skyrimReferenceService, jsonService) {
     let itemTypeDefinitions = jsonService.loadJsonFilesInFolder('gear');
 

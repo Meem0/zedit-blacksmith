@@ -1,3 +1,4 @@
+module.exports = ({ngapp}) =>
 ngapp.service('skyrimAttributeService', function(skyrimGearService, skyrimMaterialService, jsonService) {
     let attributeOverrides = jsonService.loadJsonFile('attributeOverrides')
         .reduce((attributeOverrides, {attribute, itemType, material, value}) => {

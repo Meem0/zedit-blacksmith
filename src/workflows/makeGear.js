@@ -1,3 +1,5 @@
+module.exports = ({ngapp, xelib, modulePath}, blacksmithHelpers) => {
+
 ngapp.service('createGearRecordService', function(skyrimAttributeService, skyrimGearService, skyrimMaterialService) {
     let setDeep = function(obj, val, keys) {
         if (keys.length > 1) {
@@ -134,3 +136,5 @@ ngapp.run(function(workflowService, writeObjectToElementService, createGearRecor
         }]
     });
 });
+
+}

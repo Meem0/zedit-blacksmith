@@ -1,3 +1,4 @@
+module.exports = ({ngapp, xelib}, blacksmithHelpers) =>
 ngapp.service('writeObjectToElementService', function(blacksmithHelpersService) {
     let getElementValue = function(id, typeInfo) {
         if (typeInfo.isInteger) {

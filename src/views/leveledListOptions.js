@@ -1,3 +1,4 @@
+module.exports = ({ngapp, xelib, moduleUrl}, blacksmithHelpers) =>
 ngapp.run(function(workflowService) {
     let getDefaultTemplateItem = function(item) {
         return 'Skyrim.esm:012EB7';

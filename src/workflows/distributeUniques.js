@@ -1,3 +1,4 @@
+module.exports = ({ngapp, xelib, modulePath}, blacksmithHelpers) =>
 ngapp.run(function(workflowService) {
     let getDuplicateContainerEditorId = function(refrRecord, contRecord) {
         const refrReference = blacksmithHelpers.getReferenceFromRecord(refrRecord);

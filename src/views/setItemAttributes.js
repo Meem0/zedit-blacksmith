@@ -1,3 +1,4 @@
+module.exports = ({ngapp, moduleUrl}) =>
 ngapp.run(function(workflowService, skyrimAttributeService) {
     // get the value for attributeName from attributeValues, or fall back to the attribute definition's default value
     let getAttributeValue = function(gearCategory, attributeName, itemType, material, attributeValues) {

@@ -1,3 +1,5 @@
+module.exports = ({ngapp, modulePath}) => {
+
 ngapp.controller('blacksmithSettingsController', function($scope) {
 });
 
@@ -13,3 +15,5 @@ ngapp.run(function($rootScope, settingsService) {
         }
     });
 });
+
+}

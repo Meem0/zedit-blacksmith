@@ -1,3 +1,4 @@
+module.exports = ({ngapp, xelib, modulePath}) =>
 ngapp.run(function(workflowService) {
     workflowService.addModule({
         name: 'Blacksmith',

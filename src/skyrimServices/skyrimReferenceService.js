@@ -1,3 +1,4 @@
+module.exports = ({ngapp}) =>
 ngapp.service('skyrimReferenceService', function(jsonService) {
     let referenceAliases = jsonService.loadJsonFile('referenceAliases');
 

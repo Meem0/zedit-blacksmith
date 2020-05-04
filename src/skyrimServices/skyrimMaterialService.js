@@ -1,3 +1,4 @@
+module.exports = ({ngapp}) =>
 ngapp.service('skyrimMaterialService', function(skyrimReferenceService, jsonService) {
     let materialDefinitions = (jsonService.loadJsonFilesInFolder('materials')
         .map(({name, components, ...rest}) => ({

@@ -1,3 +1,4 @@
+module.exports = ({ngapp, moduleUrl}) =>
 ngapp.run(function(workflowService, skyrimGearService) {
     let getItemTypes = function(gearCategory) {
         return skyrimGearService.getItemTypesForGearCategory(gearCategory);

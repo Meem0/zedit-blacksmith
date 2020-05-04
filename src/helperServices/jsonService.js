@@ -1,3 +1,4 @@
+module.exports = ({ngapp, fh, modulePath}) =>
 ngapp.service('jsonService', function() {
     this.loadJsonFile = function(filename) {
         return fh.loadJsonFile(`${modulePath}/resources/${filename}.json`);

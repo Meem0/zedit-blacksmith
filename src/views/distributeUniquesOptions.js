@@ -1,3 +1,4 @@
+module.exports = ({ngapp, xelib, moduleUrl}, blacksmithHelpers) =>
 ngapp.run(function(workflowService) {
     let distributeUniqueItemController = function($scope) {
         debugger;

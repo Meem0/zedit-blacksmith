@@ -1,3 +1,5 @@
+module.exports = ({ngapp, xelib, modulePath}, blacksmithHelpers) => {
+
 ngapp.service('createRecipeRecordService', function(skyrimMaterialService, skyrimGearService) {
     const conditionFunctions = {
         EPTemperingItemIsEnchanted: {
@@ -246,3 +248,4 @@ ngapp.run(function(workflowService, createRecipeRecordService, skyrimMaterialSer
     });
 
 });
+}

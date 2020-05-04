@@ -1,3 +1,4 @@
+module.exports = ({ngapp, xelib, modulePath}, blacksmithHelpers) =>
 ngapp.run(function(workflowService) {
     let getOrAddOverrideLvliRecord = function(baseLvliRecord, targetPlugin) {
         const baseLvliFormID = xelib.GetHexFormID(baseLvliRecord);

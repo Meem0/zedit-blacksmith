@@ -1,3 +1,4 @@
+module.exports = ({ngapp, modulePath}) =>
 ngapp.directive('editMaterial', function(skyrimMaterialService) {
     let editMaterialLink = function(scope) {
         scope.materials = skyrimMaterialService.getMaterials();

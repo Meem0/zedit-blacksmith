@@ -1,3 +1,4 @@
+module.exports = ({ngapp, moduleUrl}) =>
 ngapp.run(function(workflowService) {
     let setArmorAttributesController = function($scope, skyrimArmorService) {
         let loadArmorTemplate = function() {

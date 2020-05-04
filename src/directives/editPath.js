@@ -1,3 +1,4 @@
+module.exports = ({ngapp, xelib, fh, logger, modulePath}) =>
 ngapp.directive('editPath', function() {
     let getBasePath = function(fileType) {
         if (fileType === 'mesh') {

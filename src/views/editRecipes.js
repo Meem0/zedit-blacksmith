@@ -1,3 +1,4 @@
+module.exports = ({ngapp, xelib, moduleUrl}, blacksmithHelpers) =>
 ngapp.run(function(workflowService, skyrimMaterialService, skyrimGearService, jsonService, skyrimReferenceService) {
     let overrideRecipes = jsonService.loadJsonFile('recipeOverrides').reduce((overrideRecipes, {itemType, material, ingredients}) => {
         let overrideRecipesForItem = overrideRecipes[itemType] = overrideRecipes[itemType] || {};
