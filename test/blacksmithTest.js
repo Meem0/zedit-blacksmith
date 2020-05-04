@@ -3,7 +3,7 @@ let getShortKey = function (fullKey) {
     return (matchResult && matchResult[1]) || fullKey;
 };
 
-let blacksmithHelpers = require('../lib/blacksmithHelpers')(zeditGlobals);
+let blacksmithHelpers = require('../src/helpers/blacksmithHelpers')(zeditGlobals);
 global.blacksmithHelpers = blacksmithHelpers;
 const excludedKeys = ['Record Header', 'EDID', 'OBND', 'FULL', 'Model', 'KSIZ', 'COCT', 'WNAM', 'Unused', 'Unknown'];
 
@@ -74,8 +74,10 @@ beforeAll(function() {
 
     require('./workflowSystem/workflowService');
     require('./workflowSystem/views/pluginSelector');
-    const paths = fh.jetpack.find('src', {matching: ['*.js']});
-    paths.forEach(path => require(`..\\${path}`));
+    const paths = fh.jetpack.find('src', {matching: ['*.js', '!*blacksmithHelpers.js', '!*blacksmithDebug.js']});
+    paths.forEach(path => {
+        require(`..\\${path}`)(zeditGlobals, blacksmithHelpers);
+    });
 });
 
 afterAll(function() {
@@ -84,7 +86,7 @@ afterAll(function() {
 });
 
 let testCasesData = fh.jetpack.read('test/testCases.json', 'json');
-let testCases = testCasesData;//.slice(0, 3);
+let testCases = testCasesData; //.slice(0, 3);
 testCases.forEach(({itemType, material, gearCategory, reference, recipeReference, temperReference}) => {
     if (gearCategory !== 'weapon' || !reference || reference === 'ERROR') {
         return;

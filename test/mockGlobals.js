@@ -32,4 +32,4 @@ console.log('xelib done loading');
 modulePath = fh.jetpack.cwd();
 moduleUrl = `file:///${modulePath}`;
 
-zeditGlobals = {xelib, logger};
+zeditGlobals = {ngapp, xelib, fh, logger, modulePath, moduleUrl};
