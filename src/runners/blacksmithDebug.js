@@ -1,6 +1,6 @@
 module.exports = ({ngapp, xelib}, blacksmithHelpers) =>
 ngapp.run(function(settingsService, contextMenuFactory, writeObjectToElementService) {
-    let blacksmithDebug = function() {
+    let blacksmithDebug = function(scope) {
         try {
             let selectedNode = scope.selectedNodes[0];
             if (selectedNode) {
@@ -54,8 +54,8 @@ ngapp.run(function(settingsService, contextMenuFactory, writeObjectToElementServ
         visible: (scope) => settingsService.settings.blacksmith.debugMode,
         build: (scope, items) => {
             items.push({
-                label: 'Debug',
-                callback: blacksmithDebug
+                label: 'Blacksmith Debug',
+                callback: () => blacksmithDebug(scope)
             });
         }
     });
