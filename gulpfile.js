@@ -1,7 +1,6 @@
 const fs = require('fs');
 const del = require('del');
 const gulp = require('gulp');
-const include = require('gulp-include');
 const rename = require('gulp-rename');
 const sass = require('gulp-sass');
 const zip = require('gulp-zip');
@@ -12,12 +11,10 @@ function clean() {
 }
 
 function build() {
-	let scripts = gulp.src('index.js')
-        .pipe(include())
-        .on('error', console.log)
+	let index = gulp.src('index.js')
         .pipe(gulp.dest('dist'));
 
-	let lib = gulp.src('src/**/*.js')
+    let src = gulp.src('src/**/*.js')
         .pipe(gulp.dest('dist/src'));
 
     let partials = gulp.src('partials/**/*.html')
@@ -36,7 +33,7 @@ function build() {
     let moduleJson = gulp.src('module.json')
         .pipe(gulp.dest('dist'));
     
-    return merge(scripts, lib, partials, resources, css, docs, moduleJson);
+    return merge(index, src, partials, resources, css, docs, moduleJson);
 }
 
 function release() {
