@@ -1,8 +1,0 @@
-<div>
-    <label>
-        <span class="input-label">Reference</span>
-        <select ng-model="editMethod" ng-options="method.label for method in editMethods"></select>
-    </label>
-    <reference-select ng-show="editMethod === chooseExisting" model="model" signature="signature" signatures="[signature]"></reference-select>
-    <ng-transclude ng-show="editMethod === defineHere"></ng-transclude>
-</div>
