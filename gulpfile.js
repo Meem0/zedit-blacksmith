@@ -17,6 +17,9 @@ function build() {
     let src = gulp.src('src/**/*.js')
         .pipe(gulp.dest('dist/src'));
 
+    let lib = gulp.src('lib/**/*')
+        .pipe(gulp.dest('dist/lib'));
+
     let partials = gulp.src('partials/**/*.html')
         .pipe(gulp.dest('dist/partials'));
 
@@ -33,7 +36,7 @@ function build() {
     let moduleJson = gulp.src('module.json')
         .pipe(gulp.dest('dist'));
     
-    return merge(index, src, partials, resources, css, docs, moduleJson);
+    return merge(index, src, lib, partials, resources, css, docs, moduleJson);
 }
 
 function release() {
