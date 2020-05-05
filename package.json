@@ -10,6 +10,7 @@
   "scripts": {
     "build": "gulp build",
     "release": "gulp release",
+    "setup": "gulp setup",
     "test": "jest blacksmithTest.js"
   },
   "devDependencies": {
