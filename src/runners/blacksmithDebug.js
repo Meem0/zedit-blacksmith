@@ -1,5 +1,5 @@
 module.exports = ({ngapp, xelib}, blacksmithHelpers) =>
-ngapp.run(function(settingsService, contextMenuFactory, writeObjectToElementService) {
+ngapp.run(function(settingsService, contextMenuFactory, writeObjectToElementService, cellService) {
     let blacksmithDebug = function(scope) {
         try {
             let selectedNode = scope.selectedNodes[0];
@@ -34,6 +34,16 @@ ngapp.run(function(settingsService, contextMenuFactory, writeObjectToElementServ
                             }
                         }
                     );
+                }
+                else if (controlFlag === 5) {
+                    let worldspaces = cellService.getWorldspaces().map(worldspace => ({
+                        worldspace,
+                        exteriorCells: cellService.getExteriorCells(worldspace).map(exteriorCell => ({
+                            exteriorCell,
+                            interiorCells: cellService.getInteriorCells(exteriorCell)
+                        }))
+                    }));
+                    console.log(worldspaces);
                 }
             }
         }
