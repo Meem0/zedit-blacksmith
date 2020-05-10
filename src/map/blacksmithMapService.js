@@ -1,5 +1,9 @@
-module.exports = ({ngapp, fh, modulePath}) =>
+module.exports = ({ngapp, fh, modulePath}, blacksmithHelpers) =>
 ngapp.service('blacksmithMapService', function(leafletService) {
+    let getIconUrl = function(iconFilename) {
+        return `${modulePath}\\resources\\map\\icons\\${iconFilename}`;
+    };
+
     let getMapSettingsFromTiledMapSettings = function(map, {mapSize, numZoomLevels}) {
         const mapBounds = [[0, 0], [-mapSize, mapSize]];
 
@@ -107,9 +111,14 @@ ngapp.service('blacksmithMapService', function(leafletService) {
 
         setDoors(doors) {
             let leaflet = leafletService.getLeaflet();
-            const doorIconUrl = `${modulePath}\\resources\\map\\icons\\Door.png`;
+            const doorIconUrl = getIconUrl('Door.png');
+            const worldDoorIconUrl = getIconUrl('Door_World.png');
             doors.forEach(door => {
-                let icon = new leaflet.Icon({iconUrl: doorIconUrl, iconSize: [20, 36]});
+                const isWorldDoor = blacksmithHelpers.runOnReferenceRecord(door.destinationZoneReference, xelib.Signature) === 'WRLD';
+                let icon = new leaflet.Icon({
+                    iconUrl: isWorldDoor ? worldDoorIconUrl : doorIconUrl,
+                    iconSize: [20, 36]
+                });
                 let doorMarker = this.addMarker(icon, door.coordinates, door.name);
                 if (doorMarker) {
                     doorMarker.on('click', () => {
