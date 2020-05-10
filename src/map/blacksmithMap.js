@@ -1,6 +1,9 @@
 module.exports = ({ngapp, fh, modulePath, moduleUrl}, blacksmithHelpers) => {
-ngapp.controller('blacksmithMapModalController', function($scope, blacksmithMapService, leafletService) {
+ngapp.controller('blacksmithMapModalController', function($scope, blacksmithMapService, leafletService, cellService) {
     let leaflet = leafletService.getLeaflet();
+    global.lg = leaflet;
+    global.jg = fh.jetpack;
+    global.bkh = blacksmithHelpers;
 
     let getMapMarkerObject = function(mapMarkerRecord) {
         if (!xelib.HasElement(mapMarkerRecord, 'Map Marker')) {
@@ -61,43 +64,97 @@ ngapp.controller('blacksmithMapModalController', function($scope, blacksmithMapS
         return markerReferences.map(reference => xelib.WithHandle(blacksmithHelpers.getRecordFromReference(reference), getMapMarkerObject));
     };
 
-    let SkyrimMapIcon = leaflet.Icon.extend({
-        iconSize: [32, 32],
-        iconAnchor: [32, 16]
-    });
+    let addMarkerToMap = function(iconUrl, {x, y}, name, map) {
+        let icon = new leaflet.Icon({iconUrl, iconSize: [24, 24]});
+        map.addMarker(icon, {x, y}, name);
+    };
 
-    let addMarkerToMap = function({type, name, x, y}, map) {
+    let getMapMarkerUrl = function(type) {
         let iconUrl = '';
         let customIconUrl = `${modulePath}\\resources\\map\\icons\\${type}.svg`;
         if (type && fh.jetpack.exists(customIconUrl)) {
             iconUrl = customIconUrl;
         }
         if (!iconUrl) {
-            console.log(`Unknown marker type ${type} for ${name}`);
+            console.log(`Unknown marker type ${type}`);
             iconUrl = `${modulePath}\\resources\\map\\icons\\Unknown.svg`
         }
-
-        let icon = new SkyrimMapIcon({ iconUrl });
-        map.addMarker(icon, {x, y}, name);
+        return iconUrl;
     };
 
-    const tileData = {
-        zoomLevelsDir: `${modulePath}\\resources\\map\\tiles\\`,
-        tileFormat: 'skyrim-{x}-{y}-{z}.jpg',
-        tileCoordinateSize: 8192,
-        tileGridLength: 64,
-        coordinateOriginTileIndex: {x: 28.5, y: 25}
+    let resolveDestinationZone = doorRecord => {
+        return xelib.WithHandle(xelib.GetLinksTo(doorRecord, 'XTEL\\Door'), linkedDoorRecord => {
+            let destinationCellRecord = linkedDoorRecord ? xelib.GetLinksTo(linkedDoorRecord, 'Cell') : 0;
+            let destinationZoneRecord = destinationCellRecord;
+            if (destinationCellRecord && xelib.HasElement(destinationCellRecord, 'Worldspace')) {
+                destinationZoneRecord = xelib.GetLinksTo(destinationCellRecord, 'Worldspace');
+                xelib.Release(destinationCellRecord);
+            }
+            return destinationZoneRecord;
+        });
     };
     
-    let bksMap = blacksmithMapService.createMap('blacksmithMap', tileData);
-    
-    let allMarkers = getAllMapMarkers();
-    allMarkers.forEach(marker => addMarkerToMap(marker, bksMap));
+    let getDoors = function(zoneRecord) {
+        return xelib.WithHandles(xelib.GetREFRs(zoneRecord, 'DOOR'), doorRecords => {
+            return doorRecords.reduce((doors, doorRecord) => {
+                if (xelib.HasElement(doorRecord, 'XTEL')) {
+                    doors.push({
+                        name: xelib.LongName(doorRecord),
+                        coordinates: {
+                            x: xelib.GetFloatValue(doorRecord, 'DATA\\Position\\X'),
+                            y: xelib.GetFloatValue(doorRecord, 'DATA\\Position\\Y')
+                        },
+                        destinationZoneReference: xelib.WithHandle(resolveDestinationZone(doorRecord), blacksmithHelpers.getReferenceFromRecord),
+                        reference: blacksmithHelpers.getReferenceFromRecord(doorRecord)
+                    });
+                }
+                return doors;
+            }, []);
+        });
+    };
 
-    global.lg = leaflet;
-    global.mg = bksMap.map;
-    global.jg = fh.jetpack;
-    
+    const worldspaceTileData = {
+        'Skyrim.esm:00003C': {
+            zoomLevelsDir: `${modulePath}\\resources\\map\\tiles\\`,
+            tileFormat: 'skyrim-{x}-{y}-{z}.jpg',
+            tileCoordinateSize: 8192,
+            tileGridLength: 64,
+            coordinateOriginTileIndex: {x: 28.5, y: 25.5}
+        }
+    };
+
+    let bksMap;
+
+    let onDoorSelected = function(door) {
+        if (blacksmithHelpers.runOnReferenceRecord(door.destinationZoneReference, xelib.Signature) === 'WRLD') {
+            openMapWithWorldspace(door.destinationZoneReference);
+        }
+    };
+
+    let openMapWithWorldspace = function(worldspaceReference) {
+        if (bksMap) {
+            bksMap.remove();
+        }
+
+        const tileData = worldspaceTileData[worldspaceReference];
+        const doors = blacksmithHelpers.runOnReferenceRecord(worldspaceReference, getDoors);
+
+        bksMap = blacksmithMapService.createMap('blacksmithMap', {tileData, doors});
+        bksMap.registerOnDoorSelected(onDoorSelected);
+
+        global.bmg = bksMap;
+        global.mg = bksMap.map;
+    };
+
+    $scope.onWorldspaceSelected = function() {
+        const worldspace = $scope.worldspaces.find(({name}) => name === $scope.selectedWorldspaceName);
+        openMapWithWorldspace(worldspace.reference);
+    };
+
+    $scope.worldspaces = cellService.getWorldspaces();
+    $scope.selectedWorldspaceName = 'Skyrim';
+    $scope.onWorldspaceSelected();
+
     $scope.onDebug = function() {
         debugger;
     };

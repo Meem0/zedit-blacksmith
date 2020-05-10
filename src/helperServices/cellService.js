@@ -1,72 +1,82 @@
 module.exports = ({ngapp}, blacksmithHelpers) =>
 ngapp.service('cellService', function() {
     let {GetElement, GetIntValue, HasElement, GetRecords, 
-        GetLinksTo, GetElements, Name} = xelib;
+        GetLinksTo, GetElements, Name, WithHandle, WithHandles} = xelib;
     
     // private functions
     let getWorldspaceDimensions = worldspace => {
-       let coords = GetElement(worldspace, 'MNAM\\Cell Coordinates');
-       return {
-           minX: GetIntValue(coords, 'NW Cell\\X'),
-           maxX: GetIntValue(coords, 'SE Cell\\X'),
-           minY: GetIntValue(coords, 'SE Cell\\Y'),
-           maxY: GetIntValue(coords, 'NW Cell\\Y')
-       };
+        return WithHandle(GetElement(worldspace, 'MNAM\\Cell Coordinates'), coords => {
+            return {
+                minX: coords ? GetIntValue(coords, 'NW Cell\\X') : 0,
+                maxX: coords ? GetIntValue(coords, 'SE Cell\\X') : 0,
+                minY: coords ? GetIntValue(coords, 'SE Cell\\Y') : 0,
+                maxY: coords ? GetIntValue(coords, 'NW Cell\\Y') : 0
+            };
+        });
     };
     
     let getCellCoordinates = exteriorCell => {
-       let x = GetIntValue(exteriorCell, 'XCLC\\X'),
-           y = GetIntValue(exteriorCell, 'XCLC\\Y');
-       return { x, y };
+        let x = GetIntValue(exteriorCell, 'XCLC\\X'),
+            y = GetIntValue(exteriorCell, 'XCLC\\Y');
+        return { x, y };
     };
     
     let worldspaceFilter = worldspace => HasElement(worldspace, 'FULL');
     
     let makeWorldspaceObject = worldspace => ({
-       name: Name(worldspace),
-       recordType: 'worldspace',
-       record: worldspace,
-       dimensions: getWorldspaceDimensions(worldspace)
+        name: Name(worldspace),
+        recordType: 'worldspace',
+        reference: blacksmithHelpers.getReferenceFromRecord(worldspace),
+        dimensions: getWorldspaceDimensions(worldspace)
     });
     
     let exteriorCellFilter = function(worldspace) {
-       let {minX, maxX, minY, maxY} = worldspace.dimensions;
-       return (exteriorCell) => {
-           let {x, y} = getCellCoordinates(exteriorCell);
-           return x >= minX && x <= maxX &&
-               y >= minY && y <= maxY;
-       };
+        let {minX, maxX, minY, maxY} = worldspace.dimensions;
+        return (exteriorCell) => {
+            let {x, y} = getCellCoordinates(exteriorCell);
+            return x >= minX && x <= maxX && y >= minY && y <= maxY;
+        };
     }
     
     let makeExteriorCellObject = exteriorCell => ({
-       name: Name(exteriorCell),
-       recordType: 'exterior cell',
-       record: exteriorCell,
-       coordinates: getCellCoordinates(exteriorCell)
+        name: Name(exteriorCell),
+        recordType: 'exterior cell',
+        record: exteriorCell,
+        coordinates: getCellCoordinates(exteriorCell)
     });
     
-    let GetDoors = exteriorCell => {
-       let navmeshes = GetRecords(exteriorCell, 'NAVM');
-       return navmeshes.reduce((doors, navmesh) => {
-           let doorTriangles = GetElements(navmesh, 'NVNM\\Door Triangles');
-           doorTriangles.forEach(doorTriangle => {
-               let doorRef = GetLinksTo(doorTriangle, 'Door');
-               if (doorRef) doors.push(doorRef);
-           });
-           return doors;
-       }, []);
+    let getCellDoors = cellRecord => {
+        return WithHandles(GetRecords(cellRecord, 'NAVM'), navmeshes => {
+            return navmeshes.reduce((doors, navmesh) => {
+                WithHandles(GetElements(navmesh, 'NVNM\\Door Triangles'), doorTriangles => {
+                    doorTriangles.forEach(doorTriangle => {
+                        let doorRef = GetLinksTo(doorTriangle, 'Door');
+                        if (doorRef) {
+                            doors.push(doorRef);
+                        }
+                    });
+                });
+                return doors;
+            }, []);
+        });
+    };
+
+    let makeDoorObject = doorRecord => {
+        return {
+            record: doorRecord
+        };
     };
     
     let resolveDestinationCell = door => {
-       let linkedDoor = GetLinksTo(door, 'XTEL\\Door');
-       if (!linkedDoor) return 0;
-       return GetLinksTo(linkedDoor, 'Cell');
+        return WithHandle(GetLinksTo(door, 'XTEL\\Door'), linkedDoor => {
+            return linkedDoor ? GetLinksTo(linkedDoor, 'Cell') : 0;
+        });
     };
     
     let makeInteriorCellObject = interiorCell => ({
-       name: Name(interiorCell),
-       recordType: 'interior cell',
-       record: interiorCell
+        name: Name(interiorCell),
+        recordType: 'interior cell',
+        record: interiorCell
     });
 
     // public api
@@ -77,14 +87,23 @@ ngapp.service('cellService', function() {
     };
 
     this.getExteriorCells = function(worldspace) {
-        return GetRecords(worldspace.record, 'CELL')
+        return blacksmithHelpers.runOnReferenceRecord(worldspaceRecord => GetRecords(worldspaceRecord, 'CELL'))
             .filter(exteriorCellFilter(worldspace))
             .map(makeExteriorCellObject);
     };
 
     this.getInteriorCells = function(exteriorCell) {
-        return GetDoors(exteriorCell.record)
+        return getCellDoors(exteriorCell.record)
             .map(resolveDestinationCell)
             .map(makeInteriorCellObject);
+    };
+
+    this.getDoors = function(zone) {
+        if (zone.recordType === 'worldspace') {
+            const exteriorCells = this.getExteriorCells(zone);
+            return exteriorCells.reduce((doors, exteriorCell) => {
+                return doors.concat(getCellDoors(exteriorCell.record).map(makeDoorObject));
+            }, []);
+        }
     };
 });

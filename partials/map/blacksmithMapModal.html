@@ -12,5 +12,12 @@
             <div id="blacksmithMap"></div>
             <button ng-click="onDebug()">Debug</button>
         </div>
+
+        <label>
+            <span class="input-label">Worldspace</span>
+            <select ng-model="selectedWorldspaceName" ng-change="onWorldspaceSelected()">
+                <option ng-repeat="worldspace in worldspaces">{{::worldspace.name}}</option>
+            </select>
+        </label>        
     </div>
 </div>
