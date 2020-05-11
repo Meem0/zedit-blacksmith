@@ -4,6 +4,45 @@ ngapp.service('blacksmithMapService', function(leafletService) {
         return `${modulePath}\\resources\\map\\icons\\${iconFilename}`;
     };
 
+    let getContainerIconType = function(edid, name) {
+        if (name.includes('corpse') || edid.includes('corpse')) {
+            return 'Skull.png';
+        }
+        if (edid.includes('merchant')) {
+            return 'Shop.png';
+        }
+        if (edid.includes('safe') || edid.includes('strongbox')) {
+            return 'JewelBox.png';
+        }
+        if (edid.includes('chest')) {
+            if (edid.includes('boss')) {
+                return 'TreasureChest.png';
+            }
+            return 'Chest.png';
+        }
+        if (name.includes('barrel') || edid.includes('barrel')) {
+            return 'Barrel.png';
+        }
+        if (name.includes('sack') || edid.includes('sack') || name.includes('satchel') || edid.includes('satchel')) {
+            return 'Bag.png';
+        }
+        if (name.includes('cupboard') || name.includes('table') || name.includes('wardrobe') || name.includes('dresser')) {
+            return 'Furniture.png';
+        }
+        return 'Cube.png';
+    };
+
+    let getContainerIcon = function(containerReference) {
+        let edid = '';
+        let name = '';
+        blacksmithHelpers.runOnReferenceRecord(containerReference, containerRecord => {
+            edid = xelib.EditorID(containerRecord).toLowerCase();
+            name = xelib.Name(containerRecord).toLowerCase();
+        });
+        const iconType = getContainerIconType(edid, name);
+        return getIconUrl(iconType);
+    };
+
     let getMapSettingsFromTiledMapSettings = function(map, {mapSize, numZoomLevels}) {
         let leaflet = leafletService.getLeaflet();
         const mapBounds = leaflet.latLngBounds([0, 0], [-mapSize, mapSize]);
@@ -45,8 +84,8 @@ ngapp.service('blacksmithMapService', function(leafletService) {
                 ({mapBounds, minZoom, maxZoom} = getMapSettingsFromTiledMapSettings(this.map, this._tiledMapSettings));
             }
             else {
-                const doorsCoordinates = this._doors.map(({coordinates}) => this._leaflet.point(coordinates.x, coordinates.y));
-                const coordinatesBounds = getCoordinatesBounds(doorsCoordinates, 1000, 1.2);
+                const itemsCoordinates = [...this._doors, ...this._containers].map(({coordinates}) => this._leaflet.point(coordinates.x, coordinates.y));
+                const coordinatesBounds = getCoordinatesBounds(itemsCoordinates, 1000, 1.2);
                 mapBounds = this._leaflet.latLngBounds(this._gameCoordsToMapLatlng(coordinatesBounds.min), this._gameCoordsToMapLatlng(coordinatesBounds.max));
                 minZoom = this.map.getBoundsZoom(mapBounds, /*inside*/ false);
                 maxZoom = minZoom + 3;
@@ -122,6 +161,18 @@ ngapp.service('blacksmithMapService', function(leafletService) {
             this._doors = doors;
         }
 
+        setContainers(containers) {
+            containers.forEach(container => {
+                let icon = new this._leaflet.Icon({
+                    iconUrl: getContainerIcon(container.contReference),
+                    iconSize: [24, 24]
+                });
+                let containerMarker = this.addMarker(icon, this._leaflet.point(container.coordinates.x, container.coordinates.y), container.name);
+            });
+            
+            this._containers = containers;
+        }
+
         addMarker(icon, gameCoords, name) {
             let markerLatlng = this._gameCoordsToMapLatlng(gameCoords);
             let marker = this._leaflet.marker(markerLatlng, {icon}).addTo(this.map);
@@ -161,13 +212,16 @@ ngapp.service('blacksmithMapService', function(leafletService) {
         }
     };
 
-    this.createMap = function(mapId, {tileData, doors} = {}) {
+    this.createMap = function(mapId, {tileData, doors, containers} = {}) {
         let map = new BlacksmithMap(mapId);
         if (tileData) {
             map.setTileData(tileData);
         }
         if (doors) {
             map.setDoors(doors);
+        }
+        if (containers) {
+            map.setContainers(containers);
         }
         map.initializeBounds();
         return map;

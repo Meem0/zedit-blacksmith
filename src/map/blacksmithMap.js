@@ -71,13 +71,13 @@ ngapp.controller('blacksmithMapModalController', function($scope, $timeout, blac
 
     let getMapMarkerUrl = function(type) {
         let iconUrl = '';
-        let customIconUrl = `${modulePath}\\resources\\map\\icons\\${type}.svg`;
+        let customIconUrl = `${modulePath}\\resources\\map\\map_markers\\${type}.svg`;
         if (type && fh.jetpack.exists(customIconUrl)) {
             iconUrl = customIconUrl;
         }
         if (!iconUrl) {
             console.log(`Unknown marker type ${type}`);
-            iconUrl = `${modulePath}\\resources\\map\\icons\\Unknown.svg`
+            iconUrl = `${modulePath}\\resources\\map\\map_markers\\Unknown.svg`
         }
         return iconUrl;
     };
@@ -115,6 +115,25 @@ ngapp.controller('blacksmithMapModalController', function($scope, $timeout, blac
         });
     };
 
+    let getContainers = function(zoneRecord) {
+        return xelib.WithHandles(xelib.GetREFRs(zoneRecord, 'CONT'), contRefrs => {
+            return contRefrs.reduce((conts, contRefr) => {
+                xelib.WithHandle(xelib.GetLinksTo(contRefr, 'NAME'), contRecord => {
+                    conts.push({
+                        name: xelib.Name(contRecord),
+                        coordinates: {
+                            x: xelib.GetFloatValue(contRefr, 'DATA\\Position\\X'),
+                            y: xelib.GetFloatValue(contRefr, 'DATA\\Position\\Y')
+                        },
+                        contReference: blacksmithHelpers.getReferenceFromRecord(contRecord),
+                        reference: blacksmithHelpers.getReferenceFromRecord(contRefr)
+                    });
+                });
+                return conts;
+            }, []);
+        });
+    };
+
     const zoneTileData = {
         'Skyrim.esm:00003C': {
             zoomLevelsDir: `${modulePath}\\resources\\map\\tiles\\`,
@@ -146,9 +165,13 @@ ngapp.controller('blacksmithMapModalController', function($scope, $timeout, blac
         }
 
         const tileData = zoneTileData[zoneReference];
-        const doors = blacksmithHelpers.runOnReferenceRecord(zoneReference, getDoors);
+        let doors, containers;
+        blacksmithHelpers.runOnReferenceRecord(zoneReference, zoneRecord => {
+            doors = getDoors(zoneRecord);
+            containers = getContainers(zoneRecord);
+        });
 
-        bksMap = blacksmithMapService.createMap('blacksmithMap', {tileData, doors});
+        bksMap = blacksmithMapService.createMap('blacksmithMap', {tileData, doors, containers});
         bksMap.registerOnDoorSelected(onDoorSelected);
 
         global.bmg = bksMap;
