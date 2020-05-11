@@ -9,14 +9,15 @@
         <div class="close-modal" ng-click="cancel()"></div>
 
         <div class="modal-content">
+            <h2>{{currentZoneName}}</h2>
             <div id="blacksmithMap"></div>
             <button ng-click="onDebug()">Debug</button>
+            <label>
+                <span class="input-label">Worldspace</span>
+                <select ng-model="selectedWorldspace" ng-change="onWorldspaceSelected()" ng-options="worldspace.name for worldspace in worldspaces">
+                </select>
+            </label>
         </div>
 
-        <label>
-            <span class="input-label">Worldspace</span>
-            <select ng-model="selectedWorldspace" ng-change="onWorldspaceSelected()" ng-options="worldspace.name for worldspace in worldspaces">
-            </select>
-        </label>        
     </div>
 </div>

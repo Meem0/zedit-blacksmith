@@ -98,13 +98,15 @@ ngapp.controller('blacksmithMapModalController', function($scope, $timeout, blac
         return xelib.WithHandles(xelib.GetREFRs(zoneRecord, 'DOOR'), doorRecords => {
             return doorRecords.reduce((doors, doorRecord) => {
                 if (xelib.HasElement(doorRecord, 'XTEL')) {
+                    const destinationZoneReference = xelib.WithHandle(resolveDestinationZone(doorRecord), blacksmithHelpers.getReferenceFromRecord);
                     doors.push({
                         name: xelib.LongName(doorRecord),
                         coordinates: {
                             x: xelib.GetFloatValue(doorRecord, 'DATA\\Position\\X'),
                             y: xelib.GetFloatValue(doorRecord, 'DATA\\Position\\Y')
                         },
-                        destinationZoneReference: xelib.WithHandle(resolveDestinationZone(doorRecord), blacksmithHelpers.getReferenceFromRecord),
+                        destinationZoneName: blacksmithHelpers.runOnReferenceRecord(destinationZoneReference, xelib.Name),
+                        destinationZoneReference,
                         reference: blacksmithHelpers.getReferenceFromRecord(doorRecord)
                     });
                 }
@@ -133,6 +135,8 @@ ngapp.controller('blacksmithMapModalController', function($scope, $timeout, blac
         if (bksMap) {
             bksMap.remove();
         }
+
+        $scope.currentZoneName = blacksmithHelpers.runOnReferenceRecord(zoneReference, xelib.Name);
 
         const selectedWorldspace = $scope.worldspaces.find(({reference}) => reference === zoneReference);
         if (selectedWorldspace) {

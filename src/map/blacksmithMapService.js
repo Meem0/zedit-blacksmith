@@ -14,7 +14,7 @@ ngapp.service('blacksmithMapService', function(leafletService) {
         return {mapBounds, minZoom, maxZoom};
     };
 
-    let getCoordinatesBounds = function(coordinatesList, minBoundsSize = 0, paddingMultiplier = 1.2) {
+    let getCoordinatesBounds = function(coordinatesList, minBoundsSize = 0, paddingMultiplier = 1) {
         let leaflet = leafletService.getLeaflet();
         let bounds = leaflet.bounds(coordinatesList);
 
@@ -46,7 +46,7 @@ ngapp.service('blacksmithMapService', function(leafletService) {
             }
             else {
                 const doorsCoordinates = this._doors.map(({coordinates}) => this._leaflet.point(coordinates.x, coordinates.y));
-                const coordinatesBounds = getCoordinatesBounds(doorsCoordinates);
+                const coordinatesBounds = getCoordinatesBounds(doorsCoordinates, 1000, 1.2);
                 mapBounds = this._leaflet.latLngBounds(this._gameCoordsToMapLatlng(coordinatesBounds.min), this._gameCoordsToMapLatlng(coordinatesBounds.max));
                 minZoom = this.map.getBoundsZoom(mapBounds, /*inside*/ false);
                 maxZoom = minZoom + 3;
@@ -109,7 +109,7 @@ ngapp.service('blacksmithMapService', function(leafletService) {
                     iconUrl: isWorldDoor ? worldDoorIconUrl : doorIconUrl,
                     iconSize: [20, 36]
                 });
-                let doorMarker = this.addMarker(icon, this._leaflet.point(door.coordinates.x, door.coordinates.y), door.name);
+                let doorMarker = this.addMarker(icon, this._leaflet.point(door.coordinates.x, door.coordinates.y), door.destinationZoneName);
                 if (doorMarker) {
                     doorMarker.on('click', () => {
                         if (this._onDoorSelectedCb) {
@@ -126,7 +126,7 @@ ngapp.service('blacksmithMapService', function(leafletService) {
             let markerLatlng = this._gameCoordsToMapLatlng(gameCoords);
             let marker = this._leaflet.marker(markerLatlng, {icon}).addTo(this.map);
             if (name) {
-                marker.bindPopup(name);
+                marker.bindTooltip(name);
             }
             return marker;
         }
