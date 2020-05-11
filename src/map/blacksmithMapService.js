@@ -5,51 +5,37 @@ ngapp.service('blacksmithMapService', function(leafletService) {
     };
 
     let getMapSettingsFromTiledMapSettings = function(map, {mapSize, numZoomLevels}) {
-        const mapBounds = [[0, 0], [-mapSize, mapSize]];
+        let leaflet = leafletService.getLeaflet();
+        const mapBounds = leaflet.latLngBounds([0, 0], [-mapSize, mapSize]);
 
         const minZoom = map.getBoundsZoom(mapBounds, /*inside*/ true);
         const maxZoom = minZoom + numZoomLevels - 1;
         
         return {mapBounds, minZoom, maxZoom};
-    }
+    };
 
-    let getCoordinatesBounds = function(coordinatesList) {
-        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-        coordinatesList.forEach(({x, y}) => {
-            if (x < minX) {
-                minX = x;
-            }
-            if (x > maxX) {
-                maxX = x;
-            }
-            if (y < minY) {
-                minY = y;
-            }
-            if (y > maxY) {
-                maxY = y;
-            }
-        });
-        let makeFinite = num => Number.isFinite(num) ? num : 0;
-        return {
-            min: {
-                x: makeFinite(minX),
-                y: makeFinite(minY)
-            },
-            max: {
-                x: makeFinite(maxX),
-                y: makeFinite(maxY)
-            }
-        };
-    }
+    let getCoordinatesBounds = function(coordinatesList, minBoundsSize = 0, paddingMultiplier = 1.2) {
+        let leaflet = leafletService.getLeaflet();
+        let bounds = leaflet.bounds(coordinatesList);
+
+        const boundsSize = bounds.getSize();
+        const minBoundsDimensions = leaflet.point(Math.max(minBoundsSize, boundsSize.x * paddingMultiplier), Math.max(minBoundsSize, boundsSize.y * paddingMultiplier));
+        const minBoundsPadding = minBoundsDimensions.multiplyBy(0.5);
+
+        let boundsCenter = bounds.getCenter();
+        bounds.extend(boundsCenter.add(minBoundsPadding));
+        bounds.extend(boundsCenter.subtract(minBoundsPadding));
+        return bounds;
+    };
 
     class BlacksmithMap {
         constructor(mapId) {
-            let leaflet = leafletService.getLeaflet();
+            this._leaflet = leafletService.getLeaflet();
             const mapOpts = {
-                crs: leaflet.CRS.Simple,
+                crs: this._leaflet.CRS.Simple,
                 minZoom: -100
             };
-            this.map = leaflet.map(mapId, mapOpts);
+            this.map = this._leaflet.map(mapId, mapOpts);
         }
 
         initializeBounds() {
@@ -59,11 +45,20 @@ ngapp.service('blacksmithMapService', function(leafletService) {
                 ({mapBounds, minZoom, maxZoom} = getMapSettingsFromTiledMapSettings(this.map, this._tiledMapSettings));
             }
             else {
-                const doorsCoordinates = this._doors.map(({coordinates}) => coordinates);
+                const doorsCoordinates = this._doors.map(({coordinates}) => this._leaflet.point(coordinates.x, coordinates.y));
                 const coordinatesBounds = getCoordinatesBounds(doorsCoordinates);
-                mapBounds = [this._gameCoordsToMapLatlng(coordinatesBounds.min), this._gameCoordsToMapLatlng(coordinatesBounds.max)];
+                mapBounds = this._leaflet.latLngBounds(this._gameCoordsToMapLatlng(coordinatesBounds.min), this._gameCoordsToMapLatlng(coordinatesBounds.max));
                 minZoom = this.map.getBoundsZoom(mapBounds, /*inside*/ false);
                 maxZoom = minZoom + 3;
+
+                this._leaflet.imageOverlay(`${modulePath}\\resources\\map\\DefaultBackground.png`, mapBounds).addTo(this.map);
+                this._leaflet.polyline([
+                    mapBounds.getNorthWest(),
+                    mapBounds.getNorthEast(),
+                    mapBounds.getSouthEast(),
+                    mapBounds.getSouthWest(),
+                    mapBounds.getNorthWest()
+                ], {color: 'red'}).addTo(this.map);
             }
 
             this.map.setMaxBounds(mapBounds);
@@ -86,10 +81,7 @@ ngapp.service('blacksmithMapService', function(leafletService) {
             }, 100);
 
             this._tiledMapSettings = {
-                coordinateOffset: {
-                    x: coordinateOriginTileIndex.x * tileCoordinateSize,
-                    y: coordinateOriginTileIndex.y * tileCoordinateSize
-                },
+                coordinateOffset: this._leaflet.point(coordinateOriginTileIndex.x * tileCoordinateSize, coordinateOriginTileIndex.y * tileCoordinateSize),
                 mapSize: tileCoordinateSize * tileGridLength,
                 numZoomLevels
             };
@@ -104,22 +96,20 @@ ngapp.service('blacksmithMapService', function(leafletService) {
             };
             const tileUrl = zoomDirJp.cwd() + '\\zoom{z}\\' + tileFormat;
 
-            let leaflet = leafletService.getLeaflet();
-            let tileLayer = leaflet.tileLayer(tileUrl, tileOpts);
+            let tileLayer = this._leaflet.tileLayer(tileUrl, tileOpts);
             tileLayer.addTo(this.map);
         }
 
         setDoors(doors) {
-            let leaflet = leafletService.getLeaflet();
             const doorIconUrl = getIconUrl('Door.png');
             const worldDoorIconUrl = getIconUrl('Door_World.png');
             doors.forEach(door => {
                 const isWorldDoor = blacksmithHelpers.runOnReferenceRecord(door.destinationZoneReference, xelib.Signature) === 'WRLD';
-                let icon = new leaflet.Icon({
+                let icon = new this._leaflet.Icon({
                     iconUrl: isWorldDoor ? worldDoorIconUrl : doorIconUrl,
                     iconSize: [20, 36]
                 });
-                let doorMarker = this.addMarker(icon, door.coordinates, door.name);
+                let doorMarker = this.addMarker(icon, this._leaflet.point(door.coordinates.x, door.coordinates.y), door.name);
                 if (doorMarker) {
                     doorMarker.on('click', () => {
                         if (this._onDoorSelectedCb) {
@@ -133,10 +123,8 @@ ngapp.service('blacksmithMapService', function(leafletService) {
         }
 
         addMarker(icon, gameCoords, name) {
-            let leaflet = leafletService.getLeaflet();
-
             let markerLatlng = this._gameCoordsToMapLatlng(gameCoords);
-            let marker = leaflet.marker(markerLatlng, {icon}).addTo(this.map);
+            let marker = this._leaflet.marker(markerLatlng, {icon}).addTo(this.map);
             if (name) {
                 marker.bindPopup(name);
             }
@@ -152,48 +140,24 @@ ngapp.service('blacksmithMapService', function(leafletService) {
         }
 
         _getGameCoordsOffset() {
-            let offsetX = 0;
-            let offsetY = 0;
+            let gameCoordsOffset = this._leaflet.point(0, 0);
             if (this._tiledMapSettings) {
-                offsetX = this._tiledMapSettings.coordinateOffset.x;
-                offsetY = this._tiledMapSettings.coordinateOffset.y * -1;
+                gameCoordsOffset.x = this._tiledMapSettings.coordinateOffset.x;
+                gameCoordsOffset.y = this._tiledMapSettings.coordinateOffset.y * -1;
             }
-            return {x: offsetX, y: offsetY};
+            return gameCoordsOffset;
         }
 
-        _gameCoordsToMapLatlng(a, b) {
-            let x, y;
-            if (typeof(a) === 'object') {
-                x = a.x;
-                y = a.y;
-            }
-            else {
-                x = a;
-                y = b;
-            }
-
+        _gameCoordsToMapLatlng(gameCoords) {
             const gameCoordsOffset = this._getGameCoordsOffset();
-            return [y + gameCoordsOffset.y, x + gameCoordsOffset.x];
+            const offsetGameCoords = gameCoordsOffset.add(gameCoords);
+            return this._leaflet.latLng(offsetGameCoords.y, offsetGameCoords.x);
         }
 
-        _mapLatlngToGameCoords(a, b) {
-            let lat, lng;
-            if (Array.isArray(a)) {
-                ([lat, lng] = a);
-            }
-            else if (typeof(a) === 'object') {
-                ({lat, lng} = a);
-            }
-            else {
-                lat = a;
-                lng = b;
-            }
-
+        _mapLatlngToGameCoords(mapLatLng) {
             const gameCoordsOffset = this._getGameCoordsOffset();
-            return {
-                x: lng - gameCoordsOffset.x,
-                y: lat - gameCoordsOffset.y
-            };
+            const gameCoords = this._leaflet.point(mapLatLng.lng, mapLatLng.lat);
+            return gameCoords.subtract(gameCoordsOffset);
         }
     };
 

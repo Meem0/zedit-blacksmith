@@ -1,5 +1,5 @@
 module.exports = ({ngapp, fh, modulePath, moduleUrl}, blacksmithHelpers) => {
-ngapp.controller('blacksmithMapModalController', function($scope, blacksmithMapService, leafletService, cellService) {
+ngapp.controller('blacksmithMapModalController', function($scope, $timeout, blacksmithMapService, leafletService, cellService) {
     let leaflet = leafletService.getLeaflet();
     global.lg = leaflet;
     global.jg = fh.jetpack;
@@ -113,7 +113,7 @@ ngapp.controller('blacksmithMapModalController', function($scope, blacksmithMapS
         });
     };
 
-    const worldspaceTileData = {
+    const zoneTileData = {
         'Skyrim.esm:00003C': {
             zoomLevelsDir: `${modulePath}\\resources\\map\\tiles\\`,
             tileFormat: 'skyrim-{x}-{y}-{z}.jpg',
@@ -126,18 +126,23 @@ ngapp.controller('blacksmithMapModalController', function($scope, blacksmithMapS
     let bksMap;
 
     let onDoorSelected = function(door) {
-        if (blacksmithHelpers.runOnReferenceRecord(door.destinationZoneReference, xelib.Signature) === 'WRLD') {
-            openMapWithWorldspace(door.destinationZoneReference);
-        }
+        openMapWithZone(door.destinationZoneReference);
     };
 
-    let openMapWithWorldspace = function(worldspaceReference) {
+    let openMapWithZone = function(zoneReference) {
         if (bksMap) {
             bksMap.remove();
         }
 
-        const tileData = worldspaceTileData[worldspaceReference];
-        const doors = blacksmithHelpers.runOnReferenceRecord(worldspaceReference, getDoors);
+        const selectedWorldspace = $scope.worldspaces.find(({reference}) => reference === zoneReference);
+        if (selectedWorldspace) {
+            $timeout(() => {
+                $scope.selectedWorldspace = selectedWorldspace;
+            });
+        }
+
+        const tileData = zoneTileData[zoneReference];
+        const doors = blacksmithHelpers.runOnReferenceRecord(zoneReference, getDoors);
 
         bksMap = blacksmithMapService.createMap('blacksmithMap', {tileData, doors});
         bksMap.registerOnDoorSelected(onDoorSelected);
@@ -147,12 +152,13 @@ ngapp.controller('blacksmithMapModalController', function($scope, blacksmithMapS
     };
 
     $scope.onWorldspaceSelected = function() {
-        const worldspace = $scope.worldspaces.find(({name}) => name === $scope.selectedWorldspaceName);
-        openMapWithWorldspace(worldspace.reference);
+        if ($scope.selectedWorldspace) {
+            openMapWithZone($scope.selectedWorldspace.reference);   
+        }
     };
 
     $scope.worldspaces = cellService.getWorldspaces();
-    $scope.selectedWorldspaceName = 'Skyrim';
+    $scope.selectedWorldspace = $scope.worldspaces.find(({name}) => name === 'Skyrim');
     $scope.onWorldspaceSelected();
 
     $scope.onDebug = function() {

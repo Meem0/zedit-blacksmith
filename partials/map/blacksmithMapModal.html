@@ -15,8 +15,7 @@
 
         <label>
             <span class="input-label">Worldspace</span>
-            <select ng-model="selectedWorldspaceName" ng-change="onWorldspaceSelected()">
-                <option ng-repeat="worldspace in worldspaces">{{::worldspace.name}}</option>
+            <select ng-model="selectedWorldspace" ng-change="onWorldspaceSelected()" ng-options="worldspace.name for worldspace in worldspaces">
             </select>
         </label>        
     </div>
