@@ -1,0 +1,28 @@
+XEditLib v0.6.0.0
+Game: Skyrim, DataPath: D:\Games\steamapps\common\Skyrim Special Edition\data\
+Loading resources from Skyrim - Misc.bsa
+Loading resources from Skyrim - Shaders.bsa
+Loading resources from Skyrim - Interface.bsa
+Loading resources from Skyrim - Animations.bsa
+Loading resources from Skyrim - Meshes0.bsa
+Loading resources from Skyrim - Meshes1.bsa
+Loading resources from Skyrim - Sounds.bsa
+Loading resources from Skyrim - Voices_en0.bsa
+Loading resources from Skyrim - Textures0.bsa
+Loading resources from Skyrim - Textures1.bsa
+Loading resources from Skyrim - Textures2.bsa
+Loading resources from Skyrim - Textures3.bsa
+Loading resources from Skyrim - Textures4.bsa
+Loading resources from Skyrim - Textures5.bsa
+Loading resources from Skyrim - Textures6.bsa
+Loading resources from Skyrim - Textures7.bsa
+Loading resources from Skyrim - Textures8.bsa
+Loading resources from Skyrim - Patch.bsa
+Loading Skyrim.esm (1/6)
+File not found: C:\Program Files\nodejs\Skyrim.Hardcoded.dat
+Loading Update.esm (2/6)
+Loading Dawnguard.esm (3/6)
+Loading HearthFires.esm (4/6)
+Loading Dragonborn.esm (5/6)
+Loading Unofficial Skyrim Special Edition Patch.esp (6/6)
+Done loading files.

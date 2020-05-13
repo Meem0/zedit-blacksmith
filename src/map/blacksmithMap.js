@@ -79,7 +79,9 @@ ngapp.controller('blacksmithMapModalController', function($scope, $timeout, blac
             bksMap.remove();
         }
 
-        $scope.currentZoneName = blacksmithHelpers.runOnReferenceRecord(zoneReference, xelib.Name);
+        $timeout(() => {
+            $scope.currentZoneName = blacksmithHelpers.runOnReferenceRecord(zoneReference, xelib.Name);
+        });
 
         const selectedWorldspace = $scope.worldspaces.find(({reference}) => reference === zoneReference);
         if (selectedWorldspace) {

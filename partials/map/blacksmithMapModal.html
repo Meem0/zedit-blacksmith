@@ -1,26 +1,20 @@
-<style>
-    #blacksmithMap {
-        height: 750px;
-    }
-    .modal-container .map-modal {
-        max-width: 85%;
-        margin: 75px auto;
-    }
-</style>
-
 <div class="modal-container" unfocus-modal>
     <div class="modal map-modal">
         <div class="close-modal" ng-click="cancel()"></div>
 
-        <div class="modal-content">
-            <h2>{{currentZoneName}}</h2>
+        <div class="modal-content map-view">
+            <div class="map-sidebar">
+                <h2>{{currentZoneName}}</h2>
+                <div>
+                    <button ng-click="onDebug()">Debug</button>
+                </div>
+                <label>
+                    <span class="input-label">Worldspace</span>
+                    <select ng-model="selectedWorldspace" ng-change="onWorldspaceSelected()" ng-options="worldspace.name for worldspace in worldspaces">
+                    </select>
+                </label>
+            </div>
             <div id="blacksmithMap"></div>
-            <button ng-click="onDebug()">Debug</button>
-            <label>
-                <span class="input-label">Worldspace</span>
-                <select ng-model="selectedWorldspace" ng-change="onWorldspaceSelected()" ng-options="worldspace.name for worldspace in worldspaces">
-                </select>
-            </label>
         </div>
 
     </div>

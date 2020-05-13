@@ -7,9 +7,6 @@ ngapp.run(function(workflowService) {
         games: [xelib.gmTES5, xelib.gmSSE],
         workflows: [
             'makeWeapons', 'makeArmor', 'makeRecipes', 'makeTemperRecipes', 'addToLeveledLists', 'distributeUniques'
-        ],
-        getTheme: function(theme) {
-            return `${modulePath}\\css\\${theme}`;
-        }
+        ]
     });
 });

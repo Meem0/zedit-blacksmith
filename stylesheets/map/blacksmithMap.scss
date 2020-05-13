@@ -1,0 +1,15 @@
+.modal-container .map-modal {
+    max-width: 85%;
+    margin: 75px auto;
+}
+
+.map-view {
+    display: flex;
+    .map-sidebar {
+        width: 300px
+    }
+    #blacksmithMap {
+        height: 750px;
+        flex: 1;
+    }
+}

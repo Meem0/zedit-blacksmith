@@ -1,0 +1,1058 @@
+[
+  {
+    "material": "Daedric",
+    "itemType": "Armor",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:01396B",
+    "recipeReference": "Skyrim.esm:0DD993",
+    "temperReference": "Skyrim.esm:0EB0B5"
+  },
+  {
+    "material": "Daedric",
+    "itemType": "Battleaxe",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:0139B4",
+    "recipeReference": "Skyrim.esm:0DB8BF",
+    "temperReference": "Skyrim.esm:0EB85E"
+  },
+  {
+    "material": "Daedric",
+    "itemType": "Boots",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:01396A",
+    "recipeReference": "Skyrim.esm:0DD992",
+    "temperReference": "Skyrim.esm:0EB0B4"
+  },
+  {
+    "material": "Daedric",
+    "itemType": "Bow",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:0139B5",
+    "recipeReference": "Skyrim.esm:108CF7",
+    "temperReference": "Skyrim.esm:108CFE"
+  },
+  {
+    "material": "Daedric",
+    "itemType": "Dagger",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:0139B6",
+    "recipeReference": "Skyrim.esm:0DB8C0",
+    "temperReference": "Skyrim.esm:0EB85F"
+  },
+  {
+    "material": "Daedric",
+    "itemType": "Gauntlets",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:01396C",
+    "recipeReference": "Skyrim.esm:0DD994",
+    "temperReference": "Skyrim.esm:0EB0B6"
+  },
+  {
+    "material": "Daedric",
+    "itemType": "Greatsword",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:0139B7",
+    "recipeReference": "Skyrim.esm:0DB8C1",
+    "temperReference": "Skyrim.esm:0EB860"
+  },
+  {
+    "material": "Daedric",
+    "itemType": "Helmet",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:01396D",
+    "recipeReference": "Skyrim.esm:0DD995",
+    "temperReference": "Skyrim.esm:0EB0B7"
+  },
+  {
+    "material": "Daedric",
+    "itemType": "Mace",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:0139B8",
+    "recipeReference": "Skyrim.esm:0DB8C2",
+    "temperReference": "Skyrim.esm:0EB861"
+  },
+  {
+    "material": "Daedric",
+    "itemType": "Shield",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:01396E",
+    "recipeReference": "Skyrim.esm:0DD996",
+    "temperReference": "Skyrim.esm:0EB0B8"
+  },
+  {
+    "material": "Daedric",
+    "itemType": "Sword",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:0139B9",
+    "recipeReference": "Skyrim.esm:0DB8C3",
+    "temperReference": "Skyrim.esm:0EB862"
+  },
+  {
+    "material": "Daedric",
+    "itemType": "War Axe",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:0139B3",
+    "recipeReference": "Skyrim.esm:0DB8C4",
+    "temperReference": "Skyrim.esm:0EB863"
+  },
+  {
+    "material": "Daedric",
+    "itemType": "Warhammer",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:0139BA",
+    "recipeReference": "Skyrim.esm:0DB8C5",
+    "temperReference": "Skyrim.esm:0EB864"
+  },
+  {
+    "material": "Dragonbone",
+    "itemType": "Armor",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:013966",
+    "recipeReference": "Skyrim.esm:0DD98E",
+    "temperReference": "Skyrim.esm:0EB0BA"
+  },
+  {
+    "material": "Dragonbone",
+    "itemType": "Battleaxe",
+    "gearCategory": "weapon",
+    "reference": "Dawnguard.esm:014FC3",
+    "recipeReference": "Dawnguard.esm:019823",
+    "temperReference": "Dawnguard.esm:017EA2"
+  },
+  {
+    "material": "Dragonbone",
+    "itemType": "Boots",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:013965",
+    "recipeReference": "Skyrim.esm:0DD98D",
+    "temperReference": "Skyrim.esm:0EB0B9"
+  },
+  {
+    "material": "Dragonbone",
+    "itemType": "Bow",
+    "gearCategory": "weapon",
+    "reference": "Dawnguard.esm:0176F1",
+    "recipeReference": "Dawnguard.esm:019824",
+    "temperReference": "Dawnguard.esm:017EA3"
+  },
+  {
+    "material": "Dragonbone",
+    "itemType": "Dagger",
+    "gearCategory": "weapon",
+    "reference": "Dawnguard.esm:014FCB",
+    "recipeReference": "Dawnguard.esm:019825",
+    "temperReference": "Dawnguard.esm:017EA4"
+  },
+  {
+    "material": "Dragonbone",
+    "itemType": "Gauntlets",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:013967",
+    "recipeReference": "Skyrim.esm:0DD98F",
+    "temperReference": "Skyrim.esm:0EB0BB"
+  },
+  {
+    "material": "Dragonbone",
+    "itemType": "Greatsword",
+    "gearCategory": "weapon",
+    "reference": "Dawnguard.esm:014FCC",
+    "recipeReference": "Dawnguard.esm:019826",
+    "temperReference": "Dawnguard.esm:017EA5"
+  },
+  {
+    "material": "Dragonbone",
+    "itemType": "Helmet",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:013969",
+    "recipeReference": "Skyrim.esm:0DD990",
+    "temperReference": "Skyrim.esm:0EB0BC"
+  },
+  {
+    "material": "Dragonbone",
+    "itemType": "Mace",
+    "gearCategory": "weapon",
+    "reference": "Dawnguard.esm:014FCD",
+    "recipeReference": "Dawnguard.esm:019827",
+    "temperReference": "Dawnguard.esm:017EA6"
+  },
+  {
+    "material": "Dragonbone",
+    "itemType": "Shield",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:013968",
+    "recipeReference": "Skyrim.esm:0DD991",
+    "temperReference": "Skyrim.esm:0EB0BD"
+  },
+  {
+    "material": "Dragonbone",
+    "itemType": "Sword",
+    "gearCategory": "weapon",
+    "reference": "Dawnguard.esm:014FCE",
+    "recipeReference": "Dawnguard.esm:019828",
+    "temperReference": "Dawnguard.esm:017EA7"
+  },
+  {
+    "material": "Dragonbone",
+    "itemType": "War Axe",
+    "gearCategory": "weapon",
+    "reference": "Dawnguard.esm:014FCF",
+    "recipeReference": "Dawnguard.esm:019829",
+    "temperReference": "Dawnguard.esm:017EA8"
+  },
+  {
+    "material": "Dragonbone",
+    "itemType": "Warhammer",
+    "gearCategory": "weapon",
+    "reference": "Dawnguard.esm:014FD0",
+    "recipeReference": "Dawnguard.esm:01982A",
+    "temperReference": "Dawnguard.esm:017EAD"
+  },
+  {
+    "material": "Dragonscale",
+    "itemType": "Armor",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:01393E",
+    "recipeReference": "Skyrim.esm:0DCA14",
+    "temperReference": "Skyrim.esm:0EB0BF"
+  },
+  {
+    "material": "Dragonscale",
+    "itemType": "Boots",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:01393D",
+    "recipeReference": "Skyrim.esm:0DCA13",
+    "temperReference": "Skyrim.esm:0EB0BE"
+  },
+  {
+    "material": "Dragonscale",
+    "itemType": "Gauntlets",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:01393F",
+    "recipeReference": "Skyrim.esm:0DCA15",
+    "temperReference": "Skyrim.esm:0EB0C2"
+  },
+  {
+    "material": "Dragonscale",
+    "itemType": "Helmet",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:013940",
+    "recipeReference": "Skyrim.esm:0DCA16",
+    "temperReference": "Skyrim.esm:0EB0C3"
+  },
+  {
+    "material": "Dragonscale",
+    "itemType": "Shield",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:013941",
+    "recipeReference": "Skyrim.esm:0DCA17",
+    "temperReference": "Skyrim.esm:0EB0C4"
+  },
+  {
+    "material": "Dwarven",
+    "itemType": "Armor",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:01394D",
+    "recipeReference": "Skyrim.esm:0DD97A",
+    "temperReference": "Skyrim.esm:0EB124"
+  },
+  {
+    "material": "Dwarven",
+    "itemType": "Battleaxe",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:013994",
+    "recipeReference": "Skyrim.esm:0DB8A3",
+    "temperReference": "Skyrim.esm:0EB865"
+  },
+  {
+    "material": "Dwarven",
+    "itemType": "Boots",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:01394C",
+    "recipeReference": "Skyrim.esm:0DD979",
+    "temperReference": "Skyrim.esm:0EB0CA"
+  },
+  {
+    "material": "Dwarven",
+    "itemType": "Bow",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:013995",
+    "recipeReference": "Skyrim.esm:108CF8",
+    "temperReference": "Skyrim.esm:108D00"
+  },
+  {
+    "material": "Dwarven",
+    "itemType": "Dagger",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:013996",
+    "recipeReference": "Skyrim.esm:0DB8A4",
+    "temperReference": "Skyrim.esm:0EB866"
+  },
+  {
+    "material": "Dwarven",
+    "itemType": "Gauntlets",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:01394E",
+    "recipeReference": "Skyrim.esm:0DD97B",
+    "temperReference": "Skyrim.esm:0EB1E3"
+  },
+  {
+    "material": "Dwarven",
+    "itemType": "Greatsword",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:013997",
+    "recipeReference": "Skyrim.esm:0DB8A5",
+    "temperReference": "Skyrim.esm:0EB867"
+  },
+  {
+    "material": "Dwarven",
+    "itemType": "Helmet",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:01394F",
+    "recipeReference": "Skyrim.esm:0DD97C",
+    "temperReference": "Skyrim.esm:0EB2BE"
+  },
+  {
+    "material": "Dwarven",
+    "itemType": "Mace",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:013998",
+    "recipeReference": "Skyrim.esm:0DB8A6",
+    "temperReference": "Skyrim.esm:0EB868"
+  },
+  {
+    "material": "Dwarven",
+    "itemType": "Shield",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:013950",
+    "recipeReference": "Skyrim.esm:0DD97D",
+    "temperReference": "Skyrim.esm:0EB3C6"
+  },
+  {
+    "material": "Dwarven",
+    "itemType": "Sword",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:013999",
+    "recipeReference": "Skyrim.esm:0DB8A7",
+    "temperReference": "Skyrim.esm:0EB869"
+  },
+  {
+    "material": "Dwarven",
+    "itemType": "War Axe",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:013993",
+    "recipeReference": "Skyrim.esm:0DB8A8",
+    "temperReference": "Skyrim.esm:0F46BB"
+  },
+  {
+    "material": "Dwarven",
+    "itemType": "Warhammer",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:01399A",
+    "recipeReference": "Skyrim.esm:0DB8A9",
+    "temperReference": "Skyrim.esm:0F46BF"
+  },
+  {
+    "material": "Ebony",
+    "itemType": "Armor",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:013961",
+    "recipeReference": "Skyrim.esm:0DD989",
+    "temperReference": "Skyrim.esm:0EB448"
+  },
+  {
+    "material": "Ebony",
+    "itemType": "Battleaxe",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:0139AC",
+    "recipeReference": "Skyrim.esm:0DB8B8",
+    "temperReference": "Skyrim.esm:0F46B8"
+  },
+  {
+    "material": "Ebony",
+    "itemType": "Boots",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:013960",
+    "recipeReference": "Skyrim.esm:0DD988",
+    "temperReference": "Skyrim.esm:0EB3C8"
+  },
+  {
+    "material": "Ebony",
+    "itemType": "Bow",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:0139AD",
+    "recipeReference": "Skyrim.esm:108CF9",
+    "temperReference": "Skyrim.esm:108D01"
+  },
+  {
+    "material": "Ebony",
+    "itemType": "Dagger",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:0139AE",
+    "recipeReference": "Skyrim.esm:0DB8B9",
+    "temperReference": "Skyrim.esm:0F46B9"
+  },
+  {
+    "material": "Ebony",
+    "itemType": "Gauntlets",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:013962",
+    "recipeReference": "Skyrim.esm:0DD98A",
+    "temperReference": "Skyrim.esm:0EB478"
+  },
+  {
+    "material": "Ebony",
+    "itemType": "Greatsword",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:0139AF",
+    "recipeReference": "Skyrim.esm:0DB8BA",
+    "temperReference": "Skyrim.esm:0F46BA"
+  },
+  {
+    "material": "Ebony",
+    "itemType": "Helmet",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:013963",
+    "recipeReference": "Skyrim.esm:0DD98B",
+    "temperReference": "Skyrim.esm:0EB4A5"
+  },
+  {
+    "material": "Ebony",
+    "itemType": "Mace",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:0139B0",
+    "recipeReference": "Skyrim.esm:0DB8BB",
+    "temperReference": "Skyrim.esm:0F46BC"
+  },
+  {
+    "material": "Ebony",
+    "itemType": "Shield",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:013964",
+    "recipeReference": "Skyrim.esm:0DD98C",
+    "temperReference": "Skyrim.esm:0EB4A7"
+  },
+  {
+    "material": "Ebony",
+    "itemType": "Sword",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:0139B1",
+    "recipeReference": "Skyrim.esm:0DB8BC",
+    "temperReference": "Skyrim.esm:0F46BD"
+  },
+  {
+    "material": "Ebony",
+    "itemType": "War Axe",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:0139AB",
+    "recipeReference": "Skyrim.esm:0DB8BD",
+    "temperReference": "Skyrim.esm:0F46BE"
+  },
+  {
+    "material": "Ebony",
+    "itemType": "Warhammer",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:0139B2",
+    "recipeReference": "Skyrim.esm:0DB8BE",
+    "temperReference": "Skyrim.esm:0F46C0"
+  },
+  {
+    "material": "Elven",
+    "itemType": "Armor",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:0896A3",
+    "recipeReference": "Skyrim.esm:0DC9FB",
+    "temperReference": "Skyrim.esm:0EB785"
+  },
+  {
+    "material": "Elven",
+    "itemType": "Battleaxe",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:01399C",
+    "recipeReference": "Skyrim.esm:0DB8AA",
+    "temperReference": "Skyrim.esm:0F46C1"
+  },
+  {
+    "material": "Elven",
+    "itemType": "Boots",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:01391A",
+    "recipeReference": "Skyrim.esm:0DC9FA",
+    "temperReference": "Skyrim.esm:0EB52D"
+  },
+  {
+    "material": "Elven",
+    "itemType": "Bow",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:01399D",
+    "recipeReference": "Skyrim.esm:108CFA",
+    "temperReference": "Skyrim.esm:108D02"
+  },
+  {
+    "material": "Elven",
+    "itemType": "Dagger",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:01399E",
+    "recipeReference": "Skyrim.esm:0DB8AB",
+    "temperReference": "Skyrim.esm:0F46C2"
+  },
+  {
+    "material": "Elven",
+    "itemType": "Gauntlets",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:01391C",
+    "recipeReference": "Skyrim.esm:0DC9FC",
+    "temperReference": "Skyrim.esm:0EB786"
+  },
+  {
+    "material": "Elven",
+    "itemType": "Greatsword",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:01399F",
+    "recipeReference": "Skyrim.esm:0DB8AC",
+    "temperReference": "Skyrim.esm:0F46C3"
+  },
+  {
+    "material": "Elven",
+    "itemType": "Helmet",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:01391D",
+    "recipeReference": "Skyrim.esm:0DC9FD",
+    "temperReference": "Skyrim.esm:0EB787"
+  },
+  {
+    "material": "Elven",
+    "itemType": "Mace",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:0139A0",
+    "recipeReference": "Skyrim.esm:0DB8AD",
+    "temperReference": "Skyrim.esm:0F46C4"
+  },
+  {
+    "material": "Elven",
+    "itemType": "Shield",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:01391E",
+    "recipeReference": "Skyrim.esm:0DC9FE",
+    "temperReference": "Skyrim.esm:0EB788"
+  },
+  {
+    "material": "Elven",
+    "itemType": "Sword",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:0139A1",
+    "recipeReference": "Skyrim.esm:0DB8AE",
+    "temperReference": "Skyrim.esm:0F46C5"
+  },
+  {
+    "material": "Elven",
+    "itemType": "War Axe",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:01399B",
+    "recipeReference": "Skyrim.esm:0DB8AF",
+    "temperReference": "Skyrim.esm:0F46C6"
+  },
+  {
+    "material": "Elven",
+    "itemType": "Warhammer",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:0139A2",
+    "recipeReference": "Skyrim.esm:0DB8B0",
+    "temperReference": "Skyrim.esm:0F46C7"
+  },
+  {
+    "material": "Glass",
+    "itemType": "Armor",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:013939",
+    "recipeReference": "Skyrim.esm:0DCA0F",
+    "temperReference": "Skyrim.esm:0EB7A1"
+  },
+  {
+    "material": "Glass",
+    "itemType": "Battleaxe",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:0139A4",
+    "recipeReference": "Skyrim.esm:0DB8B1",
+    "temperReference": "Skyrim.esm:0F46B1"
+  },
+  {
+    "material": "Glass",
+    "itemType": "Boots",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:013938",
+    "recipeReference": "Skyrim.esm:0DCA0E",
+    "temperReference": "Skyrim.esm:0EB78E"
+  },
+  {
+    "material": "Glass",
+    "itemType": "Bow",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:0139A5",
+    "recipeReference": "Skyrim.esm:108CFB",
+    "temperReference": "Skyrim.esm:108D04"
+  },
+  {
+    "material": "Glass",
+    "itemType": "Dagger",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:0139A6",
+    "recipeReference": "Skyrim.esm:0DB8B2",
+    "temperReference": "Skyrim.esm:0F46B2"
+  },
+  {
+    "material": "Glass",
+    "itemType": "Gauntlets",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:01393A",
+    "recipeReference": "Skyrim.esm:0DCA10",
+    "temperReference": "Skyrim.esm:0EB7A6"
+  },
+  {
+    "material": "Glass",
+    "itemType": "Greatsword",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:0139A7",
+    "recipeReference": "Skyrim.esm:0DB8B3",
+    "temperReference": "Skyrim.esm:0F46B3"
+  },
+  {
+    "material": "Glass",
+    "itemType": "Helmet",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:01393B",
+    "recipeReference": "Skyrim.esm:0DCA11",
+    "temperReference": "Skyrim.esm:0EB7A7"
+  },
+  {
+    "material": "Glass",
+    "itemType": "Mace",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:0139A8",
+    "recipeReference": "Skyrim.esm:0DB8B4",
+    "temperReference": "Skyrim.esm:0F46B4"
+  },
+  {
+    "material": "Glass",
+    "itemType": "Shield",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:01393C",
+    "recipeReference": "Skyrim.esm:0DCA12",
+    "temperReference": "Skyrim.esm:0EB7A9"
+  },
+  {
+    "material": "Glass",
+    "itemType": "Sword",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:0139A9",
+    "recipeReference": "Skyrim.esm:0DB8B5",
+    "temperReference": "Skyrim.esm:0F46B5"
+  },
+  {
+    "material": "Glass",
+    "itemType": "War Axe",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:0139A3",
+    "recipeReference": "Skyrim.esm:0DB8B6",
+    "temperReference": "Skyrim.esm:0F46B6"
+  },
+  {
+    "material": "Glass",
+    "itemType": "Warhammer",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:0139AA",
+    "recipeReference": "Skyrim.esm:0DB8B7",
+    "temperReference": "Skyrim.esm:0F46B7"
+  },
+  {
+    "material": "Iron",
+    "itemType": "Armor",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:012E49",
+    "recipeReference": "Skyrim.esm:0DB291",
+    "temperReference": "Skyrim.esm:085DC5"
+  },
+  {
+    "material": "Iron",
+    "itemType": "Battleaxe",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:013980",
+    "recipeReference": "Skyrim.esm:0DA76E",
+    "temperReference": "Skyrim.esm:0ADB79"
+  },
+  {
+    "material": "Iron",
+    "itemType": "Boots",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:012E4B",
+    "recipeReference": "Skyrim.esm:0DB290",
+    "temperReference": "Skyrim.esm:0ADB89"
+  },
+  {
+    "material": "Iron",
+    "itemType": "Dagger",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:01397E",
+    "recipeReference": "Skyrim.esm:0DA76A",
+    "temperReference": "Skyrim.esm:0ADB7E"
+  },
+  {
+    "material": "Iron",
+    "itemType": "Gauntlets",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:012E46",
+    "recipeReference": "Skyrim.esm:0DB28F",
+    "temperReference": "Skyrim.esm:0ADB92"
+  },
+  {
+    "material": "Iron",
+    "itemType": "Greatsword",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:01359D",
+    "recipeReference": "Skyrim.esm:0DA76F",
+    "temperReference": "Skyrim.esm:0ADB7F"
+  },
+  {
+    "material": "Iron",
+    "itemType": "Helmet",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:012E4D",
+    "recipeReference": "Skyrim.esm:0DB292",
+    "temperReference": "Skyrim.esm:0ADB93"
+  },
+  {
+    "material": "Iron",
+    "itemType": "Mace",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:013982",
+    "recipeReference": "Skyrim.esm:0DA76B",
+    "temperReference": "Skyrim.esm:0ADB80"
+  },
+  {
+    "material": "Iron",
+    "itemType": "Shield",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:012EB6",
+    "recipeReference": "Skyrim.esm:0DB293",
+    "temperReference": "Skyrim.esm:085DC7"
+  },
+  {
+    "material": "Iron",
+    "itemType": "Sword",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:012EB7",
+    "recipeReference": "Skyrim.esm:0DA769",
+    "temperReference": "Skyrim.esm:0ADB77"
+  },
+  {
+    "material": "Iron",
+    "itemType": "War Axe",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:013790",
+    "recipeReference": "Skyrim.esm:0DA76C",
+    "temperReference": "Skyrim.esm:085DC6"
+  },
+  {
+    "material": "Iron",
+    "itemType": "Warhammer",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:013981",
+    "recipeReference": "Skyrim.esm:0DA76D",
+    "temperReference": "Skyrim.esm:0EB85D"
+  },
+  {
+    "material": "Leather",
+    "itemType": "Armor",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:03619E",
+    "recipeReference": "Skyrim.esm:0DCA02",
+    "temperReference": "Skyrim.esm:0ADB9E"
+  },
+  {
+    "material": "Leather",
+    "itemType": "Boots",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:013920",
+    "recipeReference": "Skyrim.esm:0DCA01",
+    "temperReference": "Skyrim.esm:0ADB9D"
+  },
+  {
+    "material": "Leather",
+    "itemType": "Gauntlets",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:013921",
+    "recipeReference": "Skyrim.esm:0DCA03",
+    "temperReference": "Skyrim.esm:0ADBAC"
+  },
+  {
+    "material": "Leather",
+    "itemType": "Helmet",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:013922",
+    "recipeReference": "Skyrim.esm:0DCA04",
+    "temperReference": "Skyrim.esm:0ADBD3"
+  },
+  {
+    "material": "Orcish",
+    "itemType": "Armor",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:013957",
+    "recipeReference": "Skyrim.esm:0DD984",
+    "temperReference": "Skyrim.esm:0EB7FA"
+  },
+  {
+    "material": "Orcish",
+    "itemType": "Battleaxe",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:01398C",
+    "recipeReference": "Skyrim.esm:0DB899",
+    "temperReference": "Skyrim.esm:0F46A3"
+  },
+  {
+    "material": "Orcish",
+    "itemType": "Boots",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:013956",
+    "recipeReference": "Skyrim.esm:0DD983",
+    "temperReference": "Skyrim.esm:0EB7F8"
+  },
+  {
+    "material": "Orcish",
+    "itemType": "Bow",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:01398D",
+    "recipeReference": "Skyrim.esm:108CFC",
+    "temperReference": "Skyrim.esm:108D06"
+  },
+  {
+    "material": "Orcish",
+    "itemType": "Dagger",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:01398E",
+    "recipeReference": "Skyrim.esm:0DB89C",
+    "temperReference": "Skyrim.esm:0F46A4"
+  },
+  {
+    "material": "Orcish",
+    "itemType": "Gauntlets",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:013958",
+    "recipeReference": "Skyrim.esm:0DD985",
+    "temperReference": "Skyrim.esm:0EB7FB"
+  },
+  {
+    "material": "Orcish",
+    "itemType": "Greatsword",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:01398F",
+    "recipeReference": "Skyrim.esm:0DB89A",
+    "temperReference": "Skyrim.esm:0F46A5"
+  },
+  {
+    "material": "Orcish",
+    "itemType": "Helmet",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:013959",
+    "recipeReference": "Skyrim.esm:0DD986",
+    "temperReference": "Skyrim.esm:0EB800"
+  },
+  {
+    "material": "Orcish",
+    "itemType": "Mace",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:013990",
+    "recipeReference": "Skyrim.esm:0DB89D",
+    "temperReference": "Skyrim.esm:0F46A6"
+  },
+  {
+    "material": "Orcish",
+    "itemType": "Shield",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:013946",
+    "recipeReference": "Skyrim.esm:0DD987",
+    "temperReference": "Skyrim.esm:0EB801"
+  },
+  {
+    "material": "Orcish",
+    "itemType": "Sword",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:013991",
+    "recipeReference": "Skyrim.esm:0DB89F",
+    "temperReference": "Skyrim.esm:0F46A7"
+  },
+  {
+    "material": "Orcish",
+    "itemType": "War Axe",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:01398B",
+    "recipeReference": "Skyrim.esm:0DB8A0",
+    "temperReference": "Skyrim.esm:0F46A8"
+  },
+  {
+    "material": "Orcish",
+    "itemType": "Warhammer",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:013992",
+    "recipeReference": "Skyrim.esm:0DB8A1",
+    "temperReference": "Skyrim.esm:0F46A9"
+  },
+  {
+    "material": "Scaled",
+    "itemType": "Armor",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:01B3A3",
+    "recipeReference": "Skyrim.esm:0DCA06",
+    "temperReference": "Skyrim.esm:0EB84B"
+  },
+  {
+    "material": "Scaled",
+    "itemType": "Boots",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:01B39F",
+    "recipeReference": "Skyrim.esm:0DCA05",
+    "temperReference": "Skyrim.esm:0EB836"
+  },
+  {
+    "material": "Scaled",
+    "itemType": "Gauntlets",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:01B3A0",
+    "recipeReference": "Skyrim.esm:0DCA07",
+    "temperReference": "Skyrim.esm:0EB84C"
+  },
+  {
+    "material": "Scaled",
+    "itemType": "Helmet",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:01B3A1",
+    "recipeReference": "Skyrim.esm:0DCA08",
+    "temperReference": "Skyrim.esm:0EB851"
+  },
+  {
+    "material": "Steel",
+    "itemType": "Armor",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:013952",
+    "recipeReference": "Skyrim.esm:0DD975",
+    "temperReference": "Skyrim.esm:0EB853"
+  },
+  {
+    "material": "Steel",
+    "itemType": "Battleaxe",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:013984",
+    "recipeReference": "Skyrim.esm:0DB898",
+    "temperReference": "Skyrim.esm:0F46AA"
+  },
+  {
+    "material": "Steel",
+    "itemType": "Boots",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:013951",
+    "recipeReference": "Skyrim.esm:0DD974",
+    "temperReference": "Skyrim.esm:0EB852"
+  },
+  {
+    "material": "Steel",
+    "itemType": "Dagger",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:013986",
+    "recipeReference": "Skyrim.esm:0DB89B",
+    "temperReference": "Skyrim.esm:0F46AB"
+  },
+  {
+    "material": "Steel",
+    "itemType": "Gauntlets",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:013953",
+    "recipeReference": "Skyrim.esm:0DD976",
+    "temperReference": "Skyrim.esm:0EB854"
+  },
+  {
+    "material": "Steel",
+    "itemType": "Greatsword",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:013987",
+    "recipeReference": "Skyrim.esm:0A5CD6",
+    "temperReference": "Skyrim.esm:0F46AC"
+  },
+  {
+    "material": "Steel",
+    "itemType": "Helmet",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:013954",
+    "recipeReference": "Skyrim.esm:0DD977",
+    "temperReference": "Skyrim.esm:0EB855"
+  },
+  {
+    "material": "Steel",
+    "itemType": "Mace",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:013988",
+    "recipeReference": "Skyrim.esm:0DB896",
+    "temperReference": "Skyrim.esm:0F46AD"
+  },
+  {
+    "material": "Steel",
+    "itemType": "Shield",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:013955",
+    "recipeReference": "Skyrim.esm:0DD978",
+    "temperReference": "Skyrim.esm:0EB85B"
+  },
+  {
+    "material": "Steel",
+    "itemType": "Sword",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:013989",
+    "recipeReference": "Skyrim.esm:0DB5D7",
+    "temperReference": "Skyrim.esm:0F46AE"
+  },
+  {
+    "material": "Steel",
+    "itemType": "War Axe",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:013983",
+    "recipeReference": "Skyrim.esm:0DB897",
+    "temperReference": "Skyrim.esm:0F46AF"
+  },
+  {
+    "material": "Steel",
+    "itemType": "Warhammer",
+    "gearCategory": "weapon",
+    "reference": "Skyrim.esm:01398A",
+    "recipeReference": "Skyrim.esm:0DB89E",
+    "temperReference": "Skyrim.esm:0F46B0"
+  },
+  {
+    "material": "SteelPlate",
+    "itemType": "Armor",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:01395C",
+    "recipeReference": "Skyrim.esm:0DD97F",
+    "temperReference": "Skyrim.esm:0EB857"
+  },
+  {
+    "material": "SteelPlate",
+    "itemType": "Boots",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:01395B",
+    "recipeReference": "Skyrim.esm:0DD97E",
+    "temperReference": "Skyrim.esm:0EB856"
+  },
+  {
+    "material": "SteelPlate",
+    "itemType": "Gauntlets",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:01395D",
+    "recipeReference": "Skyrim.esm:0DD980",
+    "temperReference": "Skyrim.esm:0EB858"
+  },
+  {
+    "material": "SteelPlate",
+    "itemType": "Helmet",
+    "gearCategory": "armor",
+    "reference": "Skyrim.esm:01395E",
+    "recipeReference": "Skyrim.esm:0DD981",
+    "temperReference": "Skyrim.esm:0EB859"
+  }
+]
