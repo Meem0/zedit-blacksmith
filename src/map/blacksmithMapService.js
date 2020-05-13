@@ -243,7 +243,12 @@ ngapp.service('blacksmithMapService', function(leafletService) {
 
                 containerMarkerGroup.markerData.push({
                     gameCoordinates: this._leaflet.point(container.coordinates.x, container.coordinates.y),
-                    tooltipText: container.name
+                    tooltipText: container.name,
+                    onClick: () => {
+                        if (this._onContainerSelectedCb) {
+                            this._onContainerSelectedCb(container);
+                        }
+                    }
                 });
             });
 
@@ -256,6 +261,10 @@ ngapp.service('blacksmithMapService', function(leafletService) {
 
         registerOnDoorSelected(cb) {
             this._onDoorSelectedCb = cb;
+        }
+
+        registerOnContainerSelected(cb) {
+            this._onContainerSelectedCb = cb;
         }
 
         _getGameCoordsOffset() {

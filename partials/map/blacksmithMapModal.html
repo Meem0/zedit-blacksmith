@@ -5,14 +5,17 @@
         <div class="modal-content map-view">
             <div class="map-sidebar">
                 <h2>{{currentZoneName}}</h2>
-                <div>
-                    <button ng-click="onDebug()">Debug</button>
-                </div>
+                <button class="action-btn small" ng-click="onDebug()">Debug</button>
                 <label>
                     <span class="input-label">Worldspace</span>
                     <select ng-model="selectedWorldspace" ng-change="onWorldspaceSelected()" ng-options="worldspace.name for worldspace in worldspaces">
                     </select>
                 </label>
+                <div ng-show="selectedContainerName">
+                    <h4>{{selectedContainerName}} ({{selectedContainerEdid}})</h4>
+                    <button class="action-btn small" ng-click="reloadContainerLoot()">Reload Loot</button>
+                    <p ng-repeat="lootEntry in selectedContainerLoot">{{lootEntry.name}} x{{lootEntry.count}}</p>
+                </div>
             </div>
             <div id="blacksmithMap"></div>
         </div>

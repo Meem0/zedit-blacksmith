@@ -70,6 +70,40 @@ ngapp.controller('blacksmithMapModalController', function($scope, $timeout, blac
 
     let bksMap;
 
+    let getContainerLoot = function(contRecord) {
+        const fakeLoot = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+        const numItems = Math.floor(Math.random() * 20);
+        let loot = [];
+        for (let i = 0; i < numItems; ++i) {
+            const itemIndex = Math.floor(Math.random() * fakeLoot.length);
+            const itemName = fakeLoot[itemIndex];
+            let lootEntry = loot.find(({name}) => name === itemName);
+            if (!lootEntry) {
+                lootEntry = {
+                    name: itemName,
+                    count: 0
+                };
+                loot.push(lootEntry);
+            }
+            ++lootEntry.count;
+        }
+        return loot;
+    };
+
+    let setSelectedContainer = function(container) {
+        $scope.selectedContainerName = container.name;
+        blacksmithHelpers.runOnReferenceRecord(container.contReference, contRecord => {
+            $scope.selectedContainerEdid = xelib.EditorID(contRecord);
+            $scope.selectedContainerLoot = getContainerLoot(contRecord);
+        });
+
+        $scope.reloadContainerLoot = function() {
+            blacksmithHelpers.runOnReferenceRecord(container.contReference, contRecord => {
+                $scope.selectedContainerLoot = getContainerLoot(contRecord);
+            });
+        };
+    };
+
     let onDoorSelected = function(door) {
         openMapWithZone(door.destinationZoneReference);
     };
@@ -80,6 +114,7 @@ ngapp.controller('blacksmithMapModalController', function($scope, $timeout, blac
         }
 
         $timeout(() => {
+            $scope.selectedContainerName = undefined;
             $scope.currentZoneName = blacksmithHelpers.runOnReferenceRecord(zoneReference, xelib.Name);
         });
 
@@ -99,6 +134,9 @@ ngapp.controller('blacksmithMapModalController', function($scope, $timeout, blac
 
         bksMap = blacksmithMapService.createMap('blacksmithMap', {tileData, doors, containers});
         bksMap.registerOnDoorSelected(onDoorSelected);
+        bksMap.registerOnContainerSelected(container => {
+            $timeout(() => setSelectedContainer(container));
+        });
 
         global.bmg = bksMap;
         global.mg = bksMap.map;
