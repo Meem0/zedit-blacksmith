@@ -61,9 +61,10 @@ ngapp.controller('blacksmithMapModalController', function($scope, $timeout, blac
         'Skyrim.esm:00003C': {
             zoomLevelsDir: `${modulePath}\\resources\\map\\tiles\\`,
             tileFormat: 'skyrim-{x}-{y}-{z}.jpg',
-            tileCoordinateSize: 8192,
-            tileGridLength: 64,
-            coordinateOriginTileIndex: {x: 28.5, y: 25.5}
+            tilePixelSize: 256,
+            tileCoordinateSize: 131072,
+            tileGridLength: 4,
+            coordinateOriginTileIndex: {x: 1.78125, y: 1.59375}
         }
     };
 

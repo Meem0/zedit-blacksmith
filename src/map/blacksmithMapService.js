@@ -42,11 +42,11 @@ ngapp.service('blacksmithMapService', function(leafletService) {
         return {name: 'Other Containers', priority: 100};
     };
 
-    let getMapSettingsFromTiledMapSettings = function(map, {mapSize, numZoomLevels}) {
+    let getMapSettingsFromTiledMapSettings = function(map, {pixelSize, mapSize, numZoomLevels}) {
         let leaflet = leafletService.getLeaflet();
         const mapBounds = leaflet.latLngBounds([0, 0], [-mapSize, mapSize]);
 
-        const minZoom = map.getBoundsZoom(mapBounds, /*inside*/ true);
+        const minZoom = Math.log2(pixelSize / mapSize);
         const maxZoom = minZoom + numZoomLevels - 1;
         
         return {mapBounds, minZoom, maxZoom};
@@ -154,7 +154,7 @@ ngapp.service('blacksmithMapService', function(leafletService) {
             this.map.setView([0, 0], minZoom);
         }
 
-        setTileData({zoomLevelsDir, tileFormat, tileCoordinateSize, tileGridLength, coordinateOriginTileIndex}) {
+        setTileData({zoomLevelsDir, tileFormat, tilePixelSize, tileCoordinateSize, tileGridLength, coordinateOriginTileIndex}) {
             const zoomDirJp = fh.jetpack.cwd(zoomLevelsDir);
             const zoomDirs = zoomDirJp.list().filter(dir => dir.startsWith('zoom'));
             const numZoomLevels = zoomDirs.length;
@@ -169,6 +169,7 @@ ngapp.service('blacksmithMapService', function(leafletService) {
 
             this._tiledMapSettings = {
                 coordinateOffset: this._leaflet.point(coordinateOriginTileIndex.x * tileCoordinateSize, coordinateOriginTileIndex.y * tileCoordinateSize),
+                pixelSize: tilePixelSize * tileGridLength,
                 mapSize: tileCoordinateSize * tileGridLength,
                 numZoomLevels
             };
@@ -177,6 +178,7 @@ ngapp.service('blacksmithMapService', function(leafletService) {
 
             const tileOpts = {
                 bounds: mapBounds,
+                tileSize: tilePixelSize,
                 minZoom,
                 maxZoom,
                 zoomOffset: tileDataMinZoom - minZoom
