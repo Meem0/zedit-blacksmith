@@ -17,7 +17,8 @@
                     <p ng-repeat="lootEntry in selectedContainerLoot">{{lootEntry.name}} x{{lootEntry.count}}</p>
                 </div>
             </div>
-            <div id="blacksmithMap"></div>
+            <div id="blacksmithMap" ng-class="{'hide-map': loadingMap}"></div>
+            <img ng-src="{{::spinnerUrl}}" ng-show="loadingMap" width="200" height="200">
         </div>
 
     </div>

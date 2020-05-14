@@ -1,20 +1,8 @@
 module.exports = ({ngapp, fh, modulePath, moduleUrl}, blacksmithHelpers) => {
-ngapp.controller('blacksmithMapModalController', function($scope, $timeout, blacksmithMapService, leafletService, cellService, mapDataService) {
-    let leaflet = leafletService.getLeaflet();
-    global.lg = leaflet;
-    global.jg = fh.jetpack;
-    global.bkh = blacksmithHelpers;
-
-    const zoneTileData = {
-        'Skyrim.esm:00003C': {
-            zoomLevelsDir: `${modulePath}\\resources\\map\\tiles\\`,
-            tileFormat: 'skyrim-{x}-{y}-{z}.jpg',
-            tilePixelSize: 256,
-            tileCoordinateSize: 131072,
-            tileGridLength: 4,
-            coordinateOriginTileIndex: {x: 1.78125, y: 1.59375}
-        }
-    };
+ngapp.controller('blacksmithMapModalController', function($scope, $timeout, blacksmithMapService, cellService, mapDataService, jsonService, progressService) {
+    const zoneSettings = jsonService.loadJsonFile('map/zoneSettings');
+    $scope.spinnerUrl = `${moduleUrl}/resources/images/LoadSpinner.png`;
+    $scope.showMap = true;
 
     let bksMap;
 
@@ -57,34 +45,47 @@ ngapp.controller('blacksmithMapModalController', function($scope, $timeout, blac
     };
 
     let openMapWithZone = function(zoneReference) {
-        if (bksMap) {
-            bksMap.remove();
-        }
+        const zoneName = blacksmithHelpers.runOnReferenceRecord(zoneReference, xelib.Name);
+        const settings = zoneSettings[zoneReference];
 
         $timeout(() => {
+            $scope.loadingMap = true;
             $scope.selectedContainerName = undefined;
-            $scope.currentZoneName = blacksmithHelpers.runOnReferenceRecord(zoneReference, xelib.Name);
-        });
+            $scope.currentZoneName = zoneName;
 
-        const selectedWorldspace = $scope.worldspaces.find(({reference}) => reference === zoneReference);
-        if (selectedWorldspace) {
-            $timeout(() => {
+            const selectedWorldspace = $scope.worldspaces.find(({reference}) => reference === zoneReference);
+            if (selectedWorldspace) {
                 $scope.selectedWorldspace = selectedWorldspace;
-            });
-        }
+            }
+    
+            if (bksMap) {
+                bksMap.remove();
+            }
+            
+            $timeout(() => {
+                let doors = mapDataService.getDoors(zoneReference);
+        
+                let containers = mapDataService.getContainers(zoneReference);
+        
+                let tileData;
+                if (settings && settings.tileData) {
+                    tileData = { ...settings.tileData };
+                    tileData.zoomLevelsDir = modulePath + tileData.zoomLevelsDir;
+                }
+        
+                bksMap = blacksmithMapService.createMap('blacksmithMap', {tileData, doors, containers});
+        
+                bksMap.registerOnDoorSelected(onDoorSelected);
+                bksMap.registerOnContainerSelected(container => {
+                    $timeout(() => setSelectedContainer(container));
+                });
+        
+                $scope.loadingMap = false;
 
-        const tileData = zoneTileData[zoneReference];
-        let doors = mapDataService.getDoors(zoneReference);
-        let containers = mapDataService.getContainers(zoneReference);
-
-        bksMap = blacksmithMapService.createMap('blacksmithMap', {tileData, doors, containers});
-        bksMap.registerOnDoorSelected(onDoorSelected);
-        bksMap.registerOnContainerSelected(container => {
-            $timeout(() => setSelectedContainer(container));
+                global.bmg = bksMap;
+                global.mg = bksMap.map;
+            }, 1);
         });
-
-        global.bmg = bksMap;
-        global.mg = bksMap.map;
     };
 
     $scope.onWorldspaceSelected = function() {

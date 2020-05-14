@@ -1,5 +1,8 @@
-module.exports = ({ngapp, xelib}, blacksmithHelpers) =>
+module.exports = ({ngapp, xelib, fh}, blacksmithHelpers) =>
 ngapp.run(function(settingsService, contextMenuFactory, writeObjectToElementService, cellService) {
+    global.jg = fh.jetpack;
+    global.bkh = blacksmithHelpers;
+
     let blacksmithDebug = function(scope) {
         try {
             let selectedNode = scope.selectedNodes[0];

@@ -42,7 +42,7 @@ ngapp.service('blacksmithMapService', function(leafletService) {
         return {name: 'Other Containers', priority: 100};
     };
 
-    let getMapSettingsFromTiledMapSettings = function(map, {pixelSize, mapSize, numZoomLevels}) {
+    let getMapSettingsFromTiledMapSettings = function({pixelSize, mapSize, numZoomLevels}) {
         let leaflet = leafletService.getLeaflet();
         const mapBounds = leaflet.latLngBounds([0, 0], [-mapSize, mapSize]);
 
@@ -80,7 +80,7 @@ ngapp.service('blacksmithMapService', function(leafletService) {
             let mapBounds, minZoom, maxZoom;
 
             if (this._tiledMapSettings) {
-                ({mapBounds, minZoom, maxZoom} = getMapSettingsFromTiledMapSettings(this.map, this._tiledMapSettings));
+                ({mapBounds, minZoom, maxZoom} = getMapSettingsFromTiledMapSettings(this._tiledMapSettings));
             }
             else {
                 let minGameCoordinatesBounds = this._leaflet.bounds([]);
@@ -174,7 +174,7 @@ ngapp.service('blacksmithMapService', function(leafletService) {
                 numZoomLevels
             };
 
-            const {mapBounds, minZoom, maxZoom} = getMapSettingsFromTiledMapSettings(this.map, this._tiledMapSettings);
+            const {mapBounds, minZoom, maxZoom} = getMapSettingsFromTiledMapSettings(this._tiledMapSettings);
 
             const tileOpts = {
                 bounds: mapBounds,

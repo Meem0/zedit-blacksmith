@@ -1,0 +1,15 @@
+{
+    "Skyrim.esm:00003C": {
+        "tileData": {
+            "zoomLevelsDir": "\\resources\\map\\tiles\\",
+            "tileFormat": "skyrim-{x}-{y}-{z}.jpg",
+            "tilePixelSize": 256,
+            "tileCoordinateSize": 131072,
+            "tileGridLength": 4,
+            "coordinateOriginTileIndex": {
+                "x": 1.78125,
+                "y": 1.59375
+            }
+        }
+    }
+}

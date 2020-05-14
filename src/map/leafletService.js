@@ -5,6 +5,7 @@ ngapp.service('leafletService', function() {
     this.getLeaflet = function() {
         if (!leaflet) {
             leaflet = require(`${modulePath}\\lib\\leaflet\\leaflet-src`);
+            global.lg = leaflet;
             
             const cssElementId = 'blacksmithLeafletCSS';
             let cssElement = document.getElementById(cssElementId);
