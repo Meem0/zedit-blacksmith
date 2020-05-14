@@ -197,7 +197,7 @@ ngapp.service('blacksmithMapService', function(leafletService) {
                 const isWorldDoor = blacksmithHelpers.runOnReferenceRecord(door.destinationZoneReference, xelib.Signature) === 'WRLD';
                 (isWorldDoor ? worldDoorMarkers : doorMarkers).push({
                     gameCoordinates: this._leaflet.point(door.coordinates.x, door.coordinates.y),
-                    tooltipText: door.destinationZoneName,
+                    tooltipText: door.name,
                     onClick: () => {
                         if (this._onDoorSelectedCb) {
                             this._onDoorSelectedCb(door);

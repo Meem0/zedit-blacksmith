@@ -1,61 +1,9 @@
 module.exports = ({ngapp, fh, modulePath, moduleUrl}, blacksmithHelpers) => {
-ngapp.controller('blacksmithMapModalController', function($scope, $timeout, blacksmithMapService, leafletService, cellService) {
+ngapp.controller('blacksmithMapModalController', function($scope, $timeout, blacksmithMapService, leafletService, cellService, mapDataService) {
     let leaflet = leafletService.getLeaflet();
     global.lg = leaflet;
     global.jg = fh.jetpack;
     global.bkh = blacksmithHelpers;
-
-    let resolveDestinationZone = doorRecord => {
-        return xelib.WithHandle(xelib.GetLinksTo(doorRecord, 'XTEL\\Door'), linkedDoorRecord => {
-            let destinationCellRecord = linkedDoorRecord ? xelib.GetLinksTo(linkedDoorRecord, 'Cell') : 0;
-            let destinationZoneRecord = destinationCellRecord;
-            if (destinationCellRecord && xelib.HasElement(destinationCellRecord, 'Worldspace')) {
-                destinationZoneRecord = xelib.GetLinksTo(destinationCellRecord, 'Worldspace');
-                xelib.Release(destinationCellRecord);
-            }
-            return destinationZoneRecord;
-        });
-    };
-    
-    let getDoors = function(zoneRecord) {
-        return xelib.WithHandles(xelib.GetREFRs(zoneRecord, 'DOOR'), doorRecords => {
-            return doorRecords.reduce((doors, doorRecord) => {
-                if (xelib.HasElement(doorRecord, 'XTEL')) {
-                    const destinationZoneReference = xelib.WithHandle(resolveDestinationZone(doorRecord), blacksmithHelpers.getReferenceFromRecord);
-                    doors.push({
-                        name: xelib.LongName(doorRecord),
-                        coordinates: {
-                            x: xelib.GetFloatValue(doorRecord, 'DATA\\Position\\X'),
-                            y: xelib.GetFloatValue(doorRecord, 'DATA\\Position\\Y')
-                        },
-                        destinationZoneName: blacksmithHelpers.runOnReferenceRecord(destinationZoneReference, xelib.Name),
-                        destinationZoneReference,
-                        reference: blacksmithHelpers.getReferenceFromRecord(doorRecord)
-                    });
-                }
-                return doors;
-            }, []);
-        });
-    };
-
-    let getContainers = function(zoneRecord) {
-        return xelib.WithHandles(xelib.GetREFRs(zoneRecord, 'CONT'), contRefrs => {
-            return contRefrs.reduce((conts, contRefr) => {
-                xelib.WithHandle(xelib.GetLinksTo(contRefr, 'NAME'), contRecord => {
-                    conts.push({
-                        name: xelib.Name(contRecord),
-                        coordinates: {
-                            x: xelib.GetFloatValue(contRefr, 'DATA\\Position\\X'),
-                            y: xelib.GetFloatValue(contRefr, 'DATA\\Position\\Y')
-                        },
-                        contReference: blacksmithHelpers.getReferenceFromRecord(contRecord),
-                        reference: blacksmithHelpers.getReferenceFromRecord(contRefr)
-                    });
-                });
-                return conts;
-            }, []);
-        });
-    };
 
     const zoneTileData = {
         'Skyrim.esm:00003C': {
@@ -126,11 +74,8 @@ ngapp.controller('blacksmithMapModalController', function($scope, $timeout, blac
         }
 
         const tileData = zoneTileData[zoneReference];
-        let doors, containers;
-        blacksmithHelpers.runOnReferenceRecord(zoneReference, zoneRecord => {
-            doors = getDoors(zoneRecord);
-            containers = getContainers(zoneRecord);
-        });
+        let doors = mapDataService.getDoors(zoneReference);
+        let containers = mapDataService.getContainers(zoneReference);
 
         bksMap = blacksmithMapService.createMap('blacksmithMap', {tileData, doors, containers});
         bksMap.registerOnDoorSelected(onDoorSelected);
