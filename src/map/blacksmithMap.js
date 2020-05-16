@@ -157,37 +157,44 @@ ngapp.controller('blacksmithMapModalController', function($scope, $timeout, blac
         const zoneName = blacksmithHelpers.runOnReferenceRecord(zoneReference, xelib.Name);
         const settings = zoneSettings[zoneReference];
 
-        $timeout(() => {
-            $scope.loadingMap = true;
-            $scope.selectedContainerName = undefined;
-            $scope.currentZoneName = zoneName;
+        $scope.loadingMap = true;
+        $scope.selectedContainerName = undefined;
+        $scope.currentZoneName = zoneName;
 
-            const selectedWorldspace = $scope.worldspaces.find(({reference}) => reference === zoneReference);
-            if (selectedWorldspace) {
-                $scope.selectedWorldspace = selectedWorldspace;
+        const selectedWorldspace = $scope.worldspaces.find(({reference}) => reference === zoneReference);
+        if (selectedWorldspace) {
+            $scope.selectedWorldspace = selectedWorldspace;
+        }
+
+        if (bksMap) {
+            bksMap.remove();
+        }
+        
+        $timeout(() => {
+            let markerGroups = getMarkerGroups(zoneReference);
+
+            let tileData;
+            if (settings && settings.tileData) {
+                tileData = { ...settings.tileData };
+                tileData.zoomLevelsDir = modulePath + tileData.zoomLevelsDir;
             }
     
-            if (bksMap) {
-                bksMap.remove();
+            bksMap = blacksmithMapService.createMap();
+            global.bmg = bksMap;
+    
+            if (tileData) {
+                bksMap.setTileData(tileData);
             }
-            
+            if (markerGroups) {
+                bksMap.setMarkerGroups(markerGroups);
+            }
+
             $timeout(() => {
-                let markerGroups = getMarkerGroups(zoneReference);
-
-                let tileData;
-                if (settings && settings.tileData) {
-                    tileData = { ...settings.tileData };
-                    tileData.zoomLevelsDir = modulePath + tileData.zoomLevelsDir;
-                }
-        
-                bksMap = blacksmithMapService.createMap('blacksmithMap', {tileData, markerGroups});
-        
+                bksMap.addToView('blacksmithMap');
                 $scope.loadingMap = false;
-
-                global.bmg = bksMap;
                 global.mg = bksMap.map;
-            }, 1);
-        });
+            });
+        }, 50);
     };
 
     $scope.onWorldspaceSelected = function() {

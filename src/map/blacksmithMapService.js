@@ -61,7 +61,7 @@ ngapp.service('blacksmithMapService', function(leafletService) {
             }
             this._leaflet.control.layers(null, this._layerGroups).addTo(this.map);
             
-            this.map.setMaxBounds(mapBounds.pad(0.2));
+            this.map.setMaxBounds(mapBounds);
             this.map.setMinZoom(minZoom);
             this.map.setMaxZoom(maxZoom);
             this.map.setView(mapBounds.getCenter(), minZoom);
@@ -168,15 +168,7 @@ ngapp.service('blacksmithMapService', function(leafletService) {
         }
     };
 
-    this.createMap = function(mapId, {tileData, markerGroups} = {}) {
-        let map = new BlacksmithMap(mapId);
-        if (tileData) {
-            map.setTileData(tileData);
-        }
-        if (markerGroups) {
-            map.setMarkerGroups(markerGroups);
-        }
-        map.createMap(mapId);
-        return map;
+    this.createMap = function() {
+        return new BlacksmithMap();
     };
 });

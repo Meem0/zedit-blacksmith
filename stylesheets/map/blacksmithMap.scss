@@ -6,14 +6,28 @@
 .map-view {
     display: flex;
     .map-sidebar {
-        width: 300px
+        width: 300px;
+    }
+    .map-main {
+        flex: 1;
+        position: relative;
     }
     #blacksmithMap {
         height: 750px;
-        flex: 1;
     }
-
+    .leaflet-container {
+        background: $background;
+        border: $medium-border solid;
+    }
+    .load-spinner {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        margin: auto;
+    }
     .hide-map {
-        opacity: 0
+        visibility: visible;
     }
 }
