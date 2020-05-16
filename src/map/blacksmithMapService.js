@@ -4,154 +4,67 @@ ngapp.service('blacksmithMapService', function(leafletService) {
         return `${modulePath}\\resources\\map\\icons\\${iconFilename}`;
     };
 
-    let getContainerIconData = function(containerReference) {
-        let edid = '';
-        let name = '';
-        blacksmithHelpers.runOnReferenceRecord(containerReference, containerRecord => {
-            edid = xelib.EditorID(containerRecord).toLowerCase();
-            name = xelib.Name(containerRecord).toLowerCase();
-        });
-        
-        if (name.includes('corpse') || edid.includes('corpse')) {
-            return {name: 'Corpses', priority: 110};
-        }
-        if (edid.includes('merchant')) {
-            return {name: 'Merchant Chests', priority: 105};
-        }
-        if (edid.includes('safe') || edid.includes('strongbox')) {
-            return {name: 'Safes', priority: 140};
-        }
-        if (edid.includes('chest')) {
-            if (edid.includes('boss')) {
-                return {name: 'Boss Chests', priority: 150};
-            }
-            return {name: 'Chests', priority: 145};
-        }
-        if (name.includes('barrel') || edid.includes('barrel')) {
-            return {name: 'Barrels', priority: 130};
-        }
-        if (name.includes('sack') || edid.includes('sack') || name.includes('satchel') || edid.includes('satchel')) {
-            return {name: 'Bags', priority: 125};
-        }
-        if (name.includes('cupboard') || name.includes('table') || name.includes('wardrobe') || name.includes('dresser')) {
-            return {name: 'Furniture', priority: 120};
-        }
-        if (name.includes('urn') || name.includes('pot')) {
-            return {name: 'Pottery', priority: 115};
-        }
-        return {name: 'Other Containers', priority: 100};
+    let getMapBoundsSettings = function(map, bounds) {
+        const mapBounds = bounds.pad(0.2);
+        const minZoom = map.getBoundsZoom(mapBounds, /*inside*/ false);
+        return {
+            mapBounds,
+            minZoom,
+            maxZoom: minZoom + 3
+        };
     };
 
-    let getMapSettingsFromTiledMapSettings = function({pixelSize, mapSize, numZoomLevels}) {
-        let leaflet = leafletService.getLeaflet();
-        const mapBounds = leaflet.latLngBounds([0, 0], [-mapSize, mapSize]);
-
-        const minZoom = Math.log2(pixelSize / mapSize);
-        const maxZoom = minZoom + numZoomLevels - 1;
-        
-        return {mapBounds, minZoom, maxZoom};
-    };
-
-    let getPaddedCoordinatesBounds = function(coordinatesBounds, minBoundsSize = 0, paddingMultiplier = 1) {
+    let addDefaultBackgroundToMap = function(map, bounds) {
         let leaflet = leafletService.getLeaflet();
 
-        const boundsSize = coordinatesBounds.getSize();
-        const minBoundsDimensions = leaflet.point(Math.max(minBoundsSize, boundsSize.x * paddingMultiplier), Math.max(minBoundsSize, boundsSize.y * paddingMultiplier));
-        const minBoundsPadding = minBoundsDimensions.multiplyBy(0.5);
-
-        let boundsCenter = coordinatesBounds.getCenter();
-        coordinatesBounds.extend(boundsCenter.add(minBoundsPadding));
-        coordinatesBounds.extend(boundsCenter.subtract(minBoundsPadding));
-        return coordinatesBounds;
+        leaflet.imageOverlay(`${modulePath}\\resources\\map\\DefaultBackground.png`, bounds).addTo(map);
+        leaflet.polyline([
+            bounds.getNorthWest(),
+            bounds.getNorthEast(),
+            bounds.getSouthEast(),
+            bounds.getSouthWest(),
+            bounds.getNorthWest()
+        ], {color: 'red'}).addTo(map);
     };
 
     class BlacksmithMap {
-        constructor(mapId) {
+        constructor() {
             this._leaflet = leafletService.getLeaflet();
+            this._markerGroups = [];
+            this._layerGroups = {};
+        }
+
+        createMap(mapId) {
             const mapOpts = {
                 crs: this._leaflet.CRS.Simple,
                 minZoom: -100
             };
             this.map = this._leaflet.map(mapId, mapOpts);
-            this._markerGroups = [];
-        }
 
-        initializeMap() {
-            let mapBounds, minZoom, maxZoom;
+            let {mapBounds, minZoom, maxZoom} = this._tiledMapBoundsSettings || getMapBoundsSettings(this.map, this._markerMinBounds);
 
-            if (this._tiledMapSettings) {
-                ({mapBounds, minZoom, maxZoom} = getMapSettingsFromTiledMapSettings(this._tiledMapSettings));
+            if (this._tileLayer) {
+                this._tileLayer.addTo(this.map);
             }
             else {
-                let minGameCoordinatesBounds = this._leaflet.bounds([]);
-                this._markerGroups.forEach(({markerData}) => {
-                    markerData.forEach(({gameCoordinates}) => minGameCoordinatesBounds.extend(gameCoordinates));
-                });
-                const paddedGameCoordinatesBounds = getPaddedCoordinatesBounds(minGameCoordinatesBounds, 1000, 1.2);
-                mapBounds = this._leaflet.latLngBounds(this._gameCoordsToMapLatlng(paddedGameCoordinatesBounds.min), this._gameCoordsToMapLatlng(paddedGameCoordinatesBounds.max));
-                minZoom = this.map.getBoundsZoom(mapBounds, /*inside*/ false);
-                maxZoom = minZoom + 3;
-
-                this._leaflet.imageOverlay(`${modulePath}\\resources\\map\\DefaultBackground.png`, mapBounds).addTo(this.map);
-                this._leaflet.polyline([
-                    mapBounds.getNorthWest(),
-                    mapBounds.getNorthEast(),
-                    mapBounds.getSouthEast(),
-                    mapBounds.getSouthWest(),
-                    mapBounds.getNorthWest()
-                ], {color: 'red'}).addTo(this.map);
+                addDefaultBackgroundToMap(this.map, mapBounds);
             }
 
-            if (this._markerGroups.length > 0) {
-                this._markerGroups.sort((a, b) => {
-                    return b.priority - a.priority;
-                });
-
-                const defaultMaxMarkers = 600;
-                let currentTotalMarkers = 0;
-
-                let layerGroups = this._markerGroups.reduce((layerGroups, {name, priority, iconSize, markerData}) => {
-                    const iconUrl = getIconUrl(name + '.png')
-                    let icon = this._leaflet.icon({
-                        iconUrl,
-                        iconSize
-                    });
-
-                    let markers = markerData.map(({gameCoordinates, tooltipText, onClick}) => {
-                        let markerLatlng = this._gameCoordsToMapLatlng(gameCoordinates);
-                        let marker = this._leaflet.marker(markerLatlng, {
-                            icon,
-                            zIndexOffset: priority,
-                            riseOnHover: true
-                        });
-                        if (tooltipText) {
-                            marker.bindTooltip(tooltipText);
-                        }
-                        if (onClick) {
-                            marker.on('click', onClick);
-                        }
-                        return marker;
-                    });
-                    let layerGroup = this._leaflet.layerGroup(markers);
-
-                    currentTotalMarkers += markers.length;
-                    if (currentTotalMarkers <= defaultMaxMarkers) {
-                        layerGroup.addTo(this.map);
-                    }
-
-                    let groupLabel = `<img src='${iconUrl}' height='20' width='20'> ${name} (${markers.length})`;
-
-                    layerGroups[groupLabel] = layerGroup;
-                    return layerGroups
-                }, {});
-
-                this._leaflet.control.layers(null, layerGroups).addTo(this.map);
+            const defaultMaxLayers = 600;
+            let currentTotalLayers = 0;
+            for (let layerGroup of Object.values(this._layerGroups)) {
+                currentTotalLayers += layerGroup.getLayers().length;
+                if (currentTotalLayers > defaultMaxLayers) {
+                    break;
+                }
+                layerGroup.addTo(this.map);
             }
-
-            this.map.setMaxBounds(mapBounds);
+            this._leaflet.control.layers(null, this._layerGroups).addTo(this.map);
+            
+            this.map.setMaxBounds(mapBounds.pad(0.2));
             this.map.setMinZoom(minZoom);
             this.map.setMaxZoom(maxZoom);
-            this.map.setView([0, 0], minZoom);
+            this.map.setView(mapBounds.getCenter(), minZoom);
         }
 
         setTileData({zoomLevelsDir, tileFormat, tilePixelSize, tileCoordinateSize, tileGridLength, coordinateOriginTileIndex}) {
@@ -167,111 +80,77 @@ ngapp.service('blacksmithMapService', function(leafletService) {
                 return minZoom;
             }, 100);
 
-            this._tiledMapSettings = {
-                coordinateOffset: this._leaflet.point(coordinateOriginTileIndex.x * tileCoordinateSize, coordinateOriginTileIndex.y * tileCoordinateSize),
-                pixelSize: tilePixelSize * tileGridLength,
-                mapSize: tileCoordinateSize * tileGridLength,
-                numZoomLevels
+            const tiledMapPixelSize = tilePixelSize * tileGridLength;
+            const tiledMapGameCoordinatesSize = tileCoordinateSize * tileGridLength;
+            const minZoom = Math.log2(tiledMapPixelSize / tiledMapGameCoordinatesSize);
+
+            this._tiledMapBoundsSettings = {
+                mapBounds: this._leaflet.latLngBounds([0, 0], [-tiledMapGameCoordinatesSize, tiledMapGameCoordinatesSize]),
+                minZoom,
+                maxZoom: minZoom + numZoomLevels - 1
             };
 
-            const {mapBounds, minZoom, maxZoom} = getMapSettingsFromTiledMapSettings(this._tiledMapSettings);
+            this._tiledMapCoordinateOffset = this._leaflet.point(coordinateOriginTileIndex.x * tileCoordinateSize, coordinateOriginTileIndex.y * tileCoordinateSize);
 
             const tileOpts = {
-                bounds: mapBounds,
+                bounds: this._tiledMapBoundsSettings.mapBounds,
                 tileSize: tilePixelSize,
                 minZoom,
-                maxZoom,
+                maxZoom: this._tiledMapBoundsSettings.maxZoom,
                 zoomOffset: tileDataMinZoom - minZoom
             };
             const tileUrl = zoomDirJp.cwd() + '\\zoom{z}\\' + tileFormat;
 
-            let tileLayer = this._leaflet.tileLayer(tileUrl, tileOpts);
-            tileLayer.addTo(this.map);
+            this._tileLayer = this._leaflet.tileLayer(tileUrl, tileOpts);
         }
 
-        setDoors(doors) {
-            let worldDoorMarkers = [];
-            let doorMarkers = [];
+        setMarkerGroups(markerGroups) {
+            this._markerMinBounds = this._leaflet.latLngBounds([]);
 
-            doors.forEach(door => {
-                const isWorldDoor = blacksmithHelpers.runOnReferenceRecord(door.destinationZoneReference, xelib.Signature) === 'WRLD';
-                (isWorldDoor ? worldDoorMarkers : doorMarkers).push({
-                    gameCoordinates: this._leaflet.point(door.coordinates.x, door.coordinates.y),
-                    tooltipText: door.name,
-                    onClick: () => {
-                        if (this._onDoorSelectedCb) {
-                            this._onDoorSelectedCb(door);
-                        }
-                    }
-                });
+            markerGroups.sort((a, b) => {
+                return b.priority - a.priority;
             });
 
-            if (worldDoorMarkers.length > 0) {
-                this._markerGroups.push({
-                    name: 'World Doors',
-                    priority: 170,
-                    iconSize: [32, 32],
-                    markerData: worldDoorMarkers
+            markerGroups.forEach(({name, priority, iconSize, markerData}) => {
+                const iconUrl = getIconUrl(name + '.png')
+                let icon = this._leaflet.icon({
+                    iconUrl,
+                    iconSize
                 });
-            }
-            if (doorMarkers.length > 0) {
-                this._markerGroups.push({
-                    name: 'Doors',
-                    priority: 160,
-                    iconSize: [32, 32],
-                    markerData: doorMarkers
-                });
-            }
-        }
 
-        setContainers(containers) {
-            let containerMarkerGroups = {};
+                let markers = markerData.map(({gameCoordinates, tooltipText, onClick}) => {
+                    let markerLatLng = this._gameCoordsToMapLatlng(this._leaflet.point(gameCoordinates.x, gameCoordinates.y));
+                    this._markerMinBounds.extend(markerLatLng);
 
-            containers.forEach(container => {
-                let {name, priority} = getContainerIconData(container.contReference);
-
-                let containerMarkerGroup = containerMarkerGroups[name];
-                if (!containerMarkerGroup) {
-                    containerMarkerGroup = {
-                        name,
-                        priority,
-                        iconSize: [24, 24],
-                        markerData: []
-                    };
-                    containerMarkerGroups[name] = containerMarkerGroup;
-                }
-
-                containerMarkerGroup.markerData.push({
-                    gameCoordinates: this._leaflet.point(container.coordinates.x, container.coordinates.y),
-                    tooltipText: container.name,
-                    onClick: () => {
-                        if (this._onContainerSelectedCb) {
-                            this._onContainerSelectedCb(container);
-                        }
+                    let marker = this._leaflet.marker(markerLatLng, {
+                        icon,
+                        zIndexOffset: priority,
+                        riseOnHover: true
+                    });
+                    if (tooltipText) {
+                        marker.bindTooltip(tooltipText);
                     }
+                    if (onClick) {
+                        marker.on('click', onClick);
+                    }
+                    return marker;
                 });
-            });
 
-            Object.values(containerMarkerGroups).forEach(containerMarkerGroup => this._markerGroups.push(containerMarkerGroup));
+                let layerGroup = this._leaflet.layerGroup(markers);
+                let groupLabel = `<img src='${iconUrl}' height='20' width='20'> ${name} (${markers.length})`;
+                this._layerGroups[groupLabel] = layerGroup;
+            }, {});
         }
 
         remove() {
             this.map.remove();
         }
 
-        registerOnDoorSelected(cb) {
-            this._onDoorSelectedCb = cb;
-        }
-
-        registerOnContainerSelected(cb) {
-            this._onContainerSelectedCb = cb;
-        }
-
         _getGameCoordsOffset() {
             let gameCoordsOffset = this._leaflet.point(0, 0);
-            if (this._tiledMapSettings) {
-                gameCoordsOffset.x = this._tiledMapSettings.coordinateOffset.x;
-                gameCoordsOffset.y = this._tiledMapSettings.coordinateOffset.y * -1;
+            if (this._tiledMapCoordinateOffset) {
+                gameCoordsOffset.x = this._tiledMapCoordinateOffset.x;
+                gameCoordsOffset.y = this._tiledMapCoordinateOffset.y * -1;
             }
             return gameCoordsOffset;
         }
@@ -289,18 +168,15 @@ ngapp.service('blacksmithMapService', function(leafletService) {
         }
     };
 
-    this.createMap = function(mapId, {tileData, doors, containers} = {}) {
+    this.createMap = function(mapId, {tileData, markerGroups} = {}) {
         let map = new BlacksmithMap(mapId);
         if (tileData) {
             map.setTileData(tileData);
         }
-        if (doors) {
-            map.setDoors(doors);
+        if (markerGroups) {
+            map.setMarkerGroups(markerGroups);
         }
-        if (containers) {
-            map.setContainers(containers);
-        }
-        map.initializeMap();
+        map.createMap(mapId);
         return map;
     };
 });
