@@ -14,57 +14,83 @@ ngapp.service('blacksmithMapService', function(leafletService) {
         };
     };
 
-    let addDefaultBackgroundToMap = function(map, bounds) {
+    let createDefaultBackground = function(bounds) {
         let leaflet = leafletService.getLeaflet();
 
-        leaflet.imageOverlay(`${modulePath}\\resources\\map\\DefaultBackground.png`, bounds).addTo(map);
-        leaflet.polyline([
+        let image = leaflet.imageOverlay(`${modulePath}\\resources\\map\\DefaultBackground.png`, bounds);
+        let line = leaflet.polyline([
             bounds.getNorthWest(),
             bounds.getNorthEast(),
             bounds.getSouthEast(),
             bounds.getSouthWest(),
             bounds.getNorthWest()
-        ], {color: 'red'}).addTo(map);
+        ], {color: 'red'});
+
+        return leaflet.layerGroup([image, line]);
     };
 
     class BlacksmithMap {
-        constructor() {
+        constructor(mapId) {
             this._leaflet = leafletService.getLeaflet();
-            this._markerGroups = [];
-            this._layerGroups = {};
-        }
 
-        createMap(mapId) {
             const mapOpts = {
                 crs: this._leaflet.CRS.Simple,
                 minZoom: -100
             };
             this.map = this._leaflet.map(mapId, mapOpts);
+            this._layerControl = this._leaflet.control.layers().addTo(this.map);
 
+            this.clearMap();
+        }
+
+        clearMap() {
+            this._tiledMapBoundsSettings = undefined;
+            this._markerMinBounds = undefined;
+            this._tiledMapCoordinateOffset = undefined;
+
+            if (this._tileLayer) {
+                this._tileLayer.remove();
+                this._tileLayer = undefined;
+            }
+            if (this._defaultBackground) {
+                this._defaultBackground.remove();
+                this._defaultBackground = undefined;
+            }
+            if (this._layerGroups) {
+                Object.values(this._layerGroups).forEach(layerGroup => layerGroup.remove());
+            }
+            this._layerGroups = {};
+        }
+
+        remove() {
+            this.map.remove();
+        }
+
+        addToView() {
             let {mapBounds, minZoom, maxZoom} = this._tiledMapBoundsSettings || getMapBoundsSettings(this.map, this._markerMinBounds);
 
             if (this._tileLayer) {
                 this._tileLayer.addTo(this.map);
             }
             else {
-                addDefaultBackgroundToMap(this.map, mapBounds);
+                this._defaultBackground = createDefaultBackground(mapBounds).addTo(this.map);
             }
 
             const defaultMaxLayers = 600;
             let currentTotalLayers = 0;
-            for (let layerGroup of Object.values(this._layerGroups)) {
+            for (let [label, layerGroup] of Object.entries(this._layerGroups)) {
                 currentTotalLayers += layerGroup.getLayers().length;
                 if (currentTotalLayers > defaultMaxLayers) {
                     break;
                 }
                 layerGroup.addTo(this.map);
+                this._layerControl.addOverlay(layerGroup, label);
             }
-            this._leaflet.control.layers(null, this._layerGroups).addTo(this.map);
             
             this.map.setMaxBounds(mapBounds);
             this.map.setMinZoom(minZoom);
             this.map.setMaxZoom(maxZoom);
-            this.map.setView(mapBounds.getCenter(), minZoom);
+            this.map.setView(mapBounds.getCenter(), minZoom, {animate: false});
         }
 
         setTileData({zoomLevelsDir, tileFormat, tilePixelSize, tileCoordinateSize, tileGridLength, coordinateOriginTileIndex}) {
@@ -142,10 +168,6 @@ ngapp.service('blacksmithMapService', function(leafletService) {
             }, {});
         }
 
-        remove() {
-            this.map.remove();
-        }
-
         _getGameCoordsOffset() {
             let gameCoordsOffset = this._leaflet.point(0, 0);
             if (this._tiledMapCoordinateOffset) {
@@ -168,7 +190,7 @@ ngapp.service('blacksmithMapService', function(leafletService) {
         }
     };
 
-    this.createMap = function() {
-        return new BlacksmithMap();
+    this.createMap = function(mapId) {
+        return new BlacksmithMap(mapId);
     };
 });

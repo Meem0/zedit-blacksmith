@@ -169,6 +169,8 @@ ngapp.controller('blacksmithMapModalController', function($scope, $timeout, blac
         if (bksMap) {
             bksMap.remove();
         }
+        bksMap = blacksmithMapService.createMap('blacksmithMap');
+        global.bmg = bksMap;
         
         $timeout(() => {
             let markerGroups = getMarkerGroups(zoneReference);
@@ -179,9 +181,6 @@ ngapp.controller('blacksmithMapModalController', function($scope, $timeout, blac
                 tileData.zoomLevelsDir = modulePath + tileData.zoomLevelsDir;
             }
     
-            bksMap = blacksmithMapService.createMap();
-            global.bmg = bksMap;
-    
             if (tileData) {
                 bksMap.setTileData(tileData);
             }
@@ -190,7 +189,7 @@ ngapp.controller('blacksmithMapModalController', function($scope, $timeout, blac
             }
 
             $timeout(() => {
-                bksMap.addToView('blacksmithMap');
+                bksMap.addToView();
                 $scope.loadingMap = false;
                 global.mg = bksMap.map;
             });
