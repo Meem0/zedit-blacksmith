@@ -89,10 +89,10 @@ ngapp.run(function(workflowService) {
                     return this.reference;
                 },
                 get name() {
-                    return blacksmithHelpers.runOnReferenceRecord(this.reference, xelib.FullName) || '';
+                    return blacksmithHelpers.withRecord(this.reference, xelib.FullName) || '';
                 },
                 get editorId() {
-                    return blacksmithHelpers.runOnReferenceRecord(this.reference, xelib.EditorID) || '';
+                    return blacksmithHelpers.withRecord(this.reference, xelib.EditorID) || '';
                 }
             });
             return items;

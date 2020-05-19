@@ -114,15 +114,15 @@ ngapp.run(function(workflowService, skyrimMaterialService, skyrimGearService, js
     };
 
     let viewIngredientController = function($scope) {
-        $scope.ingredientName = blacksmithHelpers.runOnReferenceRecord($scope.ingredient.itemReference, xelib.FullName) || '';
+        $scope.ingredientName = blacksmithHelpers.withRecord($scope.ingredient.itemReference, xelib.FullName) || '';
     };
 
     let editIngredientController = function($scope) {
-        $scope.ingredientSignature = blacksmithHelpers.runOnReferenceRecord($scope.ingredient.itemReference, xelib.Signature) || 'MISC';
+        $scope.ingredientSignature = blacksmithHelpers.withRecord($scope.ingredient.itemReference, xelib.Signature) || 'MISC';
     
         $scope.ingredientLongName = {
             get value() {
-                return blacksmithHelpers.runOnReferenceRecord($scope.ingredient.itemReference, xelib.LongName) || '';
+                return blacksmithHelpers.withRecord($scope.ingredient.itemReference, xelib.LongName) || '';
             },
             set value(inValue) {
                 $scope.ingredient.itemReference = blacksmithHelpers.getReferenceFromLongName(inValue);
@@ -161,7 +161,7 @@ ngapp.run(function(workflowService, skyrimMaterialService, skyrimGearService, js
         $scope.$on('componentsUpdated', rebuildAutomaticRecipe);
 
         $scope.recipe = $scope.model.recipes.find(({itemReference}) => itemReference === $scope.item.reference);
-        $scope.itemName = blacksmithHelpers.runOnReferenceRecord($scope.item.reference, xelib.FullName) || '';
+        $scope.itemName = blacksmithHelpers.withRecord($scope.item.reference, xelib.FullName) || '';
         
         $scope.editManually = {
             get value() {
@@ -204,12 +204,12 @@ ngapp.run(function(workflowService, skyrimMaterialService, skyrimGearService, js
                 return $scope.model.temperIngredient || defaultTemperIngredient;
             };
             $scope.temperIngredient = {
-                signature: blacksmithHelpers.runOnReferenceRecord(getTemperIngredient(), xelib.Signature) || 'MISC',
+                signature: blacksmithHelpers.withRecord(getTemperIngredient(), xelib.Signature) || 'MISC',
                 get itemReference() {
                     return getTemperIngredient();
                 },
                 get longName() {
-                    return blacksmithHelpers.runOnReferenceRecord(getTemperIngredient(), xelib.LongName) || '';
+                    return blacksmithHelpers.withRecord(getTemperIngredient(), xelib.LongName) || '';
                 },
                 set longName(value) {
                     $scope.model.temperIngredient = blacksmithHelpers.getReferenceFromLongName(value);
@@ -224,12 +224,12 @@ ngapp.run(function(workflowService, skyrimMaterialService, skyrimGearService, js
                 };
                 return {
                     type,
-                    signature: blacksmithHelpers.runOnReferenceRecord(getComponentItemReference(), xelib.Signature) || 'MISC',
+                    signature: blacksmithHelpers.withRecord(getComponentItemReference(), xelib.Signature) || 'MISC',
                     get itemReference() {
                         return getComponentItemReference();
                     },
                     get longName() {
-                        return blacksmithHelpers.runOnReferenceRecord(getComponentItemReference(), xelib.LongName) || '';
+                        return blacksmithHelpers.withRecord(getComponentItemReference(), xelib.LongName) || '';
                     },
                     set longName(value) {
                         if (!$scope.model.components) {

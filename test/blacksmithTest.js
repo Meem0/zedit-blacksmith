@@ -13,7 +13,7 @@ let transformRecordObject = function(recordObject, transformedObject = {}, paren
             return Math.round(value * 100000) / 100000;
         }
         else if (typeof(value) === 'string') {
-            const longName = blacksmithHelpers.runOnReferenceRecord(value, xelib.LongName);
+            const longName = blacksmithHelpers.withRecord(value, xelib.LongName);
             return longName || value;
         }
         else if (Array.isArray(value)) {
@@ -47,7 +47,7 @@ const overrideTestValues = [{
     keyPath: 'BIDS',
     itemType: 'Greatsword',
     material: 'Elven',
-    value: blacksmithHelpers.runOnReferenceRecord('Skyrim.esm:0183FF', xelib.LongName)
+    value: blacksmithHelpers.withRecord('Skyrim.esm:0183FF', xelib.LongName)
 }];
 
 let getOverrideTestValue = function(inKeyPath, inItemType, inMaterial) {
@@ -185,10 +185,10 @@ testCases.forEach(({itemType, material, gearCategory, reference, recipeReference
                             type: itemType,
                             material,
                             get name() {
-                                return blacksmithHelpers.runOnReferenceRecord(this.reference, xelib.FullName) || '';
+                                return blacksmithHelpers.withRecord(this.reference, xelib.FullName) || '';
                             },
                             get editorId() {
-                                return blacksmithHelpers.runOnReferenceRecord(this.reference, xelib.EditorID) || '';
+                                return blacksmithHelpers.withRecord(this.reference, xelib.EditorID) || '';
                             }
                         }]
                     }, {

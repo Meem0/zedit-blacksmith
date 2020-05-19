@@ -2,14 +2,13 @@ module.exports = ({ngapp, fh, modulePath, moduleUrl}, blacksmithHelpers) => {
 ngapp.controller('blacksmithMapModalController', function($scope, $timeout, blacksmithMapService, cellService, mapDataService, jsonService, progressService) {
     const zoneSettings = jsonService.loadJsonFile('map/zoneSettings');
     $scope.spinnerUrl = `${moduleUrl}/resources/images/LoadSpinner.png`;
-    $scope.showMap = true;
 
     let bksMap;
 
     let getContainerMarkerData = function(containerReference) {
         let edid = '';
         let name = '';
-        blacksmithHelpers.runOnReferenceRecord(containerReference, containerRecord => {
+        blacksmithHelpers.withRecord(containerReference, containerRecord => {
             edid = xelib.EditorID(containerRecord).toLowerCase();
             name = xelib.Name(containerRecord).toLowerCase();
         });
@@ -66,13 +65,13 @@ ngapp.controller('blacksmithMapModalController', function($scope, $timeout, blac
 
     let setSelectedContainer = function(container) {
         $scope.selectedContainerName = container.name;
-        blacksmithHelpers.runOnReferenceRecord(container.contReference, contRecord => {
+        blacksmithHelpers.withRecord(container.contReference, contRecord => {
             $scope.selectedContainerEdid = xelib.EditorID(contRecord);
             $scope.selectedContainerLoot = getContainerLoot(contRecord);
         });
 
         $scope.reloadContainerLoot = function() {
-            blacksmithHelpers.runOnReferenceRecord(container.contReference, contRecord => {
+            blacksmithHelpers.withRecord(container.contReference, contRecord => {
                 $scope.selectedContainerLoot = getContainerLoot(contRecord);
             });
         };
@@ -87,7 +86,7 @@ ngapp.controller('blacksmithMapModalController', function($scope, $timeout, blac
         let doorMarkers = [];
 
         doorData.forEach(door => {
-            const isWorldDoor = blacksmithHelpers.runOnReferenceRecord(door.destinationZoneReference, xelib.Signature) === 'WRLD';
+            const isWorldDoor = blacksmithHelpers.withRecord(door.destinationZoneReference, xelib.Signature) === 'WRLD';
             (isWorldDoor ? worldDoorMarkers : doorMarkers).push({
                 gameCoordinates: door.coordinates,
                 tooltipText: door.name,
@@ -154,7 +153,7 @@ ngapp.controller('blacksmithMapModalController', function($scope, $timeout, blac
     };
 
     let openMapWithZone = function(zoneReference) {
-        const zoneName = blacksmithHelpers.runOnReferenceRecord(zoneReference, xelib.Name);
+        const zoneName = blacksmithHelpers.withRecord(zoneReference, xelib.Name);
         const settings = zoneSettings[zoneReference];
 
         $scope.loadingMap = true;

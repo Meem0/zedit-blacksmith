@@ -14,7 +14,7 @@ ngapp.run(function(workflowService) {
     };
 
     let duplicateContainerInstance = function(containerRefr, targetPlugin) {
-        return blacksmithHelpers.runOnReferenceRecord(containerRefr, refrRecord => {
+        return blacksmithHelpers.withRecord(containerRefr, refrRecord => {
             if (!refrRecord) {
                 return;
             }
@@ -43,7 +43,7 @@ ngapp.run(function(workflowService) {
                 if (!contCopyRecord) {
                     return;
                 }
-                const itemFormId = blacksmithHelpers.runOnReferenceRecord(item.reference, xelib.GetHexFormID);
+                const itemFormId = blacksmithHelpers.withRecord(item.reference, xelib.GetHexFormID);
                 if (itemFormId) {
                     xelib.AddItem(contCopyRecord, itemFormId, "1");
                 }
@@ -80,10 +80,10 @@ ngapp.run(function(workflowService) {
                     return this.reference;
                 },
                 get name() {
-                    return blacksmithHelpers.runOnReferenceRecord(this.reference, xelib.FullName) || '';
+                    return blacksmithHelpers.withRecord(this.reference, xelib.FullName) || '';
                 },
                 get editorId() {
-                    return blacksmithHelpers.runOnReferenceRecord(this.reference, xelib.EditorID) || '';
+                    return blacksmithHelpers.withRecord(this.reference, xelib.EditorID) || '';
                 }
             });
             return items;

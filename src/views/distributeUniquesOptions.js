@@ -6,13 +6,13 @@ ngapp.run(function(workflowService) {
             get longName() {
                 let containerLongName;
                 if ($scope.model.uniqueLootContainerInsertions) {
-                    containerLongName = blacksmithHelpers.runOnReferenceRecord($scope.model.uniqueLootContainerInsertions[$scope.item.key], xelib.LongName);
+                    containerLongName = blacksmithHelpers.withRecord($scope.model.uniqueLootContainerInsertions[$scope.item.key], xelib.LongName);
                 }
                 return containerLongName || '';
             },
             set longName(value) {
                 const containerReference = blacksmithHelpers.getReferenceFromLongName(value);
-                if (blacksmithHelpers.runOnReferenceRecord(containerReference, xelib.Signature) !== 'REFR') {
+                if (blacksmithHelpers.withRecord(containerReference, xelib.Signature) !== 'REFR') {
                     return;
                 }
                 if (!$scope.model.uniqueLootContainerInsertions) {
@@ -27,7 +27,7 @@ ngapp.run(function(workflowService) {
             set formId(value) {
                 this.formIdEdit = value;
                 const containerReference = blacksmithHelpers.getReferenceFromFormId(value);
-                if (!containerReference || blacksmithHelpers.runOnReferenceRecord(containerReference, xelib.Signature) !== 'REFR') {
+                if (!containerReference || blacksmithHelpers.withRecord(containerReference, xelib.Signature) !== 'REFR') {
                     return;
                 }
                 if (!$scope.model.uniqueLootContainerInsertions) {

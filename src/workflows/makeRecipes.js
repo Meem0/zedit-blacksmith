@@ -50,7 +50,7 @@ ngapp.service('createRecipeRecordService', function(skyrimMaterialService, skyri
         perkReference
     }) {
         let sortedIngredients = ingredients.map(ingredient => ({
-            editorId: blacksmithHelpers.runOnReferenceRecord(ingredient.itemReference, xelib.GetHexFormID, true, false),
+            editorId: blacksmithHelpers.withRecord(ingredient.itemReference, record => xelib.GetHexFormID(record, true, false)),
             ...ingredient
         })).sort((a, b) => a.editorId.localeCompare(b.editorId));
         let recipeObject = {
@@ -140,7 +140,7 @@ ngapp.run(function(workflowService, createRecipeRecordService, skyrimMaterialSer
 
     let getRecipeEditorId = function(itemReference, isTemper) {
         const prefix = isTemper ? 'Temper' : 'Recipe';
-        const itemEditorId = blacksmithHelpers.runOnReferenceRecord(itemReference, xelib.EditorID);
+        const itemEditorId = blacksmithHelpers.withRecord(itemReference, xelib.EditorID);
         return prefix + itemEditorId;
     };
 
@@ -164,10 +164,10 @@ ngapp.run(function(workflowService, createRecipeRecordService, skyrimMaterialSer
                 type: getItemType(handle),
                 material: getItemMaterial(handle),
                 get name() {
-                    return blacksmithHelpers.runOnReferenceRecord(this.reference, xelib.FullName) || '';
+                    return blacksmithHelpers.withRecord(this.reference, xelib.FullName) || '';
                 },
                 get editorId() {
-                    return blacksmithHelpers.runOnReferenceRecord(this.reference, xelib.EditorID) || '';
+                    return blacksmithHelpers.withRecord(this.reference, xelib.EditorID) || '';
                 }
             });
             return items;

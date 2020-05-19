@@ -87,7 +87,7 @@ ngapp.service('cellService', function() {
     };
 
     this.getExteriorCells = function(worldspace) {
-        return blacksmithHelpers.runOnReferenceRecord(worldspaceRecord => GetRecords(worldspaceRecord, 'CELL'))
+        return blacksmithHelpers.withRecord(worldspaceRecord => GetRecords(worldspaceRecord, 'CELL'))
             .filter(exteriorCellFilter(worldspace))
             .map(makeExteriorCellObject);
     };

@@ -283,18 +283,22 @@ module.exports = function({xelib, logger}) {
     };
 
     // e.g. 'Skyrim.esm:012E49' -> (handle to 00012E49)
-    blacksmithHelpers.getRecordFromReference = function(reference) {
+    blacksmithHelpers.getRecordFromReference = function(reference, winningOverride = false) {
         const path = blacksmithHelpers.getPathFromReference(reference);
         if (path) {
-            return xelib.GetElement(0, path);
+            let record = xelib.GetElement(0, path);
+            if (winningOverride) {
+                return xelib.WithHandle(record, xelib.GetWinningOverride);
+            }
+            return record;
         }
         return 0;
     };
 
-    blacksmithHelpers.runOnReferenceRecord = function(reference, func, ...args) {
+    blacksmithHelpers.withRecord = function(reference, func, winningOverride = false) {
         return xelib.WithHandle(
-            blacksmithHelpers.getRecordFromReference(reference),
-            id => id ? func(id, ...args) : null
+            blacksmithHelpers.getRecordFromReference(reference, winningOverride),
+            id => id ? func(id) : null
         );
     };
     

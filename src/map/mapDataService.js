@@ -1,17 +1,34 @@
 module.exports = ({ngapp}, blacksmithHelpers) =>
 ngapp.service('mapDataService', function() {
-    let buildRefrObjects = function(zoneReference, refrType, buildRefrObject) {
-        return blacksmithHelpers.runOnReferenceRecord(zoneReference, zoneRecord => {
-            return xelib.WithHandles(xelib.GetREFRs(zoneRecord, refrType), refrRecords => {
-                return refrRecords.reduce((refrObjects, refrRecord) => {
-                    let refrObject = buildRefrObject(refrRecord);
-                    if (refrObject) {
-                        refrObjects.push(refrObject);
-                    }
-                    return refrObjects;
-                }, []);
-            });
+    let withEachOverride = function(record, func) {
+        return xelib.WithHandles(xelib.GetOverrides(record), overrides => {
+            return [record, ...overrides].reduce((result, record) => {
+                let value = func(record);
+                if (Array.isArray(value)) {
+                    result.push(...value);
+                }
+                else {
+                    result.push(value);
+                }
+                return result;
+            }, []);
         });
+    };
+
+    let buildRefrObjects = function(zoneReference, refrType, buildRefrObject) {
+        return blacksmithHelpers.withRecord(zoneReference, zoneRecordMaster => (
+            withEachOverride(zoneRecordMaster, zoneRecord => (
+                xelib.WithHandles(xelib.GetREFRs(zoneRecord, refrType), refrRecords => (
+                    refrRecords.reduce((refrObjects, refrRecord) => {
+                        let refrObject = buildRefrObject(refrRecord);
+                        if (refrObject) {
+                            refrObjects.push(refrObject);
+                        }
+                        return refrObjects;
+                    }, [])
+                ))
+            ))
+        ));
     };
 
     let resolveDestinationZone = function(doorRecord) {

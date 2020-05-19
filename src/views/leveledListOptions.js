@@ -17,9 +17,9 @@ ngapp.run(function(workflowService) {
             return {
                 itemName: item.name,
                 cachedTemplateItem: initialTemplateItem,
-                templateItemSignature: blacksmithHelpers.runOnReferenceRecord(initialTemplateItem, xelib.Signature),
+                templateItemSignature: blacksmithHelpers.withRecord(initialTemplateItem, xelib.Signature),
                 get templateItemLongName() {
-                    return blacksmithHelpers.runOnReferenceRecord(this.cachedTemplateItem, xelib.LongName);
+                    return blacksmithHelpers.withRecord(this.cachedTemplateItem, xelib.LongName);
                 },
                 set templateItemLongName(value) {
                     if (!$scope.model.leveledListTemplateItems) {

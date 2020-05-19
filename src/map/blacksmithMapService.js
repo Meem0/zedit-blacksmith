@@ -6,6 +6,11 @@ ngapp.service('blacksmithMapService', function(leafletService) {
 
     let getMapBoundsSettings = function(map, bounds) {
         const mapBounds = bounds.pad(0.2);
+
+        const minRadius = 500;
+        const center = mapBounds.getCenter();
+        mapBounds.extend([[center.lat - minRadius, center.lng - minRadius], [center.lat + minRadius, center.lng + minRadius]]);
+
         const minZoom = map.getBoundsZoom(mapBounds, /*inside*/ false);
         return {
             mapBounds,

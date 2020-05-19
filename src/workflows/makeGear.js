@@ -36,8 +36,8 @@ ngapp.service('createGearRecordService', function(skyrimAttributeService, skyrim
         }
 
         keywords.sort((a, b) => {
-            const formIdA = blacksmithHelpers.runOnReferenceRecord(a, xelib.GetHexFormID, true, false);
-            const formIdB = blacksmithHelpers.runOnReferenceRecord(b, xelib.GetHexFormID, true, false);
+            const formIdA = blacksmithHelpers.withRecord(a, record => xelib.GetHexFormID(record, true, false));
+            const formIdB = blacksmithHelpers.withRecord(b, record => xelib.GetHexFormID(record, true, false));
             return formIdA.localeCompare(formIdB);
         });
 
