@@ -274,9 +274,10 @@ module.exports = function({xelib, logger}) {
     // e.g. (handle to 00012E49) -> 'Skyrim.esm:012E49'
     blacksmithHelpers.getReferenceFromRecord = function(recordId) {
         if (blacksmithHelpers.isMainRecord(recordId)) {
-            const localFormId = xelib.GetHexFormID(recordId, /*native*/ true, /*local*/ true);
-            const filename = blacksmithHelpers.getFilenameContainingElement(recordId);
-            return filename + ':' + localFormId;
+            const formId = xelib.GetHexFormID(recordId);
+            const loadOrder = Number('0x' + formId.substring(0, 2));
+            const filename = xelib.WithHandle(xelib.FileByLoadOrder(loadOrder), fileId => xelib.GetFileName(fileId));
+            return filename + ':' + formId.substring(2);
         }
         return '';
     };
