@@ -85,10 +85,9 @@ ngapp.service('blacksmithMapService', function(leafletService) {
             let currentTotalLayers = 0;
             for (let [label, layerGroup] of Object.entries(this._layerGroups)) {
                 currentTotalLayers += layerGroup.getLayers().length;
-                if (currentTotalLayers > defaultMaxLayers) {
-                    break;
+                if (currentTotalLayers <= defaultMaxLayers) {
+                    layerGroup.addTo(this.map);
                 }
-                layerGroup.addTo(this.map);
                 this._layerControl.addOverlay(layerGroup, label);
             }
             
