@@ -14,7 +14,7 @@
     "test": "jest blacksmithTest.js"
   },
   "devDependencies": {
-    "angular": "^1.5.1",
+    "angular": "^1.8.3",
     "angular-mocks": "^1.5.1",
     "del": "^5.1.0",
     "fs-jetpack": "^2.2.3",
